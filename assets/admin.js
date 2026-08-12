@@ -8,6 +8,12 @@
 (function () {
     'use strict';
 
+    function html(value) {
+        return String(value == null ? '' : value).replace(/[&<>"']/g, function (char) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char];
+        });
+    }
+
     var RAD = Math.PI / 180;
 
     // ══════════════════════════════════════════════════════
@@ -565,12 +571,12 @@
 
             if (readout) {
                 readout.innerHTML =
-                    '<p class="cbaz-readout__flag">' + p.flag + '</p>' +
-                    '<p class="cbaz-readout__name">' + p.name + '</p>' +
+                    '<p class="cbaz-readout__flag">' + html(p.flag) + '</p>' +
+                    '<p class="cbaz-readout__name">' + html(p.name) + '</p>' +
                     '<dl class="cbaz-stats">' +
                     '<div><dt>Visites</dt><dd>' + p.sessions.toLocaleString('fr-FR') + '</dd></div>' +
                     '<div><dt>Commandes</dt><dd>' + p.orders.toLocaleString('fr-FR') + '</dd></div>' +
-                    '<div><dt>Chiffre d’affaires</dt><dd>' + p.money + '</dd></div>' +
+                    '<div><dt>Chiffre d’affaires</dt><dd>' + html(p.money) + '</dd></div>' +
                     '<div><dt>Conversion</dt><dd>' +
                         (p.sessions ? ((p.orders / p.sessions) * 100).toFixed(2).replace('.', ',') : '0,00') + ' %</dd></div>' +
                     '</dl>';
@@ -819,7 +825,7 @@
             }
 
             var box = root.getBoundingClientRect();
-            var lines = '<strong>' + dot.dataset.label + '</strong>';
+            var lines = '<strong>' + html(dot.dataset.label) + '</strong>';
 
             // Seules les séries affichées entrent dans l'infobulle :
             // lire quatre chiffres quand on n'en regarde qu'un seul
@@ -827,7 +833,7 @@
             card.querySelectorAll('.cbaz-serie.is-on').forEach(function (btn) {
                 var k = btn.dataset.serie;
                 lines += '<span class="cbaz-tip__row"><i data-serie="' + k + '"></i>'
-                       + labels[k] + ' <b>' + (dot.dataset[k] || '0') + '</b></span>';
+                       + labels[k] + ' <b>' + html(dot.dataset[k] || '0') + '</b></span>';
             });
 
             tip.innerHTML = lines;
@@ -947,13 +953,14 @@
 
                     if (feed && json.data.feed.length) {
                         feed.innerHTML = json.data.feed.map(function (f) {
-                            return '<li class="cbaz-timeline--' + f.tone + '">' +
+                            var tone = ['view', 'cart', 'checkout', 'purchase', 'search'].indexOf(f.tone) >= 0 ? f.tone : 'view';
+                            return '<li class="cbaz-timeline--' + tone + '">' +
                                 '<div class="cbaz-timeline__top">' +
-                                '<span class="cbaz-timeline__time">' + f.time + '</span>' +
-                                '<span class="cbaz-badge cbaz-badge--' + f.tone + '">' + f.label + '</span>' +
+                                '<span class="cbaz-timeline__time">' + html(f.time) + '</span>' +
+                                '<span class="cbaz-badge cbaz-badge--' + tone + '">' + html(f.label) + '</span>' +
                                 '</div>' +
-                                '<p class="cbaz-timeline__what">' + f.what + '</p>' +
-                                '<p class="cbaz-timeline__who">' + f.flag + ' ' + f.country + ' · ' + f.device + '</p>' +
+                                '<p class="cbaz-timeline__what">' + html(f.what) + '</p>' +
+                                '<p class="cbaz-timeline__who">' + html(f.flag) + ' ' + html(f.country) + ' · ' + html(f.device) + '</p>' +
                                 '</li>';
                         }).join('');
                     }

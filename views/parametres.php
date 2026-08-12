@@ -301,6 +301,14 @@ $volet = cbaz_subtabs( 'volet', [
 			<textarea name="exclude_paths" rows="5" class="cbaz-textarea"><?php echo esc_textarea( $opts['exclude_paths'] ); ?></textarea>
 
 		<?php else : ?>
+			<div class="cbaz-setting">
+				<?php cbaz_toggle( 'delete_on_uninstall', ! empty( $opts['delete_on_uninstall'] ) ); ?>
+				<div class="cbaz-setting__text">
+					<strong>Effacer définitivement les données à la désinstallation</strong>
+					<p>Désactivé par défaut. Activez ce choix avant de supprimer l’extension si vous souhaitez supprimer ses tables, réglages et métadonnées d’attribution.</p>
+				</div>
+			</div>
+
 			<dl class="cbaz-stats">
 				<div><dt>Visites enregistrées</dt><dd><?php echo esc_html( cbaz_int( $rows ) ); ?></dd></div>
 				<div><dt>Pages vues</dt><dd><?php echo esc_html( cbaz_int( $views ) ); ?></dd></div>

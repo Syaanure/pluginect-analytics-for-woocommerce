@@ -153,7 +153,7 @@ function cbaz_totals( $from, $to ) {
 			SUM(CASE WHEN pageviews = 1 THEN 1 ELSE 0 END) AS bounces,
 			SUM(CASE WHEN order_id > 0 THEN 1 ELSE 0 END) AS orders,
 			SUM(revenue) AS revenue,
-			AVG(TIMESTAMPDIFF(SECOND, started_at, last_seen)) AS duration
+			AVG(engaged_seconds) AS duration
 		FROM {$s} WHERE started_at BETWEEN %s AND %s" . cbaz_filter_where(),
 		$from,
 		$to
@@ -170,6 +170,7 @@ function cbaz_totals( $from, $to ) {
 		'revenue'   => 0,
 		'duration'  => 0,
 	] );
+	$tracked_orders = $row['orders'];
 
 	/*
 	 * Les ventes viennent de WooCommerce, pas de notre table.
@@ -188,9 +189,13 @@ function cbaz_totals( $from, $to ) {
 	$row['attributed'] = $row['revenue'];
 	$row['revenue']    = $shop['revenue'];
 	$row['orders']     = $shop['orders'];
+	$row['tracked_orders'] = $tracked_orders;
 
 	$row['bounce_rate'] = $row['sessions'] ? ( $row['bounces'] / $row['sessions'] ) * 100 : 0;
-	$row['cr']          = $row['sessions'] ? ( $row['orders'] / $row['sessions'] ) * 100 : 0;
+	/* La conversion relie des achats MESURÉS aux visites mesurées. Utiliser
+	 * toutes les commandes WooCommerce (imports, admin, période pré-plugin)
+	 * pouvait produire un taux supérieur à 100 %. */
+	$row['cr']          = $row['sessions'] ? ( $tracked_orders / $row['sessions'] ) * 100 : 0;
 	$row['aov']         = $row['orders'] ? $row['revenue'] / $row['orders'] : 0;
 	$row['per_session'] = $row['sessions'] ? $row['revenue'] / $row['sessions'] : 0;
 
@@ -280,23 +285,100 @@ function cbaz_shop_series( array $range ) {
 	global $wpdb;
 
 	$schema   = cbaz_order_schema();
-	$statuses = cbaz_status_list( cbaz_paid_statuses() );
+	$paid     = cbaz_paid_statuses();
+	$statuses = cbaz_status_list( cbaz_revenue_statuses() );
 	$total    = cbaz_total_expr( 'o' );
+	$refund   = cbaz_refund_expr( 'r' );
+	$order_range = cbaz_order_range( $range );
 
 	$rows = $wpdb->get_results( $wpdb->prepare(
-		"SELECT DATE(o.{$schema['date']}) AS d,
-			COUNT(*) AS orders,
-			COALESCE(SUM({$total['select']}), 0) AS revenue
+		"SELECT DATE_FORMAT(o.{$schema['date']}, '%%Y-%%m-%%d %%H:00:00') AS created,
+			SUM({$total['select']}) AS revenue,
+			SUM(CASE WHEN o.{$schema['status']} IN (" . cbaz_status_list( $paid ) . ") THEN 1 ELSE 0 END) AS orders
 		FROM {$schema['orders']} o
 		{$total['join']}
 		WHERE o.{$schema['type']} = 'shop_order' AND o.{$schema['status']} IN ({$statuses})
 			AND o.{$schema['date']} BETWEEN %s AND %s" . cbaz_filter_order_where( 'o' ) . "
-		GROUP BY DATE(o.{$schema['date']})",
-		$range['from'],
-		$range['to']
-	), OBJECT_K );
+		GROUP BY DATE_FORMAT(o.{$schema['date']}, '%%Y-%%m-%%d %%H')",
+		$order_range['from'],
+		$order_range['to']
+	) );
 
-	return $rows ? $rows : [];
+	$out = [];
+	foreach ( $rows as $row ) {
+		$day = wp_date( 'Y-m-d', cbaz_order_ts( $row->created ) );
+		if ( ! isset( $out[ $day ] ) ) { $out[ $day ] = (object) [ 'orders' => 0, 'revenue' => 0.0 ]; }
+		$out[ $day ]->revenue += (float) $row->revenue;
+		$out[ $day ]->orders += (int) $row->orders;
+	}
+
+	$refunds = $wpdb->get_results( $wpdb->prepare(
+		"SELECT DATE_FORMAT(r.{$schema['date']}, '%%Y-%%m-%%d %%H:00:00') AS created,
+			SUM({$refund['select']}) AS refunded
+		FROM {$schema['orders']} r
+		INNER JOIN {$schema['orders']} o ON o.{$schema['id']} = r.{$schema['parent']}
+		{$refund['join']}
+		WHERE r.{$schema['type']} = 'shop_order_refund'
+			AND r.{$schema['date']} BETWEEN %s AND %s" . cbaz_filter_order_where( 'o' ) . "
+		GROUP BY DATE_FORMAT(r.{$schema['date']}, '%%Y-%%m-%%d %%H')",
+		$order_range['from'],
+		$order_range['to']
+	) );
+
+	foreach ( $refunds as $row ) {
+		$day = wp_date( 'Y-m-d', cbaz_order_ts( $row->created ) );
+		if ( ! isset( $out[ $day ] ) ) { $out[ $day ] = (object) [ 'orders' => 0, 'revenue' => 0.0 ]; }
+		$out[ $day ]->revenue -= (float) $row->refunded;
+	}
+
+	return $out;
+}
+
+/** Totaux WooCommerce par mois, avec conversion exacte des heures HPOS. */
+function cbaz_shop_months( array $range, $apply_filters = true ) {
+	global $wpdb;
+
+	$schema = cbaz_order_schema();
+	$total  = cbaz_total_expr( 'o' );
+	$refund = cbaz_refund_expr( 'r' );
+	$paid   = cbaz_status_list( cbaz_paid_statuses() );
+	$all    = cbaz_status_list( cbaz_revenue_statuses() );
+	$dates  = cbaz_order_range( $range );
+	$filter = $apply_filters ? cbaz_filter_order_where( 'o' ) : '';
+	$rows   = $wpdb->get_results( $wpdb->prepare(
+		"SELECT DATE_FORMAT(o.{$schema['date']}, '%%Y-%%m-%%d %%H:00:00') AS created,
+			SUM({$total['select']}) AS revenue,
+			SUM(CASE WHEN o.{$schema['status']} IN ({$paid}) THEN 1 ELSE 0 END) AS orders
+		FROM {$schema['orders']} o {$total['join']}
+		WHERE o.{$schema['type']} = 'shop_order' AND o.{$schema['status']} IN ({$all})
+			AND o.{$schema['date']} BETWEEN %s AND %s{$filter}
+		GROUP BY DATE_FORMAT(o.{$schema['date']}, '%%Y-%%m-%%d %%H')",
+		$dates['from'], $dates['to']
+	) );
+	$refunds = $wpdb->get_results( $wpdb->prepare(
+		"SELECT DATE_FORMAT(r.{$schema['date']}, '%%Y-%%m-%%d %%H:00:00') AS created,
+			SUM({$refund['select']}) AS refunded
+		FROM {$schema['orders']} r
+		INNER JOIN {$schema['orders']} o ON o.{$schema['id']} = r.{$schema['parent']}
+		{$refund['join']}
+		WHERE r.{$schema['type']} = 'shop_order_refund' AND r.{$schema['date']} BETWEEN %s AND %s{$filter}
+		GROUP BY DATE_FORMAT(r.{$schema['date']}, '%%Y-%%m-%%d %%H')",
+		$dates['from'], $dates['to']
+	) );
+	$out = [];
+	foreach ( $rows as $row ) {
+		$month = wp_date( 'Y-m', cbaz_order_ts( $row->created ) );
+		if ( ! isset( $out[ $month ] ) ) { $out[ $month ] = [ 'orders' => 0, 'revenue' => 0.0 ]; }
+		$out[ $month ]['orders'] += (int) $row->orders;
+		$out[ $month ]['revenue'] += (float) $row->revenue;
+	}
+	foreach ( $refunds as $row ) {
+		$month = wp_date( 'Y-m', cbaz_order_ts( $row->created ) );
+		if ( ! isset( $out[ $month ] ) ) { $out[ $month ] = [ 'orders' => 0, 'revenue' => 0.0 ]; }
+		$out[ $month ]['revenue'] -= (float) $row->refunded;
+	}
+
+	return $out;
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -494,30 +576,58 @@ function cbaz_top_products( array $range, $limit = 10 ) {
 	}
 
 	$schema   = cbaz_order_schema();
-	$statuses = cbaz_status_list( cbaz_paid_statuses() );
+	$paid     = cbaz_status_list( cbaz_paid_statuses() );
+	$statuses = cbaz_status_list( cbaz_revenue_statuses() );
+	$order_range = cbaz_order_range( $range );
 
 	$rows = $wpdb->get_results( $wpdb->prepare(
-		"SELECT oi.order_item_name AS label,
-			MAX(CAST(pid.meta_value AS UNSIGNED)) AS product_id,
-			SUM(CAST(qty.meta_value AS UNSIGNED)) AS qty,
-			SUM(CAST(tot.meta_value AS DECIMAL(12,2))) AS revenue,
-			COUNT(DISTINCT oi.order_id) AS orders
-		FROM {$wpdb->prefix}woocommerce_order_items oi
-		INNER JOIN {$wpdb->prefix}woocommerce_order_itemmeta qty
-			ON qty.order_item_id = oi.order_item_id AND qty.meta_key = '_qty'
-		INNER JOIN {$wpdb->prefix}woocommerce_order_itemmeta tot
-			ON tot.order_item_id = oi.order_item_id AND tot.meta_key = '_line_total'
-		LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta pid
-			ON pid.order_item_id = oi.order_item_id AND pid.meta_key = '_product_id'
-		INNER JOIN {$schema['orders']} o ON o.{$schema['id']} = oi.order_id
-		WHERE oi.order_item_type = 'line_item'
-			AND o.{$schema['type']} = 'shop_order'
-			AND o.{$schema['status']} IN ({$statuses})
-			AND o.{$schema['date']} BETWEEN %s AND %s" . cbaz_filter_order_where( 'o' ) . "
-		GROUP BY oi.order_item_name
+		"SELECT MAX(activity.label) AS label, activity.product_id,
+			SUM(activity.qty) AS qty, SUM(activity.revenue) AS revenue,
+			COUNT(DISTINCT activity.sale_order_id) AS orders
+		FROM (
+			SELECT oi.order_item_name AS label,
+				CAST(pid.meta_value AS UNSIGNED) AS product_id,
+				CAST(qty.meta_value AS SIGNED) AS qty,
+				CAST(tot.meta_value AS DECIMAL(12,2)) AS revenue,
+				CASE WHEN o.{$schema['status']} IN ({$paid}) THEN oi.order_id ELSE NULL END AS sale_order_id
+			FROM {$wpdb->prefix}woocommerce_order_items oi
+			INNER JOIN {$wpdb->prefix}woocommerce_order_itemmeta qty
+				ON qty.order_item_id = oi.order_item_id AND qty.meta_key = '_qty'
+			INNER JOIN {$wpdb->prefix}woocommerce_order_itemmeta tot
+				ON tot.order_item_id = oi.order_item_id AND tot.meta_key = '_line_total'
+			INNER JOIN {$wpdb->prefix}woocommerce_order_itemmeta pid
+				ON pid.order_item_id = oi.order_item_id AND pid.meta_key = '_product_id'
+			INNER JOIN {$schema['orders']} o ON o.{$schema['id']} = oi.order_id
+			WHERE oi.order_item_type = 'line_item'
+				AND o.{$schema['type']} = 'shop_order'
+				AND o.{$schema['status']} IN ({$statuses})
+				AND o.{$schema['date']} BETWEEN %s AND %s" . cbaz_filter_order_where( 'o' ) . "
+			UNION ALL
+			SELECT ri.order_item_name AS label,
+				CAST(rpid.meta_value AS UNSIGNED) AS product_id,
+				-ABS(CAST(rqty.meta_value AS SIGNED)) AS qty,
+				-ABS(CAST(rtot.meta_value AS DECIMAL(12,2))) AS revenue,
+				NULL AS sale_order_id
+			FROM {$wpdb->prefix}woocommerce_order_items ri
+			INNER JOIN {$wpdb->prefix}woocommerce_order_itemmeta rqty
+				ON rqty.order_item_id = ri.order_item_id AND rqty.meta_key = '_qty'
+			INNER JOIN {$wpdb->prefix}woocommerce_order_itemmeta rtot
+				ON rtot.order_item_id = ri.order_item_id AND rtot.meta_key = '_line_total'
+			INNER JOIN {$wpdb->prefix}woocommerce_order_itemmeta rpid
+				ON rpid.order_item_id = ri.order_item_id AND rpid.meta_key = '_product_id'
+			INNER JOIN {$schema['orders']} r ON r.{$schema['id']} = ri.order_id
+			INNER JOIN {$schema['orders']} o ON o.{$schema['id']} = r.{$schema['parent']}
+			WHERE ri.order_item_type = 'line_item'
+				AND r.{$schema['type']} = 'shop_order_refund'
+				AND r.{$schema['date']} BETWEEN %s AND %s" . cbaz_filter_order_where( 'o' ) . "
+		) activity
+		WHERE activity.product_id > 0
+		GROUP BY activity.product_id
 		ORDER BY revenue DESC LIMIT %d",
-		$range['from'],
-		$range['to'],
+		$order_range['from'],
+		$order_range['to'],
+		$order_range['from'],
+		$order_range['to'],
 		$limit
 	) );
 
@@ -529,23 +639,38 @@ function cbaz_shop_totals( array $range ) {
 	global $wpdb;
 
 	$schema   = cbaz_order_schema();
-	$statuses = cbaz_status_list( cbaz_paid_statuses() );
+	$paid_statuses = cbaz_status_list( cbaz_paid_statuses() );
+	$statuses = cbaz_status_list( cbaz_revenue_statuses() );
 	$total    = cbaz_total_expr( 'o' );
+	$refund   = cbaz_refund_expr( 'r' );
+	$order_range = cbaz_order_range( $range );
 
 	$row = $wpdb->get_row( $wpdb->prepare(
-		"SELECT COUNT(*) AS orders, COALESCE(SUM({$total['select']}), 0) AS revenue
+		"SELECT SUM(CASE WHEN o.{$schema['status']} IN ({$paid_statuses}) THEN 1 ELSE 0 END) AS orders,
+			COALESCE(SUM({$total['select']}), 0) AS revenue
 		FROM {$schema['orders']} o
 		{$total['join']}
 		WHERE o.{$schema['type']} = 'shop_order'
 			AND o.{$schema['status']} IN ({$statuses})
 			AND o.{$schema['date']} BETWEEN %s AND %s" . cbaz_filter_order_where( 'o' ),
-		$range['from'],
-		$range['to']
+		$order_range['from'],
+		$order_range['to']
+	) );
+
+	$refunded = (float) $wpdb->get_var( $wpdb->prepare(
+		"SELECT COALESCE(SUM({$refund['select']}), 0)
+		FROM {$schema['orders']} r
+		INNER JOIN {$schema['orders']} o ON o.{$schema['id']} = r.{$schema['parent']}
+		{$refund['join']}
+		WHERE r.{$schema['type']} = 'shop_order_refund'
+			AND r.{$schema['date']} BETWEEN %s AND %s" . cbaz_filter_order_where( 'o' ),
+		$order_range['from'],
+		$order_range['to']
 	) );
 
 	return [
 		'orders'  => $row ? (int) $row->orders : 0,
-		'revenue' => $row ? (float) $row->revenue : 0,
+		'revenue' => $row ? (float) $row->revenue - $refunded : -$refunded,
 	];
 }
 
@@ -876,13 +1001,21 @@ function cbaz_journey_flow( array $range, $start = '', $depth = 3, $top = 6 ) {
 	$v = cbaz_table( 'views' );
 	$s = cbaz_table( 'sessions' );
 
+	$total_rows = (int) $wpdb->get_var( $wpdb->prepare(
+		"SELECT COUNT(*) FROM {$v} v INNER JOIN {$s} s ON s.id = v.session_id
+		WHERE v.viewed_at BETWEEN %s AND %s" . cbaz_filter_where( 's' ),
+		$range['from'],
+		$range['to']
+	) );
 	$rows = $wpdb->get_results( $wpdb->prepare(
-		"SELECT v.session_id, v.path
-		FROM {$v} v
-		INNER JOIN {$s} s ON s.id = v.session_id
-		WHERE v.viewed_at BETWEEN %s AND %s" . cbaz_filter_where( 's' ) . "
-		ORDER BY v.session_id ASC, v.viewed_at ASC
-		LIMIT 30000",
+		"SELECT sample.session_id, sample.path FROM (
+			SELECT v.session_id, v.path, v.viewed_at, v.id
+			FROM {$v} v
+			INNER JOIN {$s} s ON s.id = v.session_id
+			WHERE v.viewed_at BETWEEN %s AND %s" . cbaz_filter_where( 's' ) . "
+			ORDER BY v.viewed_at DESC, v.id DESC LIMIT 30000
+		) sample
+		ORDER BY sample.session_id ASC, sample.viewed_at ASC, sample.id ASC",
 		$range['from'],
 		$range['to']
 	) );
@@ -963,6 +1096,8 @@ function cbaz_journey_flow( array $range, $start = '', $depth = 3, $top = 6 ) {
 		'steps'    => $out,
 		'visits'   => count( $sequences ),
 		'distinct' => count( $distinct ),
+		'sampled'  => $total_rows > 30000,
+		'rows'     => min( $total_rows, 30000 ),
 	];
 }
 
@@ -974,7 +1109,7 @@ function cbaz_journey_flow( array $range, $start = '', $depth = 3, $top = 6 ) {
 //  l'on regarde ici, c'est un enchaînement de pages — pas quelqu'un.
 // ══════════════════════════════════════════════════════════════
 
-function cbaz_sessions_list( array $range, $limit = 60, $only = '' ) {
+function cbaz_sessions_list( array $range, $limit = 60, $only = '', $offset = 0, $search = '' ) {
 	global $wpdb;
 
 	/*
@@ -987,11 +1122,23 @@ function cbaz_sessions_list( array $range, $limit = 60, $only = '' ) {
 
 	$s     = cbaz_table( 'sessions' );
 	$where = '';
+	$args  = [];
 
 	// Les segments sont une fonctionnalité Pro : sans elle, aucun filtre
 	// de segmentation ne peut être appliqué, même via l'URL.
 	if ( ! cbaz_can( 'journeys_filters' ) ) {
-		$only = '';
+		/*
+		 * Free expose les dix derniers parcours GLOBAUX. Une période ou un
+		 * filtre arbitraire ne doit pas servir de pagination détournée pour
+		 * parcourir tout l'historique par lots de dix.
+		 */
+		return $wpdb->get_results( $wpdb->prepare(
+			"SELECT id, started_at, last_seen, pageviews, engaged_seconds, entry_path, exit_path,
+				source, medium, campaign, country, device, browser, is_new, order_id, revenue,
+				engaged_seconds AS duration
+			FROM {$s} ORDER BY started_at DESC, id DESC LIMIT %d",
+			CBAZ_FREE_JOURNEYS
+		) );
 	}
 
 	if ( 'converties' === $only ) {
@@ -1000,18 +1147,77 @@ function cbaz_sessions_list( array $range, $limit = 60, $only = '' ) {
 		$where = ' AND pageviews = 1';
 	} elseif ( 'longues' === $only ) {
 		$where = ' AND pageviews >= 4';
+	} elseif ( 'non-acheteurs' === $only ) {
+		$where = ' AND order_id = 0';
+	} elseif ( 'abandons' === $only ) {
+		$events = cbaz_table( 'events' );
+		$where  = " AND order_id = 0 AND EXISTS (SELECT 1 FROM {$events} je WHERE je.session_id = {$s}.id AND je.name = 'add_to_cart')";
 	}
 
+	$search = substr( sanitize_text_field( (string) $search ), 0, 120 );
+	if ( '' !== $search ) {
+		$like   = '%' . $wpdb->esc_like( $search ) . '%';
+		$where .= $wpdb->prepare( ' AND (entry_path LIKE %s OR exit_path LIKE %s OR source LIKE %s OR campaign LIKE %s OR country LIKE %s OR device LIKE %s)', $like, $like, $like, $like, $like, $like );
+	}
+
+	$offset = max( 0, (int) $offset );
+
 	return $wpdb->get_results( $wpdb->prepare(
-		"SELECT id, started_at, last_seen, pageviews, entry_path, exit_path,
+		"SELECT id, started_at, last_seen, pageviews, engaged_seconds, entry_path, exit_path,
 			source, medium, campaign, country, device, browser, is_new, order_id, revenue,
-			TIMESTAMPDIFF(SECOND, started_at, last_seen) AS duration
+			engaged_seconds AS duration
 		FROM {$s}
 		WHERE started_at BETWEEN %s AND %s{$where}" . cbaz_filter_where() . "
-		ORDER BY started_at DESC LIMIT %d",
+		ORDER BY started_at DESC, id DESC LIMIT %d OFFSET %d",
 		$range['from'],
 		$range['to'],
-		$limit
+		$limit,
+		$offset
+	) );
+}
+
+/** Nombre total de parcours Pro correspondant au segment courant. */
+function cbaz_sessions_count( array $range, $only = '', $search = '' ) {
+	if ( ! cbaz_can( 'journeys_full' ) ) {
+		return CBAZ_FREE_JOURNEYS;
+	}
+
+	global $wpdb;
+	$s      = cbaz_table( 'sessions' );
+	$where  = '';
+
+	if ( 'converties' === $only ) { $where = ' AND order_id > 0'; }
+	elseif ( 'rebonds' === $only ) { $where = ' AND pageviews = 1'; }
+	elseif ( 'longues' === $only ) { $where = ' AND pageviews >= 4'; }
+	elseif ( 'non-acheteurs' === $only ) { $where = ' AND order_id = 0'; }
+	elseif ( 'abandons' === $only ) { $events = cbaz_table( 'events' ); $where = " AND order_id = 0 AND EXISTS (SELECT 1 FROM {$events} je WHERE je.session_id = {$s}.id AND je.name = 'add_to_cart')"; }
+
+	$search = substr( sanitize_text_field( (string) $search ), 0, 120 );
+	if ( '' !== $search ) {
+		$like   = '%' . $wpdb->esc_like( $search ) . '%';
+		$where .= $wpdb->prepare( ' AND (entry_path LIKE %s OR exit_path LIKE %s OR source LIKE %s OR campaign LIKE %s OR country LIKE %s OR device LIKE %s)', $like, $like, $like, $like, $like, $like );
+	}
+
+	return (int) $wpdb->get_var( $wpdb->prepare(
+		"SELECT COUNT(*) FROM {$s} WHERE started_at BETWEEN %s AND %s{$where}" . cbaz_filter_where(),
+		$range['from'],
+		$range['to']
+	) );
+}
+
+/** Vérifie la barrière backend des dix parcours Free. */
+function cbaz_journey_accessible( $id ) {
+	if ( cbaz_can( 'journeys_full' ) ) {
+		return true;
+	}
+
+	global $wpdb;
+	$s = cbaz_table( 'sessions' );
+
+	return (bool) $wpdb->get_var( $wpdb->prepare(
+		"SELECT id FROM {$s} WHERE id = %d AND id IN (SELECT id FROM (SELECT id FROM {$s} ORDER BY started_at DESC, id DESC LIMIT %d) recent)",
+		(int) $id,
+		CBAZ_FREE_JOURNEYS
 	) );
 }
 
@@ -1055,6 +1261,9 @@ function cbaz_sessions_trails( array $ids ) {
 	global $wpdb;
 
 	$ids = array_filter( array_map( 'intval', $ids ) );
+	if ( ! cbaz_can( 'journeys_full' ) ) {
+		$ids = array_values( array_filter( $ids, 'cbaz_journey_accessible' ) );
+	}
 
 	if ( ! $ids ) {
 		return [];
@@ -1094,6 +1303,9 @@ function cbaz_sessions_trails( array $ids ) {
 
 function cbaz_session( $id ) {
 	global $wpdb;
+	if ( ! cbaz_journey_accessible( $id ) ) {
+		return null;
+	}
 
 	$s = cbaz_table( 'sessions' );
 
@@ -1109,6 +1321,9 @@ function cbaz_session( $id ) {
  */
 function cbaz_session_timeline( $id ) {
 	global $wpdb;
+	if ( ! cbaz_journey_accessible( $id ) ) {
+		return [];
+	}
 
 	$v = cbaz_table( 'views' );
 	$e = cbaz_table( 'events' );

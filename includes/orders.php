@@ -70,7 +70,16 @@ function cbaz_order_schema() {
 
 /** Statuts considérés comme du chiffre d'affaires réalisé. */
 function cbaz_paid_statuses() {
-	return apply_filters( 'cbaz_paid_statuses', [ 'wc-completed', 'wc-processing', 'wc-on-hold' ] );
+	$statuses = function_exists( 'wc_get_is_paid_statuses' )
+		? array_map( function ( $status ) { return 0 === strpos( $status, 'wc-' ) ? $status : 'wc-' . $status; }, wc_get_is_paid_statuses() )
+		: [ 'wc-completed', 'wc-processing' ];
+
+	return apply_filters( 'cbaz_paid_statuses', $statuses );
+}
+
+/** Statuts dont le montant brut doit exister avant déduction des avoirs. */
+function cbaz_revenue_statuses() {
+	return array_values( array_unique( array_merge( cbaz_paid_statuses(), [ 'wc-refunded' ] ) ) );
 }
 
 function cbaz_status_list( array $statuses ) {
@@ -91,6 +100,48 @@ function cbaz_total_expr( $alias = 'o' ) {
 		'select' => 'tot.meta_value',
 		'join'   => "INNER JOIN {$wpdb->postmeta} tot ON tot.post_id = {$alias}.ID AND tot.meta_key = '_order_total'",
 	];
+}
+
+/** Montant positif d'un remboursement et jointure nécessaire. */
+function cbaz_refund_expr( $alias = 'r' ) {
+	global $wpdb;
+	$s = cbaz_order_schema();
+
+	if ( $s['hpos'] ) {
+		return [ 'select' => "ABS({$alias}.total_amount)", 'join' => '' ];
+	}
+
+	return [
+		'select' => 'ABS(ref.meta_value)',
+		'join'   => "INNER JOIN {$wpdb->postmeta} ref ON ref.post_id = {$alias}.ID AND ref.meta_key = '_refund_amount'",
+	];
+}
+
+/**
+ * Convertit les bornes locales des rapports vers le stockage des commandes.
+ *
+ * Les anciennes commandes utilisent `post_date` (heure du site), tandis que
+ * HPOS utilise `date_created_gmt`. Comparer les mêmes chaînes aux deux colonnes
+ * décalait les ventes HPOS du fuseau du site, notamment autour de minuit.
+ */
+function cbaz_order_range( array $range ) {
+	if ( ! cbaz_hpos() ) {
+		return $range;
+	}
+
+	foreach ( [ 'from', 'to', 'prev_from', 'prev_to' ] as $key ) {
+		if ( empty( $range[ $key ] ) ) {
+			continue;
+		}
+
+		$date = date_create( $range[ $key ], wp_timezone() );
+		if ( $date ) {
+			$date->setTimezone( new DateTimeZone( 'UTC' ) );
+			$range[ $key ] = $date->format( 'Y-m-d H:i:s' );
+		}
+	}
+
+	return $range;
 }
 
 /**

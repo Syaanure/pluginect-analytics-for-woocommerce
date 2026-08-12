@@ -11,6 +11,17 @@ defined( 'ABSPATH' ) || exit;
 
 require_once CBAZ_DIR . 'includes/geo.php';
 
+add_action( 'admin_init', 'cbaz_privacy_policy_content' );
+function cbaz_privacy_policy_content() {
+	if ( ! function_exists( 'wp_add_privacy_policy_content' ) ) {
+		return;
+	}
+
+	$content = '<p>' . esc_html__( 'Shop Analytics for WooCommerce conserve localement des visites pseudonymes quotidiennes, les pages consultées, des événements de navigation et des informations techniques (préfixe réseau utilisé sans être stocké, navigateur, appareil, langue, résolution et pays estimé). Une visite convertie est reliée à la commande WooCommerce. Aucun cookie n’est déposé par défaut ; la mémoire d’attribution facultative dépose un cookie de provenance signé. Les durées de conservation sont configurables dans Analytics → Paramètres.', 'shop-analytics-for-woocommerce' ) . '</p>';
+
+	wp_add_privacy_policy_content( 'Shop Analytics for WooCommerce', wp_kses_post( $content ) );
+}
+
 // ══════════════════════════════════════════════════════════════
 //  MENU
 // ══════════════════════════════════════════════════════════════
@@ -96,28 +107,30 @@ function cbaz_admin_assets( $hook ) {
 	}
 
 	wp_enqueue_style( 'cbaz-admin', CBAZ_URL . 'assets/admin.css', [], CBAZ_VERSION . '.' . filemtime( CBAZ_DIR . 'assets/admin.css' ) );
-	// Les contours du monde sont un jeu de données figé : fichier
-	// séparé, donc mis en cache par le navigateur indépendamment du
-	// code d'interface, qui bouge à chaque version.
-	wp_enqueue_script( 'cbaz-world', CBAZ_URL . 'assets/world.js', [], CBAZ_VERSION, true );
-	wp_enqueue_script( 'cbaz-admin', CBAZ_URL . 'assets/admin.js', [ 'cbaz-world' ], CBAZ_VERSION . '.' . filemtime( CBAZ_DIR . 'assets/admin.js' ), true );
+	$dependencies = [];
+
+	if ( 'cbaz-geographie' === sanitize_key( $_GET['page'] ?? '' ) ) {
+		// Le maillage du monde est volumineux et ne sert qu'au globe.
+		wp_enqueue_script( 'cbaz-world', CBAZ_URL . 'assets/world.js', [], CBAZ_VERSION, true );
+		$dependencies[] = 'cbaz-world';
+	}
+
+	wp_enqueue_script( 'cbaz-admin', CBAZ_URL . 'assets/admin.js', $dependencies, CBAZ_VERSION . '.' . filemtime( CBAZ_DIR . 'assets/admin.js' ), true );
 }
 
 // ══════════════════════════════════════════════════════════════
 //  MESSAGES DE WORDPRESS
 //
-//  Nos écrans n'affichent pas les bandeaux des autres extensions. Ils
-//  restent visibles partout ailleurs dans l'administration — c'est là
-//  qu'ils ont leur place. Une mise à jour de base de données ou une
-//  licence expirée n'a rien à faire au milieu d'un rapport de ventes.
+//  Les bandeaux restent visibles par défaut : certains portent une alerte
+//  de sécurité ou de maintenance que l'extension ne doit pas supprimer.
 //
 //  On coupe les actions plutôt que de masquer en CSS : WordPress
 //  déplace les bandeaux en JavaScript juste après le titre de page,
 //  donc les replier ne servait à rien — ils ressortaient du bloc où
 //  on les avait rangés.
 //
-//  Pour les rétablir :
-//      add_filter( 'cbaz_hide_admin_notices', '__return_false' );
+//  Un intégrateur peut explicitement les masquer :
+//      add_filter( 'cbaz_hide_admin_notices', '__return_true' );
 // ══════════════════════════════════════════════════════════════
 
 add_action( 'in_admin_header', 'cbaz_hide_notices', 1000 );
@@ -128,7 +141,7 @@ function cbaz_hide_notices() {
 		return;
 	}
 
-	if ( ! apply_filters( 'cbaz_hide_admin_notices', true ) ) {
+	if ( ! apply_filters( 'cbaz_hide_admin_notices', false ) ) {
 		return;
 	}
 
@@ -945,6 +958,7 @@ function cbaz_render_page() {
 	$tab   = cbaz_current_tab();
 	$meta  = cbaz_tabs()[ $tab ];
 	$range = cbaz_range();
+	$no_range = [ 'temps-reel', 'parametres', 'rapports', 'historique', 'licence' ];
 	?>
 	<div class="wrap cbaz">
 		<header class="cbaz-top">
@@ -953,7 +967,7 @@ function cbaz_render_page() {
 				<p class="cbaz-sub"><?php echo esc_html( $meta[1] ); ?></p>
 			</div>
 
-			<?php if ( 'temps-reel' !== $tab ) : ?>
+			<?php if ( ! in_array( $tab, $no_range, true ) ) : ?>
 				<div class="cbaz-controls">
 					<div class="cbaz-drop cbaz-drop--range">
 						<button type="button" class="cbaz-ctrl" data-cbaz-drop>
@@ -1009,7 +1023,7 @@ function cbaz_render_page() {
 						</a>
 					<?php endif; ?>
 				</div>
-			<?php else : ?>
+			<?php elseif ( 'temps-reel' === $tab ) : ?>
 				<div class="cbaz-livepill">
 					<span class="cbaz-live__pulse"></span>
 					<strong data-cbaz-online><?php echo esc_html( cbaz_int( cbaz_realtime()['online'] ) ); ?></strong>
@@ -1019,7 +1033,7 @@ function cbaz_render_page() {
 		</header>
 
 		<?php
-		if ( ! in_array( $tab, [ 'temps-reel', 'parametres', 'rapports' ], true ) ) {
+		if ( ! in_array( $tab, $no_range, true ) ) {
 			cbaz_filter_bar( $range );
 		}
 
@@ -1081,13 +1095,14 @@ function cbaz_save_settings() {
 		'exclude_paths'    => sanitize_textarea_field( wp_unslash( $_POST['exclude_paths'] ?? '' ) ),
 		'exclude_bots'     => empty( $_POST['exclude_bots'] ) ? 0 : 1,
 		'attribution_days' => max( 0, min( 90, (int) ( $_POST['attribution_days'] ?? 30 ) ) ),
+		'delete_on_uninstall' => empty( $_POST['delete_on_uninstall'] ) ? 0 : 1,
 	];
 
 	$fields = [
 		'general' => [ 'enabled', 'track_events' ],
 		'rgpd'    => [ 'attribution_days', 'retention_months', 'history_years' ],
 		'exclus'  => [ 'exclude_roles', 'exclude_paths', 'exclude_bots' ],
-		'donnees' => [],
+		'donnees' => [ 'delete_on_uninstall' ],
 	];
 
 	$keep = $fields[ $volet ] ?? [];

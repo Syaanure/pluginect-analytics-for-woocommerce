@@ -79,7 +79,7 @@ function cbaz_journeys_limit( $wanted = 40 ) {
 
 /** Adresse de présentation du module Pro. */
 function cbaz_pro_url() {
-	return apply_filters( 'cbaz_pro_url', 'https://example.com/analytics-pro' );
+	return apply_filters( 'cbaz_pro_url', 'https://syaanure.com/shop-analytics-pro/' );
 }
 
 /**

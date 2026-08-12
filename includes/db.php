@@ -41,6 +41,7 @@ function cbaz_install_tables() {
 		started_at DATETIME NOT NULL,
 		last_seen DATETIME NOT NULL,
 		pageviews SMALLINT UNSIGNED NOT NULL DEFAULT 1,
+		engaged_seconds INT UNSIGNED NOT NULL DEFAULT 0,
 		entry_path VARCHAR(190) NOT NULL DEFAULT '',
 		exit_path VARCHAR(190) NOT NULL DEFAULT '',
 		referrer_host VARCHAR(120) NOT NULL DEFAULT '',
@@ -168,6 +169,7 @@ function cbaz_install_tables() {
 		orders INT UNSIGNED NOT NULL DEFAULT 0,
 		revenue DECIMAL(14,2) NOT NULL DEFAULT 0,
 		PRIMARY KEY (id),
+		UNIQUE KEY day_kind_label (day, kind, label),
 		KEY day_kind (day, kind),
 		KEY kind_label (kind, label(40))
 	) {$charset};" );

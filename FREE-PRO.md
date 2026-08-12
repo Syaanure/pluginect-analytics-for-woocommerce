@@ -20,7 +20,7 @@ shop-analytics-for-woocommerce-pro/      PRO — add-on, nécessite FREE
 │   ├── exports.php            exports CSV
 │   └── screens.php            greffe les écrans premium
 ├── views/                     attribution, historique, rapports
-└── distribution/              emplacement réservé au licensing
+└── src/Distribution/Direct/   licence et mises à jour privées
 ```
 
 PRO n'embarque aucune copie du cœur. Il lit les mêmes tables, les mêmes
@@ -77,7 +77,7 @@ délai de conversion, revenus par source.
 `cbaz_pro_blocker()` vérifie, dans cet ordre :
 
 1. `CBAZ_VERSION` définie — FREE installé et actif ;
-2. `CBAZ_VERSION >= CBAZ_PRO_NEEDS_FREE` (4.31.0) ;
+2. `CBAZ_VERSION >= CBAZ_PRO_NEEDS_FREE` (4.31.1) ;
 3. `CBAZ_API` correspond à la version de contrat attendue.
 
 En cas d'échec : **aucune erreur fatale**. Une notice d'administration
@@ -92,7 +92,7 @@ PRO ne charge ses fichiers que depuis `cbaz_ready`, jamais avant.
 - `includes/exports.php` — 10 fonctions extraites d'`admin.php`
 - `includes/screens.php` — greffe des écrans
 - `views/attribution.php`, `views/historique.php`, `views/rapports.php`
-- `distribution/` — vide, réservé au licensing
+- `src/Distribution/Direct/` — client de licence et mise à jour
 
 Aucun de ces fichiers n'existe dans le paquet FREE ; le script de
 construction échoue si l'un d'eux s'y retrouve.
@@ -120,6 +120,6 @@ Appliquer les limites **dans la requête**, jamais à l'affichage — voir
 ./build.sh
 ```
 
-Produit `dist/shop-analytics-for-woocommerce/` et `dist/shop-analytics-for-woocommerce-pro/`,
-plus les deux ZIP. Le script vérifie qu'aucun module premium ne s'est
+Produit les dossiers et ZIP Free, Pro et License Server dans `dist/`. Le script
+vérifie qu'aucun module premium ne s'est
 glissé dans le paquet gratuit et s'interrompt si c'est le cas.

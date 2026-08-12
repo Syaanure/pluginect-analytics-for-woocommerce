@@ -1,21 +1,24 @@
 <?php
 /**
  * Plugin Name: Shop Analytics for WooCommerce
- * Description: Mesure d'audience, de ventes et de campagnes, intégrée à WordPress. Sans service tiers : les données restent sur ton serveur. Suivi UTM avec budgets, retour sur investissement et liens courts.
- * Version:     4.31.0
+ * Description: Mesure locale d'audience et de ventes pour WooCommerce, sans service tiers ni cookie par défaut.
+ * Version:     4.31.1
+ * Requires at least: 6.0
+ * Requires PHP: 7.4
+ * Requires Plugins: woocommerce
  * Author:      Syaanure
  * Text Domain: shop-analytics-for-woocommerce
  *
- * Parti pris : aucune donnée personnelle n'est conservée. L'adresse IP
- * sert une fraction de seconde à calculer une empreinte, puis elle est
- * oubliée. Un seul cookie est possible, facultatif et sans identifiant :
+ * L'adresse IP sert une fraction de seconde à calculer un identifiant
+ * pseudonyme quotidien, puis elle est oubliée. Un seul cookie est possible,
+ * facultatif et sans identifiant de visite :
  * la mémoire d'attribution, qui ne retient que la provenance d'une
  * visite — voir includes/track.php pour le détail.
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'CBAZ_VERSION', '4.31.0' );
+define( 'CBAZ_VERSION', '4.31.1' );
 define( 'CBAZ_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CBAZ_URL', plugin_dir_url( __FILE__ ) );
 
@@ -59,6 +62,7 @@ add_action( 'before_woocommerce_init', 'cbaz_declare_compat' );
 function cbaz_declare_compat() {
 	if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
 		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', __FILE__, true );
 	}
 }
 
@@ -106,6 +110,8 @@ function cbaz_defaults() {
 		 * réglage qu'on subit à l'installation.
 		 */
 		'attribution_days' => 0,
+		/* La suppression des statistiques exige un choix explicite. */
+		'delete_on_uninstall' => 0,
 	];
 }
 
@@ -162,15 +168,30 @@ function cbaz_deactivate() {
  */
 add_action( 'admin_init', 'cbaz_maybe_upgrade' );
 function cbaz_maybe_upgrade() {
+	global $wpdb;
+
 	if ( ! cbaz_can_maintain() ) {
 		return;
 	}
 
-	if ( get_option( 'cbaz_db_version' ) === CBAZ_VERSION ) {
+	$installed = get_option( 'cbaz_db_version' );
+	if ( $installed === CBAZ_VERSION ) {
 		return;
 	}
 
 	cbaz_install_tables();
+
+	/* 4.31.1 corrige la source de vérité des commandes/remboursements.
+	 * Rejouer les jours dont le détail existe encore évite de conserver
+	 * les anciens agrégats commerciaux après la mise à niveau. */
+	if ( $installed && version_compare( (string) $installed, '4.31.1', '<' ) ) {
+		$sessions = cbaz_table( 'sessions' );
+		$earliest = $wpdb->get_var( "SELECT MIN(DATE(started_at)) FROM {$sessions}" );
+		if ( $earliest ) {
+			update_option( 'cbaz_rollup_upto', $earliest, false );
+		}
+	}
+
 	update_option( 'cbaz_db_version', CBAZ_VERSION, false );
 }
 

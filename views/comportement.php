@@ -77,6 +77,7 @@ $views = [
 		<p class="cbaz-flowintro">
 			<?php echo esc_html( cbaz_int( $flow['visits'] ) ); ?> visites analysées ·
 			<?php echo esc_html( cbaz_int( $flow['distinct'] ) ); ?> parcours différents
+			<?php if ( $flow['sampled'] ) : ?> · échantillon récent de <?php echo esc_html( cbaz_int( $flow['rows'] ) ); ?> pages<?php endif; ?>
 			<?php if ( $depart ) : ?>
 				· <span class="cbaz-chip"><?php echo esc_html( $joli( $depart ) ); ?>
 					<a href="<?php echo esc_url( cbaz_url( [], [ 'depart' ] ) ); ?>" aria-label="Retirer ce départ">×</a>

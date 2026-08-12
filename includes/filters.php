@@ -93,6 +93,16 @@ function cbaz_filter_order_where( $alias = 'o' ) {
 	$sql = '';
 
 	foreach ( cbaz_filters() as $key => $value ) {
+		if ( 'client' === $key ) {
+			$sessions = cbaz_table( 'sessions' );
+			$sql     .= $wpdb->prepare(
+				" AND EXISTS (SELECT 1 FROM {$sessions} fs
+					WHERE fs.order_id = {$alias}.{$schema['id']} AND fs.is_new = %d)",
+				'nouveau' === $value ? 1 : 0
+			);
+			continue;
+		}
+
 		if ( ! isset( $map[ $key ] ) ) {
 			continue;
 		}

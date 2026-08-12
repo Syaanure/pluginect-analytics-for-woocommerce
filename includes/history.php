@@ -51,6 +51,8 @@ function cbaz_rollup_day( $day ) {
 	$daily    = cbaz_table( 'daily' );
 	$dims     = cbaz_table( 'daily_dim' );
 	$sessions = cbaz_table( 'sessions' );
+	$from     = $day . ' 00:00:00';
+	$next     = gmdate( 'Y-m-d', strtotime( $day . ' +1 day' ) ) . ' 00:00:00';
 
 	$wpdb->delete( $daily, [ 'day' => $day ] );
 	$wpdb->delete( $dims, [ 'day' => $day ] );
@@ -65,25 +67,93 @@ function cbaz_rollup_day( $day ) {
 			SUM(CASE WHEN order_id > 0 THEN 1 ELSE 0 END),
 			COALESCE(SUM(revenue), 0)
 		 FROM {$sessions}
-		 WHERE DATE(started_at) = %s
-		 HAVING COUNT(*) > 0",
+		 WHERE started_at >= %s AND started_at < %s",
 		$day,
-		$day
+		$from,
+		$next
 	) );
+
+	/* Les totaux commerciaux ont WooCommerce pour source de vérité, y
+	 * compris les commandes non attribuées et les remboursements. */
+	$shop = cbaz_shop_totals( [ 'from' => $from, 'to' => gmdate( 'Y-m-d H:i:s', strtotime( $next ) - 1 ) ] );
+	$wpdb->update( $daily, [ 'orders' => $shop['orders'], 'revenue' => $shop['revenue'] ], [ 'day' => $day ] );
 
 	foreach ( cbaz_history_dims() as $kind => $column ) {
 		$wpdb->query( $wpdb->prepare(
 			"INSERT INTO {$dims} (day, kind, label, sessions, orders, revenue)
 			 SELECT %s, %s, {$column},
 				COUNT(*),
-				SUM(CASE WHEN order_id > 0 THEN 1 ELSE 0 END),
-				COALESCE(SUM(revenue), 0)
+				0,
+				0
 			 FROM {$sessions}
-			 WHERE DATE(started_at) = %s AND {$column} <> ''
+			 WHERE started_at >= %s AND started_at < %s AND {$column} <> ''
 			 GROUP BY {$column}",
 			$day,
 			$kind,
-			$day
+			$from,
+			$next
+		) );
+	}
+
+	cbaz_rollup_commerce_dims( $day, $from, gmdate( 'Y-m-d H:i:s', strtotime( $next ) - 1 ) );
+}
+
+/** Injecte dans les dimensions le CA net issu des commandes et remboursements. */
+function cbaz_rollup_commerce_dims( $day, $from, $to ) {
+	global $wpdb;
+
+	$schema = cbaz_order_schema();
+	$total  = cbaz_total_expr( 'o' );
+	$refund = cbaz_refund_expr( 'r' );
+	$range  = cbaz_order_range( [ 'from' => $from, 'to' => $to ] );
+	$paid   = cbaz_status_list( cbaz_paid_statuses() );
+	$all    = cbaz_status_list( cbaz_revenue_statuses() );
+	$keys   = [
+		'_cbaz_source' => 'source', '_cbaz_medium' => 'medium', '_cbaz_campaign' => 'campaign',
+		'_cbaz_country' => 'country', '_cbaz_device' => 'device',
+	];
+	$key_sql = cbaz_status_list( array_keys( $keys ) );
+
+	$gross = $wpdb->get_results( $wpdb->prepare(
+		"SELECT am.meta_key, am.meta_value AS label,
+			SUM(CASE WHEN o.{$schema['status']} IN ({$paid}) THEN 1 ELSE 0 END) AS orders,
+			SUM({$total['select']}) AS revenue
+		FROM {$schema['orders']} o {$total['join']}
+		INNER JOIN {$schema['meta']} am ON am.{$schema['meta_fk']} = o.{$schema['id']} AND am.meta_key IN ({$key_sql})
+		WHERE o.{$schema['type']} = 'shop_order' AND o.{$schema['status']} IN ({$all})
+			AND o.{$schema['date']} BETWEEN %s AND %s AND am.meta_value <> ''
+		GROUP BY am.meta_key, am.meta_value",
+		$range['from'], $range['to']
+	) );
+	$refunds = $wpdb->get_results( $wpdb->prepare(
+		"SELECT am.meta_key, am.meta_value AS label, SUM({$refund['select']}) AS revenue
+		FROM {$schema['orders']} r
+		INNER JOIN {$schema['orders']} o ON o.{$schema['id']} = r.{$schema['parent']}
+		{$refund['join']}
+		INNER JOIN {$schema['meta']} am ON am.{$schema['meta_fk']} = o.{$schema['id']} AND am.meta_key IN ({$key_sql})
+		WHERE r.{$schema['type']} = 'shop_order_refund' AND r.{$schema['date']} BETWEEN %s AND %s AND am.meta_value <> ''
+		GROUP BY am.meta_key, am.meta_value",
+		$range['from'], $range['to']
+	) );
+	$commerce = [];
+
+	foreach ( $gross as $row ) {
+		$id = $row->meta_key . "\0" . $row->label;
+		$commerce[ $id ] = [ 'meta_key' => $row->meta_key, 'label' => $row->label, 'orders' => (int) $row->orders, 'revenue' => (float) $row->revenue ];
+	}
+	foreach ( $refunds as $row ) {
+		$id = $row->meta_key . "\0" . $row->label;
+		if ( ! isset( $commerce[ $id ] ) ) { $commerce[ $id ] = [ 'meta_key' => $row->meta_key, 'label' => $row->label, 'orders' => 0, 'revenue' => 0.0 ]; }
+		$commerce[ $id ]['revenue'] -= (float) $row->revenue;
+	}
+
+	$dims = cbaz_table( 'daily_dim' );
+	foreach ( $commerce as $row ) {
+		$wpdb->query( $wpdb->prepare(
+			"INSERT INTO {$dims} (day, kind, label, sessions, orders, revenue)
+			VALUES (%s, %s, %s, 0, %d, %f)
+			ON DUPLICATE KEY UPDATE orders = VALUES(orders), revenue = VALUES(revenue)",
+			$day, $keys[ $row['meta_key'] ], $row['label'], $row['orders'], $row['revenue']
 		) );
 	}
 }
@@ -100,6 +170,13 @@ function cbaz_rollup_pending( $max_days = 120 ) {
 	global $wpdb;
 
 	$sessions = cbaz_table( 'sessions' );
+	$lock     = 'cbaz-rollup-' . substr( md5( $wpdb->prefix ), 0, 16 );
+	$acquired = $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, 0)', $lock ) );
+
+	if ( '0' === (string) $acquired ) {
+		return 0;
+	}
+
 	$depuis   = get_option( 'cbaz_rollup_upto' );
 
 	if ( ! $depuis ) {
@@ -124,6 +201,10 @@ function cbaz_rollup_pending( $max_days = 120 ) {
 	// La date mémorisée est le premier jour NON consolidé : le détail
 	// à partir de là fait encore autorité.
 	update_option( 'cbaz_rollup_upto', $jour, false );
+
+	if ( '1' === (string) $acquired ) {
+		$wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock ) );
+	}
 
 	return $faits;
 }
@@ -170,16 +251,20 @@ function cbaz_history_months( $limit_years = 10 ) {
 			SELECT DATE_FORMAT(day, '%%Y-%%m') AS period, sessions, visitors, pageviews, bounces, orders, revenue
 			FROM {$daily} WHERE day >= %s AND day < %s
 			UNION ALL
-			SELECT DATE_FORMAT(started_at, '%%Y-%%m') AS period, 1, 0, pageviews,
-				CASE WHEN pageviews = 1 THEN 1 ELSE 0 END,
-				CASE WHEN order_id > 0 THEN 1 ELSE 0 END, revenue
-			FROM {$sessions} WHERE DATE(started_at) >= %s
+			SELECT DATE_FORMAT(started_at, '%%Y-%%m') AS period,
+				COUNT(*) AS sessions, COUNT(DISTINCT visitor_hash) AS visitors,
+				SUM(pageviews) AS pageviews,
+				SUM(CASE WHEN pageviews = 1 THEN 1 ELSE 0 END) AS bounces,
+				SUM(CASE WHEN order_id > 0 THEN 1 ELSE 0 END) AS orders,
+				SUM(revenue) AS revenue
+			FROM {$sessions} WHERE started_at >= %s
+			GROUP BY DATE_FORMAT(started_at, '%%Y-%%m')
 		 ) AS flux
 		 GROUP BY period
 		 ORDER BY period ASC",
 		$depuis,
 		$frontier,
-		$frontier
+		$frontier . ' 00:00:00'
 	) );
 
 	foreach ( $rows as $row ) {
@@ -191,7 +276,24 @@ function cbaz_history_months( $limit_years = 10 ) {
 		$row->revenue   = (float) $row->revenue;
 	}
 
-	return $rows;
+	/* La partie non consolidée doit elle aussi prendre WooCommerce comme
+	 * source commerciale, et non la seule fraction attribuée aux visites. */
+	$shop = cbaz_shop_months( [
+		'from' => max( $depuis, $frontier ) . ' 00:00:00',
+		'to'   => current_time( 'mysql' ),
+	], false );
+	$map = [];
+	foreach ( $rows as $row ) { $map[ $row->period ] = $row; }
+	foreach ( $shop as $period => $commerce ) {
+		if ( ! isset( $map[ $period ] ) ) {
+			$map[ $period ] = (object) [ 'period' => $period, 'sessions' => 0, 'visitors' => 0, 'pageviews' => 0, 'bounces' => 0, 'orders' => 0, 'revenue' => 0.0 ];
+		}
+		$map[ $period ]->orders  = $commerce['orders'];
+		$map[ $period ]->revenue = $commerce['revenue'];
+	}
+	ksort( $map );
+
+	return array_values( $map );
 }
 
 /** Les mêmes totaux, regroupés par année. */
@@ -242,6 +344,7 @@ function cbaz_history_breakdown( $kind, $year, $limit = 10 ) {
 	$column = $colonnes[ $kind ];
 	$debut  = $year . '-01-01';
 	$fin    = $year . '-12-31';
+	$fin_exclusive = ( (int) $year + 1 ) . '-01-01 00:00:00';
 
 	return $wpdb->get_results( $wpdb->prepare(
 		"SELECT label, SUM(sessions) AS sessions, SUM(orders) AS orders, SUM(revenue) AS revenue
@@ -251,15 +354,15 @@ function cbaz_history_breakdown( $kind, $year, $limit = 10 ) {
 			UNION ALL
 			SELECT {$column} AS label, 1, CASE WHEN order_id > 0 THEN 1 ELSE 0 END, revenue
 			FROM {$sessions}
-			WHERE DATE(started_at) BETWEEN %s AND %s AND DATE(started_at) >= %s AND {$column} <> ''
+			WHERE started_at >= %s AND started_at < %s AND started_at >= %s AND {$column} <> ''
 		 ) AS flux
 		 GROUP BY label
 		 ORDER BY sessions DESC
 		 LIMIT %d",
 		$kind,
-		$debut,
-		$fin,
-		$frontier,
+		$debut . ' 00:00:00',
+		$fin_exclusive,
+		$frontier . ' 00:00:00',
 		$debut,
 		$fin,
 		$frontier,

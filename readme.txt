@@ -4,17 +4,17 @@ Tags: analytics, woocommerce, statistiques, utm, rgpd
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 4.31.0
+Stable tag: 4.31.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Mesure d'audience, de ventes et de campagnes, hébergée sur votre serveur. Sans service tiers, sans cookie, sans donnée personnelle conservée.
+Mesure d'audience et de ventes, hébergée sur votre serveur. Sans service tiers et sans cookie par défaut.
 
 == Description ==
 
 Une boutique en ligne pose trois questions, toujours les mêmes : d'où viennent les gens, ce qu'ils font une fois arrivés, et combien ça rapporte. Les outils habituels y répondent en envoyant vos données chez un tiers, en posant des cookies, et en imposant un bandeau de consentement qui fait fuir une partie des visiteurs — donc en mesurant moins bien ce qu'ils prétendent mesurer.
 
-Cette extension répond aux mêmes questions sans rien de tout cela. Les données restent dans votre base WordPress. Aucune requête ne sort vers l'extérieur. Aucun cookie n'est déposé.
+Cette extension répond à ces questions en gardant les données de mesure dans votre base WordPress. Aucune donnée de mesure n'est envoyée à un service tiers. Aucun cookie n'est déposé avec le réglage par défaut.
 
 = Ce qu'elle mesure =
 
@@ -23,28 +23,30 @@ Cette extension répond aux mêmes questions sans rien de tout cela. Les donnée
 * **Comportement** — pages vues, pages d'entrée et de sortie, chemins types, recherches internes, points d'abandon.
 * **E-commerce** — chiffre d'affaires, commandes, panier moyen, taux de conversion, entonnoir complet, lu directement dans WooCommerce.
 * **Produits** — vues, ajouts au panier, taux d'ajout, ventes par référence.
-* **Campagnes UTM** — création de campagnes avec lien court, budget, retour sur investissement, coût par commande.
-* **Attribution** — premier contact contre dernier contact, délai de conversion, nombre de visites avant achat.
 * **Géographie** — pays, avec conversion et chiffre d'affaires par pays, sur un globe interactif.
-* **Parcours** — chaque visite déroulée page par page, avec l'étape précise où elle s'est arrêtée.
-* **Historique** — comparaison mois par mois et année par année, sur dix ans de profondeur.
-* **Temps réel** — qui est sur le site en ce moment, et ce qu'il y fait.
+* **Parcours** — les dix visites les plus récentes, déroulées page par page.
+* **Temps réel** — fréquentation et pages actives au cours des trente dernières minutes.
+* **Campagnes** — création de liens UTM et de liens courts.
+
+= Extension Pro distincte =
+
+Le module payant, distribué séparément et absent de ce paquet, ajoute l'historique complet et les filtres des parcours, les performances et l'attribution des campagnes, les détails du temps réel, les comparaisons historiques et les exports CSV. La collecte commune continue de fonctionner sans le module Pro.
 
 = Ce qu'elle ne fait pas =
 
-Elle ne suit personne. L'empreinte qui relie deux pages d'une même visite change chaque nuit : un visiteur qui revient le lendemain est quelqu'un d'autre pour le système. C'est une limite assumée, et c'est le prix de l'absence d'identifiant.
+L'identifiant pseudonyme qui relie deux pages d'une même visite change chaque nuit : un visiteur qui revient le lendemain est quelqu'un d'autre pour le système. C'est une limite assumée.
 
 == Confidentialité ==
 
 = Aucun cookie =
 
-Réglage par défaut : aucun cookie, aucun stockage local, aucun stockage de session. L'extension n'écrit rien dans le navigateur. L'article 82 de la loi Informatique et Libertés — celui qui impose le bandeau de consentement — ne s'applique donc pas.
+Réglage par défaut : aucun cookie, aucun stockage local, aucun stockage de session. L'extension n'écrit rien dans le navigateur. La qualification juridique dépend néanmoins de votre configuration, des autres extensions et de votre juridiction ; documentez la mesure dans votre politique de confidentialité.
 
 Un seul cookie facultatif existe : la mémoire d'attribution, désactivée par défaut, qui permet de rattacher un achat à un clic de campagne survenu plusieurs jours plus tôt. Elle ne contient que la provenance, jamais d'identifiant. L'écran Réglages indique en permanence, et sans détour, si un cookie est déposé ou non.
 
 = L'adresse IP n'est jamais enregistrée =
 
-Elle sert une fraction de seconde à calculer une empreinte, puis elle est oubliée. Et elle est **tronquée avant même ce calcul** : seuls le réseau est retenu — trois octets en IPv4, trois groupes en IPv6. Une empreinte ne peut donc pas être recalculée pour retrouver les visites de quelqu'un dont on connaîtrait l'adresse : elle désigne un réseau entier, jamais une personne.
+Elle sert une fraction de seconde à calculer un identifiant, puis elle est oubliée. Elle est **tronquée avant même ce calcul** : seul le préfixe réseau est retenu — trois octets en IPv4, trois groupes en IPv6. Le résultat est un identifiant pseudonyme quotidien fondé sur ce préfixe et la signature du navigateur. Il réduit la précision par rapport à une adresse complète, mais ne doit pas être présenté comme une anonymisation garantie dans tous les contextes.
 
 = Le point à connaître =
 
@@ -54,14 +56,14 @@ Nous préférons l'écrire noir sur blanc plutôt que d'afficher « aucune donn�
 
 = Deux durées de conservation =
 
-* **Le détail** — visites, pages, évènements — est purgé automatiquement. Treize mois est la durée retenue par la CNIL pour une mesure d'audience dispensée de consentement.
-* **L'historique consolidé** — un résumé quotidien sans aucune visite individuelle — est conservé jusqu'à dix ans. N'étant pas une donnée personnelle, il échappe à cette limite, et permet de comparer une rentrée à celle d'il y a trois ans.
+* **Le détail** — visites, pages, évènements — est purgé automatiquement. La valeur par défaut est 24 mois et reste configurable de 1 à 120 mois.
+* **L'historique consolidé** — un résumé quotidien sans visite individuelle — est conservé jusqu'à dix ans par défaut, avec une durée configurable.
 
 La consolidation a toujours lieu **avant** la purge : un jour effacé sans avoir été résumé serait perdu deux fois.
 
 = Ce qu'il vous reste à faire =
 
-Mentionner la mesure dans votre politique de confidentialité. L'obligation d'information ne dépend pas des cookies : elle s'applique dès qu'il y a traitement. Base légale : intérêt légitime.
+Décrire la mesure, les données, les finalités et les durées dans votre politique de confidentialité. Déterminez avec votre conseil la base légale et les obligations applicables à votre configuration et à votre juridiction.
 
 == Sécurité ==
 
@@ -89,12 +91,12 @@ Ces cellules sont neutralisées par une apostrophe de tête. Les montants négat
 
 = Désinstallation =
 
-Supprimer l'extension efface tout : les six tables, les réglages, les secrets, la tâche planifiée, les transients et les métadonnées d'attribution posées sur les commandes. Une désactivation, elle, ne touche à rien — on désactive souvent pour diagnostiquer.
+La désactivation ne touche à aucune donnée. La suppression les conserve également par défaut. Pour demander un effacement complet, activez d'abord l'option correspondante dans **Analytics → Paramètres → Données**, puis supprimez l'extension.
 
 == Installation ==
 
-1. Déposer le dossier dans `/wp-content/plugins/` puis activer l'extension.
-2. Aller dans **Réglages → Permaliens** et enregistrer, une seule fois : les liens courts de campagne en dépendent.
+1. Installer et activer WooCommerce.
+2. Installer puis activer cette extension.
 3. Vérifier **Analytics → Paramètres** : durées de conservation, rôles exclus, chemins exclus.
 
 La mesure démarre immédiatement. L'historique consolidé, lui, se construit nuit après nuit.
@@ -103,19 +105,15 @@ La mesure démarre immédiatement. L'historique consolidé, lui, se construit nu
 
 = Faut-il un bandeau de consentement ? =
 
-Non, dans le réglage par défaut : aucun cookie n'est déposé et l'adresse IP est tronquée avant tout calcul. Cela ne dispense ni d'un bandeau pour vos autres traceurs, ni de mentionner la mesure dans votre politique de confidentialité.
+Le réglage par défaut ne dépose aucun cookie, mais cette seule caractéristique ne permet pas une conclusion juridique universelle. Vérifiez votre configuration complète et votre juridiction, et mentionnez la mesure dans votre politique de confidentialité.
 
 = Pourquoi les chiffres diffèrent-ils de Google Analytics ? =
 
-Les nôtres sont généralement plus élevés, pour deux raisons. Les bloqueurs de publicité arrêtent les scripts tiers mais pas un script servi par votre propre domaine. Et sans bandeau à refuser, aucune visite n'est perdue faute de consentement.
+Les périmètres diffèrent : la balise est servie par votre domaine, les robots et rôles exclus sont configurables, l'identifiant change chaque jour et les définitions des sessions, rebonds et conversions ne sont pas nécessairement celles d'un autre outil.
 
 = Un visiteur qui revient demain est-il reconnu ? =
 
 Non, et c'est volontaire. L'empreinte change chaque nuit. « Récurrent » signifie ici : revenu au cours de la même journée.
-
-= Que se passe-t-il si WooCommerce est désactivé ? =
-
-La mesure d'audience continue. Les écrans de vente restent accessibles mais vides.
 
 = Les tâches planifiées de WordPress sont désactivées sur mon serveur =
 
@@ -126,11 +124,18 @@ La purge et la consolidation ne s'exécuteront pas d'elles-mêmes. La consolidat
 Filtres disponibles :
 
 * `cbaz_hits_per_hour` — plafond d'appels au point de collecte, par réseau et par heure. Défaut : 600.
-* `cbaz_hide_admin_notices` — renvoyer `false` pour réafficher les bandeaux des autres extensions sur nos écrans.
+* `cbaz_hide_admin_notices` — renvoyer `true` pour masquer volontairement les bandeaux des autres extensions sur nos écrans (déconseillé).
 
 Tables créées, toutes préfixées `{$wpdb->prefix}cbaz_` : `sessions`, `views`, `events`, `campaigns`, `daily`, `daily_dim`.
 
 == Changelog ==
+
+= 4.31.1 =
+* Exactitude : une page vue n'est plus incrémentée par chacun de ses événements ; durée engagée réellement visible.
+* WooCommerce : HPOS, fuseaux, remboursements, panier classique et blocs rapprochés des mêmes définitions.
+* Sécurité : événements publics bornés et attribution persistante signée.
+* Free/Pro : limite des dix parcours appliquée côté données et compatibilité vérifiée avant déverrouillage.
+* Données : conservation par défaut lors de la désinstallation, effacement complet sur choix explicite.
 
 = 4.31.0 =
 * Correction : heures affichées avec deux heures d'avance en été. Nos tables retiennent l'heure du site, mais elle était relue comme de l'UTC avant d'être reconvertie — une visite de 17 h 47 s'affichait à 19 h 47. Les durées, elles, n'étaient pas touchées.

@@ -31,7 +31,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
                 keepalive: true,
-                credentials: 'omit',
+                credentials: 'same-origin',
             });
         } catch (e) {
             // Mesure perdue : sans conséquence pour le visiteur.
@@ -188,28 +188,8 @@
     // souvent plus qu'un classement de pages vues.
     if (cfg.search) event('search', 0, 0, cfg.search);
 
-    // ── Évènements marchands ────────────────────────────────
-    if (window.jQuery) {
-        jQuery(document.body).on('added_to_cart', function (e, fragments, hash, button) {
-            var id = button && button.data ? button.data('product_id') : 0;
-            event('add_to_cart', id);
-        });
-    }
-
-    // Notre propre bouton d'ajout, qui ne passe pas toujours par
-    // l'évènement de WooCommerce.
-    document.addEventListener('click', function (e) {
-        var atc = e.target.closest ? e.target.closest('.single_add_to_cart_button, [data-cbjs-add]') : null;
-
-        if (atc) {
-            var form = atc.closest('form');
-            var id = form ? (form.querySelector('[name="add-to-cart"]') || {}).value : 0;
-            event('add_to_cart', id);
-        }
-    });
-
-    var path = location.pathname;
-
-    if (/panier|cart/.test(path)) event('view_cart');
-    if (/commander|checkout/.test(path)) event('begin_checkout');
+    // L'ajout au panier est enregistré côté serveur uniquement après
+    // confirmation de WooCommerce, pour le panier classique comme les blocs.
+    if (cfg.cart) event('view_cart');
+    if (cfg.checkout) event('begin_checkout');
 })();

@@ -47,6 +47,9 @@ function cbaz_enqueue_tracker() {
 		// l'adresse seule ne dit pas quel identifiant elle porte.
 		'product' => ( function_exists( 'is_product' ) && is_product() ) ? get_queried_object_id() : 0,
 		'search'  => is_search() ? get_search_query() : '',
+		'cart'    => function_exists( 'is_cart' ) && is_cart() ? 1 : 0,
+		'checkout'=> function_exists( 'is_checkout' ) && is_checkout()
+			&& ( ! function_exists( 'is_order_received_page' ) || ! is_order_received_page() ) ? 1 : 0,
 	] );
 }
 
@@ -103,7 +106,7 @@ function cbaz_receive_hit( WP_REST_Request $request ) {
 		return new WP_REST_Response( [ 'ok' => false ], 429 );
 	}
 
-	$path    = substr( (string) $request->get_param( 'p' ), 0, 190 );
+	$path    = substr( sanitize_text_field( (string) $request->get_param( 'p' ) ), 0, 190 );
 	$title   = substr( sanitize_text_field( (string) $request->get_param( 't' ) ), 0, 190 );
 	$ref     = (string) $request->get_param( 'r' );
 	$event   = sanitize_key( (string) $request->get_param( 'e' ) );
@@ -117,11 +120,25 @@ function cbaz_receive_hit( WP_REST_Request $request ) {
 	$screen  = substr( preg_replace( '/[^0-9x]/', '', (string) $request->get_param( 's' ) ), 0, 12 );
 	$lang    = substr( preg_replace( '/[^a-zA-Z-]/', '', (string) $request->get_param( 'g' ) ), 0, 12 );
 
+	/*
+	 * Le nom d'événement vient d'un endpoint public. Une liste positive
+	 * empêche un appel externe d'inventer un achat et de polluer le tunnel.
+	 * `purchase` reste exclusivement écrit côté serveur depuis la commande.
+	 */
+	$public_events = [ 'view_item', 'view_cart', 'begin_checkout', 'search', 'page_time' ];
+
+	if ( $event && ! in_array( $event, $public_events, true ) ) {
+		return new WP_REST_Response( [ 'ok' => false ], 400 );
+	}
+
+	$object = max( 0, $object );
+	$value  = 'page_time' === $event ? max( 0, min( 1800, $value ) ) : 0;
+
 	if ( '' === $path ) {
 		$path = '/';
 	}
 
-	$session_id = cbaz_current_session( $path, $ref, $query, compact( 'screen', 'lang' ) );
+	$session_id = cbaz_current_session( $path, $ref, $query, compact( 'screen', 'lang' ), ! $event );
 
 	if ( ! $session_id ) {
 		return new WP_REST_Response( [ 'ok' => false ], 204 );
@@ -268,7 +285,7 @@ function cbaz_flooding() {
 }
 
 /** Visite en cours, ou nouvelle visite si la précédente a expiré. */
-function cbaz_current_session( $path, $referrer, array $query, array $client = [] ) {
+function cbaz_current_session( $path, $referrer, array $query, array $client = [], $is_pageview = true ) {
 	global $wpdb;
 
 	$table = cbaz_table( 'sessions' );
@@ -281,6 +298,29 @@ function cbaz_current_session( $path, $referrer, array $query, array $client = [
 		$hash,
 		$since
 	) );
+	$lock_name = 'cbaz-session-' . $hash;
+	$locked    = false;
+
+	/* La page vue et ses événements partent presque simultanément. Deux
+	 * requêtes qui ne trouvent encore rien créeraient deux visites. Un verrou
+	 * très court sérialise uniquement la création pour cette empreinte. */
+	if ( ! $existing ) {
+		$lock_result = $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, 2)', $lock_name ) );
+
+		if ( '0' === (string) $lock_result ) {
+			return 0;
+		}
+
+		$locked = '1' === (string) $lock_result;
+
+		if ( $locked ) {
+			$existing = $wpdb->get_row( $wpdb->prepare(
+				"SELECT id, pageviews FROM {$table} WHERE visitor_hash = %s AND last_seen >= %s ORDER BY last_seen DESC LIMIT 1",
+				$hash,
+				$since
+			) );
+		}
+	}
 
 	/*
 	 * Plafond de sécurité. Le point de collecte est public par nature
@@ -290,20 +330,21 @@ function cbaz_current_session( $path, $referrer, array $query, array $client = [
 	 * aucune vraie visite n'atteint ce chiffre, et la table ne peut
 	 * plus être gonflée indéfiniment.
 	 */
-	if ( $existing && (int) $existing->pageviews >= 500 ) {
+	if ( $is_pageview && $existing && (int) $existing->pageviews >= 500 ) {
+		if ( $locked ) { $wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock_name ) ); }
 		return 0;
 	}
 
 	if ( $existing ) {
-		$wpdb->update(
-			$table,
-			[
-				'last_seen' => $now,
-				'pageviews' => (int) $existing->pageviews + 1,
-				'exit_path' => $path,
-			],
-			[ 'id' => (int) $existing->id ]
-		);
+		$update = [ 'last_seen' => $now ];
+
+		if ( $is_pageview ) {
+			$update['pageviews'] = (int) $existing->pageviews + 1;
+			$update['exit_path'] = $path;
+		}
+
+		$wpdb->update( $table, $update, [ 'id' => (int) $existing->id ] );
+		if ( $locked ) { $wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock_name ) ); }
 
 		return (int) $existing->id;
 	}
@@ -311,7 +352,15 @@ function cbaz_current_session( $path, $referrer, array $query, array $client = [
 	$attribution = cbaz_attribution( $referrer, $query );
 
 	if ( $attribution['campaign'] ) {
-		cbaz_remember_attribution( $attribution );
+		$remembered = cbaz_remember_attribution( $attribution );
+
+		if ( $remembered ) {
+			$attribution = array_merge( $attribution, [
+				'first_source'   => $remembered['first_source'],
+				'first_medium'   => $remembered['first_medium'],
+				'first_campaign' => $remembered['first_campaign'],
+			] );
+		}
 	} elseif ( ! cbaz_attr_window() ) {
 		// Réglage à zéro : on profite du passage pour nettoyer.
 		cbaz_forget_attribution();
@@ -344,13 +393,13 @@ function cbaz_current_session( $path, $referrer, array $query, array $client = [
 	) );
 
 	$wpdb->insert( $table, [
-		'first_source'   => $first ? $first->source : $attribution['source'],
-		'first_medium'   => $first ? $first->medium : $attribution['medium'],
-		'first_campaign' => $first ? $first->campaign : $attribution['campaign'],
+		'first_source'   => $attribution['first_source'] ?? ( $first ? $first->source : $attribution['source'] ),
+		'first_medium'   => $attribution['first_medium'] ?? ( $first ? $first->medium : $attribution['medium'] ),
+		'first_campaign' => $attribution['first_campaign'] ?? ( $first ? $first->campaign : $attribution['campaign'] ),
 		'visitor_hash'  => $hash,
 		'started_at'    => $now,
 		'last_seen'     => $now,
-		'pageviews'     => 1,
+		'pageviews'     => $is_pageview ? 1 : 0,
 		'entry_path'    => $path,
 		'exit_path'     => $path,
 		'referrer_host' => $attribution['host'],
@@ -367,6 +416,8 @@ function cbaz_current_session( $path, $referrer, array $query, array $client = [
 		'lang'          => $client['lang'] ?? '',
 		'is_new'        => $seen_today ? 0 : 1,
 	] );
+
+	if ( $locked ) { $wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock_name ) ); }
 
 	return (int) $wpdb->insert_id;
 }
@@ -409,6 +460,49 @@ function cbaz_record_event( $session_id, $name, $object_id = 0, $value = 0, $lab
 		'label'      => substr( (string) $label, 0, 190 ),
 		'created_at' => current_time( 'mysql' ),
 	] );
+
+	if ( 'page_time' === $name ) {
+		$seconds = max( 0, min( 1800, (int) $value ) );
+		$wpdb->query( $wpdb->prepare(
+			'UPDATE ' . cbaz_table( 'sessions' ) . ' SET engaged_seconds = LEAST(86400, engaged_seconds + %d) WHERE id = %d',
+			$seconds,
+			(int) $session_id
+		) );
+	}
+}
+
+/**
+ * Ajout au panier confirmé par WooCommerce.
+ *
+ * Le hook est commun au panier classique et à la Store API des blocs. Il
+ * évite les doubles comptages des thèmes qui émettent plusieurs événements
+ * JavaScript et n'enregistre jamais un clic dont l'ajout a finalement échoué.
+ */
+add_action( 'woocommerce_add_to_cart', 'cbaz_track_add_to_cart', 30, 6 );
+function cbaz_track_add_to_cart( $cart_item_key, $product_id, $quantity, $variation_id = 0, $variation = [], $cart_item_data = [] ) {
+	if ( ! cbaz_opt( 'enabled' ) || ! cbaz_opt( 'track_events' ) || cbaz_is_bot() || cbaz_flooding() ) {
+		return;
+	}
+
+	$excluded = (array) cbaz_opt( 'exclude_roles' );
+
+	if ( is_user_logged_in() && array_intersect( wp_get_current_user()->roles, $excluded ) ) {
+		return;
+	}
+
+	$referer = wp_get_raw_referer();
+	$path    = $referer ? wp_parse_url( $referer, PHP_URL_PATH ) : '/';
+	$query   = [];
+
+	if ( $referer ) {
+		parse_str( (string) wp_parse_url( $referer, PHP_URL_QUERY ), $query );
+	}
+
+	$session_id = cbaz_current_session( $path ?: '/', $referer ?: '', $query, [], false );
+
+	if ( $session_id ) {
+		cbaz_record_event( $session_id, 'add_to_cart', $product_id );
+	}
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -446,21 +540,32 @@ function cbaz_remember_attribution( array $attr ) {
 		// « aucun cookie » serait fausse pour elles pendant un mois.
 		cbaz_forget_attribution();
 
-		return;
+		return null;
 	}
 
 	if ( headers_sent() || '' === $attr['campaign'] . $attr['source'] ) {
-		return;
+		return null;
 	}
 
-	$payload = wp_json_encode( [
+	$previous = cbaz_recall_attribution();
+	$data     = [
 		's' => $attr['source'],
 		'm' => $attr['medium'],
 		'c' => $attr['campaign'],
 		't' => $attr['term'],
 		'k' => $attr['content'],
+		'f' => $previous['first_source'] ?? $attr['source'],
+		'g' => $previous['first_medium'] ?? $attr['medium'],
+		'p' => $previous['first_campaign'] ?? $attr['campaign'],
 		'd' => time(),
-	] );
+	];
+
+	/*
+	 * La provenance influe sur le CA attribué. Sans signature, chacun
+	 * pourrait fabriquer ce cookie et créditer arbitrairement une campagne.
+	 */
+	$data['h'] = hash_hmac( 'sha256', wp_json_encode( $data ), cbaz_secret() );
+	$payload   = wp_json_encode( $data );
 
 	setcookie( CBAZ_ATTR_COOKIE, $payload, [
 		'expires'  => time() + $days * DAY_IN_SECONDS,
@@ -470,6 +575,18 @@ function cbaz_remember_attribution( array $attr ) {
 		'httponly' => true,
 		'samesite' => 'Lax',
 	] );
+
+	return [
+		'host'           => '',
+		'source'         => (string) $data['s'],
+		'medium'         => (string) $data['m'],
+		'campaign'       => (string) $data['c'],
+		'term'           => (string) $data['t'],
+		'content'        => (string) $data['k'],
+		'first_source'   => (string) $data['f'],
+		'first_medium'   => (string) $data['g'],
+		'first_campaign' => (string) $data['p'],
+	];
 }
 
 /** Efface le cookie de provenance, s'il existe. */
@@ -496,23 +613,43 @@ function cbaz_recall_attribution() {
 
 	$data = json_decode( wp_unslash( $_COOKIE[ CBAZ_ATTR_COOKIE ] ), true );
 
-	if ( ! is_array( $data ) || empty( $data['c'] ) ) {
+	if ( ! is_array( $data ) || empty( $data['c'] ) || empty( $data['h'] ) || ! is_string( $data['h'] ) ) {
+		return null;
+	}
+
+	$signed = [
+		's' => (string) ( $data['s'] ?? '' ),
+		'm' => (string) ( $data['m'] ?? '' ),
+		'c' => (string) ( $data['c'] ?? '' ),
+		't' => (string) ( $data['t'] ?? '' ),
+		'k' => (string) ( $data['k'] ?? '' ),
+		'f' => (string) ( $data['f'] ?? '' ),
+		'g' => (string) ( $data['g'] ?? '' ),
+		'p' => (string) ( $data['p'] ?? '' ),
+		'd' => (int) ( $data['d'] ?? 0 ),
+	];
+	$valid  = hash_hmac( 'sha256', wp_json_encode( $signed ), cbaz_secret() );
+
+	if ( ! hash_equals( $valid, $data['h'] ) ) {
 		return null;
 	}
 
 	// Un cookie qui traîne au-delà de la fenêtre choisie ne doit plus
 	// peser : le navigateur devrait l'avoir supprimé, on n'en dépend pas.
-	if ( ( time() - (int) ( $data['d'] ?? 0 ) ) > $days * DAY_IN_SECONDS ) {
+	if ( $signed['d'] <= 0 || ( time() - $signed['d'] ) > $days * DAY_IN_SECONDS ) {
 		return null;
 	}
 
 	return [
-		'host'     => '',
-		'source'   => (string) ( $data['s'] ?? '' ),
-		'medium'   => (string) ( $data['m'] ?? '' ),
-		'campaign' => (string) ( $data['c'] ?? '' ),
-		'term'     => (string) ( $data['t'] ?? '' ),
-		'content'  => (string) ( $data['k'] ?? '' ),
+		'host'           => '',
+		'source'         => $signed['s'],
+		'medium'         => $signed['m'],
+		'campaign'       => $signed['c'],
+		'term'           => $signed['t'],
+		'content'        => $signed['k'],
+		'first_source'   => $signed['f'],
+		'first_medium'   => $signed['g'],
+		'first_campaign' => $signed['p'],
 	];
 }
 
@@ -917,18 +1054,8 @@ function cbaz_attach_order( $order ) {
 		? $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", $session_id ) )
 		: null;
 
-	if ( $session ) {
-		$wpdb->update(
-			$table,
-			[
-				'order_id' => $order->get_id(),
-				'revenue'  => (float) $order->get_total(),
-			],
-			[ 'id' => $session_id ]
-		);
-
-		cbaz_record_event( $session_id, 'purchase', $order->get_id(), (float) $order->get_total() );
-	}
+	/* L'achat n'est marqué qu'après confirmation du paiement. Un checkout
+	 * peut encore échouer, être annulé ou rester en attente. */
 
 	/*
 	 * L'attribution est recopiée SUR LA COMMANDE, et c'est décisif.
@@ -947,8 +1074,8 @@ function cbaz_attach_order( $order ) {
 		'campaign'       => $session->campaign ?? ( $fallback['campaign'] ?? '' ),
 		'term'           => $session->term ?? ( $fallback['term'] ?? '' ),
 		'content'        => $session->content ?? ( $fallback['content'] ?? '' ),
-		'first_source'   => $session->first_source ?? '',
-		'first_campaign' => $session->first_campaign ?? '',
+		'first_source'   => $session->first_source ?? ( $fallback['first_source'] ?? '' ),
+		'first_campaign' => $session->first_campaign ?? ( $fallback['first_campaign'] ?? '' ),
 		'landing'        => $session->entry_path ?? '',
 		'country'        => $session->country ?? '',
 		'device'         => $session->device ?? '',
@@ -996,6 +1123,52 @@ function cbaz_attach_order( $order ) {
 	}
 
 	$order->save();
+
+	/* Certains moyens de paiement synchrones confirment la commande avant
+	 * le dernier hook Store API : rejouer est sûr grâce au garde-fou ci-dessous. */
+	if ( $order->is_paid() ) {
+		cbaz_mark_order_paid( $order );
+	}
+}
+
+add_action( 'woocommerce_payment_complete', 'cbaz_mark_order_paid', 20 );
+add_action( 'woocommerce_order_status_processing', 'cbaz_mark_order_paid', 20 );
+add_action( 'woocommerce_order_status_completed', 'cbaz_mark_order_paid', 20 );
+function cbaz_mark_order_paid( $order ) {
+	global $wpdb;
+
+	$order = is_numeric( $order ) ? wc_get_order( $order ) : $order;
+	if ( ! $order instanceof WC_Order || ( ! $order->is_paid() && ! $order->has_status( function_exists( 'wc_get_is_paid_statuses' ) ? wc_get_is_paid_statuses() : [ 'processing', 'completed' ] ) ) ) {
+		return;
+	}
+
+	$session_id = (int) $order->get_meta( '_cbaz_session', true );
+	if ( ! $session_id ) {
+		return;
+	}
+
+	$wpdb->update( cbaz_table( 'sessions' ), [ 'order_id' => $order->get_id(), 'revenue' => (float) $order->get_total() ], [ 'id' => $session_id ] );
+
+	$already = (int) $wpdb->get_var( $wpdb->prepare(
+		"SELECT id FROM " . cbaz_table( 'events' ) . " WHERE session_id = %d AND name = 'purchase' AND object_id = %d LIMIT 1",
+		$session_id, $order->get_id()
+	) );
+	if ( ! $already ) {
+		cbaz_record_event( $session_id, 'purchase', $order->get_id(), (float) $order->get_total() );
+	}
+}
+
+/** Maintient le montant attribué à la visite cohérent après remboursement. */
+add_action( 'woocommerce_order_refunded', 'cbaz_sync_order_refunds', 20 );
+add_action( 'woocommerce_order_fully_refunded', 'cbaz_sync_order_refunds', 20 );
+function cbaz_sync_order_refunds( $order_id ) {
+	global $wpdb;
+	$order = wc_get_order( $order_id );
+	if ( ! $order instanceof WC_Order ) { return; }
+	$session_id = (int) $order->get_meta( '_cbaz_session', true );
+	if ( $session_id ) {
+		$wpdb->update( cbaz_table( 'sessions' ), [ 'revenue' => max( 0, (float) $order->get_total() - (float) $order->get_total_refunded() ) ], [ 'id' => $session_id ] );
+	}
 }
 
 /**

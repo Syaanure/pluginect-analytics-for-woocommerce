@@ -26,7 +26,7 @@ if ( ! empty( $_GET['visite'] ) ) {
 	}
 
 	$timeline = cbaz_session_timeline( $session->id );
-	$duree    = strtotime( $session->last_seen ) - strtotime( $session->started_at );
+	$duree    = (int) $session->engaged_seconds;
 	?>
 
 	<p class="cbaz-back">
@@ -150,12 +150,19 @@ if ( cbaz_can( 'journeys_filters' ) ) {
 	$filtre = cbaz_subtabs( 'lot', [
 		'toutes'     => 'Tous les parcours',
 		'converties' => 'Ceux qui achètent',
+		'non-acheteurs' => 'Non acheteurs',
+		'abandons'   => 'Paniers abandonnés',
 		'longues'    => 'Les longs',
 		'rebonds'    => 'Les rebonds',
 	], 'toutes' );
 }
 
-$sessions = cbaz_sessions_list( $range, 40, 'toutes' === $filtre ? '' : $filtre );
+$journey_search = cbaz_can( 'journeys_filters' ) ? sanitize_text_field( wp_unslash( $_GET['parcours_q'] ?? '' ) ) : '';
+$journey_page   = cbaz_can( 'journeys_full' ) ? max( 1, (int) ( $_GET['parcours_page'] ?? 1 ) ) : 1;
+$journey_limit  = cbaz_can( 'journeys_full' ) ? 40 : CBAZ_FREE_JOURNEYS;
+$journey_only   = 'toutes' === $filtre ? '' : $filtre;
+$sessions       = cbaz_sessions_list( $range, $journey_limit, $journey_only, ( $journey_page - 1 ) * $journey_limit, $journey_search );
+$journey_total  = cbaz_sessions_count( $range, $journey_only, $journey_search );
 $trails   = cbaz_sessions_trails( wp_list_pluck( $sessions, 'id' ) );
 
 // Moyennes et points d'arrêt lus sur le lot affiché : aucune requête
@@ -242,7 +249,14 @@ $max_arret = $arrets ? max( $arrets ) : 1;
 	</header>
 
 	<?php if ( cbaz_can( 'journeys_filters' ) ) : ?>
-		<?php echo cbaz_table_tools( 'Rechercher une page, une source…' ); // phpcs:ignore ?>
+		<form class="cbaz-tabletools" method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>">
+			<input type="hidden" name="page" value="cbaz-visites">
+			<input type="hidden" name="periode" value="<?php echo esc_attr( $range['preset'] ); ?>">
+			<input type="hidden" name="lot" value="<?php echo esc_attr( $filtre ); ?>">
+			<?php if ( 'perso' === $range['preset'] ) : ?><input type="hidden" name="du" value="<?php echo esc_attr( $range['du'] ); ?>"><input type="hidden" name="au" value="<?php echo esc_attr( $range['au'] ); ?>"><?php endif; ?>
+			<label><span class="screen-reader-text">Rechercher un parcours</span><input type="search" name="parcours_q" value="<?php echo esc_attr( $journey_search ); ?>" placeholder="Page, source, campagne, pays…"></label>
+			<button class="cbaz-ctrl cbaz-ctrl--mini">Rechercher</button>
+		</form>
 	<?php endif; ?>
 
 	<ul class="cbaz-trails">
@@ -344,6 +358,12 @@ $max_arret = $arrets ? max( $arrets ) : 1;
 		un panier a été abandonné. Clique l’horodatage pour le déroulé complet, à la seconde près.
 	</p>
 </section>
+
+<?php if ( cbaz_can( 'journeys_full' ) && $journey_total > $journey_limit ) : ?>
+	<nav class="tablenav-pages" aria-label="Pagination des parcours">
+		<?php echo wp_kses_post( paginate_links( [ 'base' => cbaz_url( [ 'parcours_page' => '%#%', 'parcours_q' => $journey_search, 'lot' => $filtre ] ), 'current' => $journey_page, 'total' => (int) ceil( $journey_total / $journey_limit ) ] ) ); ?>
+	</nav>
+<?php endif; ?>
 
 <?php if ( ! cbaz_can( 'journeys_full' ) ) : ?>
 	<p class="cbaz-note">

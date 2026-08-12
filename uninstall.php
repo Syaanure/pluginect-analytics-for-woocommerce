@@ -2,10 +2,10 @@
 /**
  * Désinstallation.
  *
- * Une extension qui laisse ses tables derrière elle après un « Supprimer »
- * ment à qui l'a supprimée. Ce fichier efface tout : les quatre tables de
- * mesure, les deux d'historique, les réglages, les secrets, la tâche de
- * nuit et les transients.
+ * Les statistiques sont conservées par défaut afin qu'une suppression
+ * accidentelle ou une réinstallation ne détruise pas des années de données.
+ * L'effacement complet n'a lieu que si l'administrateur l'a demandé dans
+ * Réglages > Données avant de supprimer l'extension.
  *
  * À savoir : WordPress n'exécute ce fichier que sur une SUPPRESSION, pas
  * sur une désactivation. Désactiver l'extension conserve donc l'intégralité
@@ -20,6 +20,12 @@
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 global $wpdb;
+
+$settings = get_option( 'cbaz_settings', [] );
+
+if ( empty( $settings['delete_on_uninstall'] ) ) {
+	return;
+}
 
 // ── Tables ──────────────────────────────────────────────────────
 foreach ( [ 'daily_dim', 'daily', 'events', 'views', 'sessions', 'campaigns' ] as $table ) {
