@@ -11,13 +11,43 @@ $rows  = (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . cbaz_table( 'sessions' 
 $views = (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . cbaz_table( 'views' ) );
 $saved = get_option( 'cbaz_saved_at' );
 
-$volet = cbaz_subtabs( 'volet', [
+$volets_coeur = [
 	'general' => 'Général',
 	'rgpd'    => 'RGPD & confidentialité',
 	'exclus'  => 'Exclusions',
 	'donnees' => 'Données',
-], 'general' );
+];
+
+/**
+ * Volets de la page Paramètres.
+ *
+ * Permet à une extension d'ajouter son propre panneau — la licence du
+ * module Pro, par exemple — sans créer un onglet de premier niveau pour
+ * un réglage qui n'en est pas un.
+ *
+ * @param array $volets clé => intitulé.
+ */
+$volets = apply_filters( 'cbaz_settings_panels', $volets_coeur );
+
+$volet = cbaz_subtabs( 'volet', $volets, 'general' );
+
+// Un volet venu d'ailleurs a son propre formulaire : celui du cœur ne
+// doit pas l'englober, sous peine d'imbriquer deux <form>.
+$volet_externe = ! isset( $volets_coeur[ $volet ] );
 ?>
+
+<?php if ( $volet_externe ) : ?>
+
+	<?php
+	/**
+	 * Contenu d'un volet ajouté par une extension.
+	 *
+	 * @param string $volet Volet demandé.
+	 */
+	do_action( 'cbaz_settings_panel', $volet );
+	?>
+
+<?php else : ?>
 
 <?php if ( ! empty( $_GET['ok'] ) ) : ?>
 	<div class="cbaz-notice cbaz-notice--ok">Réglages enregistrés.</div>
@@ -330,3 +360,5 @@ $volet = cbaz_subtabs( 'volet', [
 		</p>
 	</form>
 </section>
+
+<?php endif; ?>
