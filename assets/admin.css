@@ -2231,19 +2231,95 @@ a.cbaz-flow__page:hover { border-color: var(--ink); }
 }
 
 /* ── Découverte du module Pro ─────────────────────────────── */
+/* Une bande, pas une carte : l'encart accompagne le contenu au lieu
+   de rivaliser avec lui. Le liseré à gauche suffit à le distinguer. */
 
-.cbaz-badge-pro {
-	background: #1d2327;
-	border-radius: 3px;
-	color: #fff;
-	font-size: 10px;
-	font-weight: 700;
-	letter-spacing: .04em;
-	padding: 2px 6px;
-	text-transform: uppercase;
-	vertical-align: middle;
+.cbaz-pro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin: 14px 0 18px;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--ink);
+    border-radius: var(--radius);
+    background: #fafafa;
 }
 
-.cbaz-card--pro {
-	border-style: dashed;
+.cbaz-pro__body { min-width: 0; }
+
+.cbaz-pro__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.cbaz-pro__text {
+    margin: 4px 0 0;
+    max-width: 62ch;
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--muted);
+}
+
+/* Le lien reprend la hauteur et le rythme des autres commandes, sans en
+   emprunter la classe : un bouton plein appellerait trop l'attention. */
+.cbaz-pro__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    height: 32px;
+    padding: 0 13px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: border-color .16s ease, color .16s ease;
+}
+
+.cbaz-pro__cta:hover,
+.cbaz-pro__cta:focus-visible {
+    border-color: var(--ink);
+    color: var(--ink);
+}
+
+.cbaz-pro__cta svg {
+    width: 13px;
+    height: 13px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.cbaz-badge-pro {
+    flex-shrink: 0;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: var(--ink);
+    color: #fff;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    line-height: 1.5;
+    text-transform: uppercase;
+}
+
+/* Sur petit écran la bande s'empile, et le lien s'étire pour rester
+   confortable au pouce. */
+@media (max-width: 600px) {
+    .cbaz-pro { align-items: stretch; }
+    .cbaz-pro__cta { justify-content: center; width: 100%; }
 }

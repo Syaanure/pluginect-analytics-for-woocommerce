@@ -83,29 +83,38 @@ function cbaz_pro_url() {
 }
 
 /**
- * Encart de découverte, discret et sans fioriture.
+ * Encart de découverte du module Pro.
  *
- * Volontairement sobre : pas de fenêtre surgissante, pas de contenu
- * flouté, pas de fausse alerte. Une phrase, une explication, un lien.
+ * Volontairement sobre : ni fenêtre surgissante, ni contenu flouté, ni
+ * fausse alerte. Une bande discrète, alignée sur le reste de l'interface,
+ * qui dit ce que fait la version payante et laisse un lien.
+ *
+ * Le libellé de l'action est explicite plutôt qu'impératif : « Voir ce
+ * que fait Pro » informe, là où « Acheter » presse.
+ *
+ * @param string $title Ce dont il s'agit.
+ * @param string $text  Ce que Pro apporte, en une phrase.
  */
 function cbaz_pro_notice( $title, $text ) {
 	if ( cbaz_pro() ) {
 		return;
 	}
 	?>
-	<section class="cbaz-card cbaz-card--pro">
-		<header class="cbaz-card__head">
-			<div>
-				<h2><?php echo esc_html( $title ); ?> <span class="cbaz-badge-pro">Pro</span></h2>
-				<p><?php echo esc_html( $text ); ?></p>
-			</div>
-		</header>
-		<p>
-			<a class="cbaz-ctrl" href="<?php echo esc_url( cbaz_pro_url() ); ?>" target="_blank" rel="noopener">
-				Découvrir Pro
-			</a>
-		</p>
-	</section>
+	<aside class="cbaz-pro">
+		<div class="cbaz-pro__body">
+			<p class="cbaz-pro__title">
+				<span class="cbaz-badge-pro">Pro</span>
+				<?php echo esc_html( $title ); ?>
+			</p>
+			<p class="cbaz-pro__text"><?php echo esc_html( $text ); ?></p>
+		</div>
+
+		<a class="cbaz-pro__cta" href="<?php echo esc_url( cbaz_pro_url() ); ?>" target="_blank" rel="noopener">
+			Voir ce que fait Pro
+			<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17L17 7M9 7h8v8"/></svg>
+			<span class="screen-reader-text">(ouvre un nouvel onglet)</span>
+		</a>
+	</aside>
 	<?php
 }
 
