@@ -1054,7 +1054,7 @@ function cbaz_render_page() {
 		?>
 
 		<footer class="cbaz-footer">
-			CamiBijoux Analytics <?php echo esc_html( CBAZ_VERSION ); ?> · données hébergées sur ton serveur
+			Shop Analytics for WooCommerce <?php echo esc_html( CBAZ_VERSION ); ?> · données hébergées sur ton serveur
 			<?php if ( cbaz_hpos() ) : ?> · stockage WooCommerce moderne<?php endif; ?>
 		</footer>
 	</div>
