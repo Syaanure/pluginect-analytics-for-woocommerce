@@ -1,0 +1,14 @@
+# Paquets construits
+/dist/
+
+# Systeme
+.DS_Store
+Thumbs.db
+
+# Dependances (aucune pour l'instant, mais on prend les devants)
+/vendor/
+/node_modules/
+
+# Sauvegardes locales
+*.bak
+*.orig

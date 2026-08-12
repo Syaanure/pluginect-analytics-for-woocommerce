@@ -1,0 +1,2249 @@
+/* ═══════════════════════════════════════════════════════
+   CamiBijoux – Analytics
+
+   Blanc, gris, anthracite. Aucun bleu : les accents sont portés
+   par le contraste et non par la couleur, ce qui laisse le vert
+   et le rouge au seul usage qui compte — les variations.
+   ═══════════════════════════════════════════════════════ */
+
+.cbaz {
+    --ink:        #16181d;
+    --ink-soft:   #3d434e;
+    --muted:      #6b7280;
+    --faint:      #9aa1ac;
+    --line:       #e5e7eb;
+    --line-soft:  #f0f1f3;
+    --surface:    #ffffff;
+    --canvas:     #f6f7f8;
+    --up:         #17794a;
+    --up-bg:      #e7f4ed;
+    --down:       #b4342a;
+    --down-bg:    #fbeceb;
+    --warn:       #a86a1f;
+    --warn-bg:    #fdf3e3;
+    --radius:     12px;
+
+    /* Un seul pas d'espacement pour toute l'interface. Les blocs se
+       succédaient jusqu'ici à 12, 14, 16 ou 18 pixels selon l'endroit
+       où la règle avait été écrite — d'où des cartes tantôt collées,
+       tantôt éloignées. */
+    --gap:        16px;
+
+    /* ── Palette de DONNÉES ────────────────────────────────
+       L'interface reste anthracite ; les données, elles, sont
+       colorées. C'est ce qui distingue cinq séries d'un coup d'œil
+       sans avoir à lire la légende — un camaïeu de gris oblige à
+       revenir sans cesse à celle-ci, et c'est ce qui rendait les
+       écrans plats et difficiles à lire. */
+    --d1: #1f6feb;
+    --d2: #12866b;
+    --d3: #d1731a;
+    --d4: #7b4bd8;
+    --d5: #c2365f;
+    --d6: #0f7c92;
+    --d1-soft: rgba(31, 111, 235, .12);
+    --d2-soft: rgba(18, 134, 107, .12);
+    --d3-soft: rgba(209, 115, 26, .12);
+
+    max-width: 1600px;
+    margin-right: 20px;
+    color: var(--ink);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.cbaz *, .cbaz *::before, .cbaz *::after { box-sizing: border-box; }
+.cbaz .num, .cbaz-num { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+
+/* ── En-tête ─────────────────────────────────────────── */
+.cbaz-top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin: 16px 0 14px;
+}
+.cbaz-title {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 22px !important;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    color: var(--ink);
+}
+.cbaz-sub { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+
+.cbaz-period select {
+    min-width: 190px;
+    height: 34px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: none;
+    color: var(--ink);
+}
+
+/* ── Bandeau d'état ──────────────────────────────────── */
+.cbaz-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 14px;
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--surface);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+}
+.cbaz-status a { margin-left: auto; color: var(--ink); }
+.cbaz-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--faint);
+    flex: 0 0 auto;
+}
+.cbaz-dot.is-on { background: var(--up); }
+
+/* ── Indicateurs ─────────────────────────────────────── */
+.cbaz-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px;
+    margin: 0 0 16px;
+}
+.cbaz-kpis--4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+.cbaz-kpi {
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 1px 3px rgba(16, 24, 40, .06);
+    transition: box-shadow .16s ease, transform .16s ease;
+}
+/* Pas d'effet au survol : un indicateur ne se clique pas. Voir la
+   note « SURVOL » plus bas. */
+.cbaz-kpi__label { margin: 0 0 6px; font-size: 12px; color: var(--muted); }
+.cbaz-kpi__value {
+    margin: 0 0 6px;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    font-variant-numeric: tabular-nums;
+}
+.cbaz-kpi__note { margin: 4px 0 0; font-size: 11.5px; color: var(--faint); }
+
+.cbaz-delta {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 1px 8px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+.cbaz-delta--up   { background: var(--up-bg); color: var(--up); }
+.cbaz-delta--down { background: var(--down-bg); color: var(--down); }
+.cbaz-delta--flat { background: var(--line-soft); color: var(--muted); }
+.cbaz-delta--none { background: var(--line-soft); color: var(--faint); font-weight: 500; }
+.cbaz-delta__arrow { font-size: 12px; line-height: 1; }
+
+/* ── Cartes et grilles ───────────────────────────────── */
+/* Une ombre très douce, et un survol qui la creuse à peine : c'est
+   ce relief minimal qui sépare les cartes du fond sans les faire
+   flotter. Sans lui, tout se confond en un seul aplat. */
+.cbaz-card {
+    padding: 18px 20px 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    margin-bottom: 18px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 1px 3px rgba(16, 24, 40, .06);
+    transition: box-shadow .16s ease;
+}
+/* Idem pour les blocs. Voir la note « SURVOL » plus bas. */
+.cbaz-card__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 14px;
+}
+.cbaz-card__head h2 { margin: 0; font-size: 14px; font-weight: 600; color: var(--ink); }
+.cbaz-card__head p { margin: 3px 0 0; font-size: 12px; color: var(--muted); }
+/* Ne vise que les liens NUS de l'en-tête : un bouton posé là gardait
+   sinon la couleur du texte, donc du noir sur fond noir. */
+.cbaz-card__head a:not([class]) { font-size: 12px; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line); }
+
+.cbaz-grid { display: grid; gap: 16px; align-items: start; }
+.cbaz-grid--3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.cbaz-stack > .cbaz-card:last-child { margin-bottom: 0; }
+
+@media (min-width: 1100px) {
+    .cbaz-grid--2 { grid-template-columns: 1fr 1fr; }
+    .cbaz-grid--2-1 { grid-template-columns: 2fr 1fr; }
+    .cbaz-grid--globe { grid-template-columns: 1.75fr 1fr; }
+}
+
+/* ── Listes ──────────────────────────────────────────── */
+.cbaz-list { margin: 0; padding: 0; list-style: none; }
+.cbaz-list > li { margin: 0 0 13px; }
+.cbaz-list > li:last-child { margin-bottom: 0; }
+.cbaz-list--plain > li { margin-bottom: 9px; }
+.cbaz-list--tight { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line-soft); }
+
+.cbaz-list__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 12.5px;
+}
+.cbaz-list__row em { color: var(--muted); font-style: normal; }
+.cbaz-list__note { margin: 3px 0 0; font-size: 11.5px; color: var(--faint); font-variant-numeric: tabular-nums; }
+
+.cbaz-bar {
+    display: block;
+    height: 5px;
+    margin-top: 5px;
+    border-radius: 3px;
+    background: var(--line-soft);
+    overflow: hidden;
+}
+.cbaz-bar > span { display: block; height: 100%; border-radius: 3px; background: var(--ink); }
+
+.cbaz-path {
+    display: block;
+    font-size: 11.5px;
+    color: var(--faint);
+    word-break: break-all;
+}
+.cbaz-pill {
+    display: inline-block;
+    padding: 1px 7px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--muted);
+}
+.cbaz-empty { padding: 14px 0; color: var(--faint); font-size: 12.5px; text-align: center; }
+.cbaz-note { margin: 12px 0 0; font-size: 11.5px; line-height: 1.55; color: var(--faint); }
+
+/* ── Tableaux ────────────────────────────────────────── */
+/* separate plutôt que collapse : sans cela, un coin arrondi sur une
+   cellule est ignoré, et le survol repasserait bord à bord. */
+.cbaz-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.cbaz-table th {
+    padding: 0 10px 8px;
+    border-bottom: 1px solid var(--line);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+}
+.cbaz-table th.num, .cbaz-table td.num { text-align: right; }
+.cbaz-table td {
+    padding: 11px 10px;
+    border-bottom: 1px solid var(--line-soft);
+    font-size: 12.5px;
+    vertical-align: top;
+}
+.cbaz-table tbody tr:last-child td { border-bottom: 0; }
+.cbaz-table tbody tr:hover { background: var(--canvas); }
+
+/* Les cellules de bord gardent leur retrait : sans lui, le fond du
+   survol venait mourir contre le bord de la carte, ce qui donnait
+   l'impression que la ligne débordait du bloc. */
+.cbaz-table td:first-child, .cbaz-table th:first-child { padding-left: 10px; }
+.cbaz-table td:last-child, .cbaz-table th:last-child { padding-right: 10px; }
+
+.cbaz-table tbody tr:hover td:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+.cbaz-table tbody tr:hover td:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+
+/* Le filet du bas disparaît sous la ligne survolée : il coupait
+   l'arrondi net dans les deux angles bas. */
+.cbaz-table tbody tr:hover td { border-bottom-color: transparent; }
+
+/* Volontairement pas de rappel en marge négative : il ramènerait le
+   fond du survol vers le bord de la carte, c'est-à-dire exactement ce
+   qu'on cherche à éviter. Le texte se décale de dix pixels, le fond
+   reste où il est, et la ligne respire. */
+
+/* Les tableaux larges défilent seuls plutôt que d'étirer la page. */
+.cbaz-card { overflow-x: auto; }
+
+/* ── Graphique ───────────────────────────────────────── */
+.cbaz-chart { position: relative; }
+.cbaz-chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+/* Pointillés : la grille situe sans jamais concurrencer les courbes. */
+.cbaz-chart__grid { stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 4; }
+.cbaz-chart__tick { font-size: 11px; fill: var(--faint); font-variant-numeric: tabular-nums; }
+.cbaz-chart__bar { fill: var(--line); }
+.cbaz-chart__dot { fill: transparent; cursor: crosshair; }
+.cbaz-chart__dot:hover { fill: rgba(22, 24, 29, .035); }
+
+.cbaz-chart__axis {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--faint);
+}
+.cbaz-chart__legend { display: flex; gap: 16px; margin-top: 8px; font-size: 11.5px; color: var(--muted); }
+.cbaz-key::before {
+    content: "";
+    display: inline-block;
+    width: 10px; height: 10px;
+    margin-right: 6px;
+    border-radius: 2px;
+    vertical-align: -1px;
+}
+.cbaz-key--line::before { background: var(--ink); }
+.cbaz-key--bar::before { background: var(--line); }
+
+.cbaz-tip {
+    position: absolute;
+    z-index: 5;
+    min-width: 130px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: var(--ink);
+    color: #fff;
+    font-size: 11.5px;
+    line-height: 1.5;
+    pointer-events: none;
+    transform: translate(-50%, -115%);
+    white-space: nowrap;
+}
+.cbaz-tip strong { display: block; margin-bottom: 5px; font-size: 12px; }
+.cbaz-tip__row { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+.cbaz-tip__row b { margin-left: auto; padding-left: 12px; font-variant-numeric: tabular-nums; }
+.cbaz-tip__row i { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
+.cbaz-tip__row i[data-serie="sessions"]  { background: #6ea8ff; }
+.cbaz-tip__row i[data-serie="pageviews"] { background: #4fc3a1; }
+.cbaz-tip__row i[data-serie="revenue"]   { background: #f0a45c; }
+.cbaz-tip__row i[data-serie="orders"]    { background: #b18cf0; }
+.cbaz-tip[hidden] { display: none; }
+
+/* ── Entonnoir ───────────────────────────────────────── */
+.cbaz-funnel__row { margin-bottom: 16px; }
+.cbaz-funnel__row:last-child { margin-bottom: 0; }
+.cbaz-funnel__meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
+.cbaz-funnel__label { font-size: 12.5px; font-weight: 500; }
+.cbaz-funnel__value { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.cbaz-funnel__track {
+    position: relative;
+    height: 26px;
+    border-radius: 6px;
+    background: var(--line-soft);
+    overflow: hidden;
+}
+.cbaz-funnel__fill { height: 100%; border-radius: 6px; background: var(--ink); }
+.cbaz-funnel__pct {
+    position: absolute;
+    top: 50%;
+    right: 9px;
+    transform: translateY(-50%);
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--muted);
+}
+.cbaz-funnel__drop { margin: 4px 0 0; font-size: 11.5px; color: var(--down); }
+
+/* ── Listes de statistiques ──────────────────────────── */
+.cbaz-stats { margin: 0; }
+.cbaz-stats > div { padding: 0 0 11px; margin-bottom: 11px; border-bottom: 1px solid var(--line-soft); }
+.cbaz-stats > div:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
+.cbaz-stats dt { margin: 0 0 3px; font-size: 12px; color: var(--muted); }
+.cbaz-stats dd { margin: 0; font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.cbaz-facts { margin: 0; padding: 0; list-style: none; }
+.cbaz-facts li {
+    position: relative;
+    margin: 0 0 9px;
+    padding-left: 18px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+}
+.cbaz-facts li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 7px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--ink);
+}
+
+/* ── Globe ───────────────────────────────────────────── */
+.cbaz-globe {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    margin: 0 auto;
+    cursor: grab;
+    touch-action: none;
+}
+.cbaz-globe:active { cursor: grabbing; }
+.cbaz-globe > svg { width: 100%; height: auto; display: block; }
+
+.cbaz-globe .sphere { fill: var(--canvas); stroke: var(--line); stroke-width: .6; }
+.cbaz-globe .grat { fill: none; stroke: var(--line); stroke-width: .35; }
+.cbaz-globe .pt { fill: var(--ink); fill-opacity: .82; cursor: pointer; transition: fill-opacity .12s; }
+.cbaz-globe .pt:hover, .cbaz-globe .pt.is-active { fill-opacity: 1; }
+.cbaz-globe .halo { fill: none; stroke: var(--ink); stroke-width: 1.2; opacity: 0; }
+.cbaz-globe .pt.is-active + .halo, .cbaz-globe .halo.is-active { opacity: .35; }
+
+.cbaz-readout { min-height: 150px; }
+.cbaz-readout__hint { margin: 0; color: var(--faint); font-size: 12.5px; }
+.cbaz-readout__flag { font-size: 30px; line-height: 1; }
+.cbaz-readout__name { margin: 8px 0 12px; font-size: 16px; font-weight: 700; }
+.cbaz-readout dl { margin: 0; }
+
+/* ── Temps réel ──────────────────────────────────────── */
+.cbaz-live { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.cbaz-live__pulse {
+    position: relative;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--up);
+    flex: 0 0 auto;
+}
+.cbaz-live__pulse::after {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 2px solid var(--up);
+    animation: cbaz-pulse 2s ease-out infinite;
+}
+@keyframes cbaz-pulse {
+    0%   { transform: scale(.5); opacity: .8; }
+    100% { transform: scale(1.3); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .cbaz-live__pulse::after { animation: none; opacity: .3; }
+}
+.cbaz-live__value { margin: 0; font-size: 34px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.cbaz-live__label { margin: 3px 0 0; font-size: 12.5px; color: var(--muted); }
+.cbaz-live__note { margin: 0 0 0 auto; font-size: 11.5px; color: var(--faint); }
+
+.cbaz-feed { margin: 0; padding: 0; list-style: none; }
+.cbaz-feed li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line-soft);
+    font-size: 12.5px;
+}
+.cbaz-feed li:last-child { border-bottom: 0; }
+.cbaz-feed__flag { font-size: 17px; flex: 0 0 auto; }
+.cbaz-feed__page { flex: 1 1 auto; min-width: 0; }
+.cbaz-feed__page strong { display: block; font-weight: 500; }
+.cbaz-feed__meta, .cbaz-feed__ago { flex: 0 0 auto; font-size: 11.5px; color: var(--faint); }
+
+/* ── Formulaires ─────────────────────────────────────── */
+.cbaz-form label { display: block; margin-bottom: 12px; font-size: 12.5px; font-weight: 500; }
+.cbaz-form input[type="text"],
+.cbaz-form input[type="url"],
+.cbaz-form select,
+.cbaz-form textarea {
+    width: 100%;
+    margin-top: 5px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    box-shadow: none;
+    font-size: 13px;
+    color: var(--ink);
+}
+.cbaz-form input:focus, .cbaz-form textarea:focus, .cbaz-form select:focus {
+    border-color: var(--ink);
+    outline: none;
+    box-shadow: none;
+}
+.cbaz-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cbaz-form__actions { display: flex; gap: 10px; align-items: center; margin: 16px 0 0; }
+
+.cbaz-check {
+    display: flex !important;
+    align-items: flex-start;
+    gap: 8px;
+    font-weight: 400 !important;
+}
+.cbaz-check input { margin: 2px 0 0; }
+.cbaz-fieldset { margin: 0 0 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; }
+.cbaz-fieldset legend { padding: 0 6px; font-size: 12px; font-weight: 600; color: var(--muted); }
+
+.cbaz-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    border: 1px solid var(--ink);
+    border-radius: 8px;
+    background: var(--ink);
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+.cbaz-btn:hover { background: #000; color: #fff; }
+.cbaz-btn--ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.cbaz-btn--ghost:hover { background: var(--canvas); color: var(--ink); }
+.cbaz-btn--mini { padding: 5px 11px; font-size: 11.5px; }
+
+.cbaz-linkish {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--down);
+    font-size: 11.5px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.cbaz-notice {
+    margin: 0 0 14px;
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--surface);
+    font-size: 12.5px;
+}
+.cbaz-notice--ok { border-left-color: var(--up); }
+.cbaz-notice--ko { border-left-color: var(--down); }
+.cbaz-notice--info { border-left-color: var(--muted); line-height: 1.6; }
+
+/* ── Liens de campagne ───────────────────────────────── */
+.cbaz-links { margin: 0; padding: 0; list-style: none; }
+.cbaz-links > li { padding: 0 0 14px; margin-bottom: 14px; border-bottom: 1px solid var(--line-soft); }
+.cbaz-links > li:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
+.cbaz-links__head { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; margin-bottom: 7px; font-size: 12.5px; }
+.cbaz-links__head .cbaz-num { font-size: 11.5px; color: var(--faint); }
+.cbaz-links__actions { display: flex; gap: 12px; align-items: center; margin-top: 7px; font-size: 11.5px; }
+.cbaz-links__actions form { display: inline; }
+
+.cbaz-copy { display: flex; gap: 6px; }
+.cbaz-copy input {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 6px 9px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--canvas);
+    font-size: 11.5px;
+    color: var(--ink-soft);
+}
+
+/* ── Petits écrans ───────────────────────────────────── */
+@media (max-width: 782px) {
+    .cbaz { margin-right: 10px; }
+    .cbaz-form__row { grid-template-columns: 1fr; }
+    .cbaz-feed li { flex-wrap: wrap; }
+    .cbaz-feed__meta, .cbaz-feed__ago { font-size: 11px; }
+    .cbaz-live__note { margin-left: 0; width: 100%; }
+    .cbaz-kpi__value { font-size: 21px; }
+}
+
+/* ── Campagnes ───────────────────────────────────────── */
+.cbaz-strong { color: var(--ink); font-weight: 600; text-decoration: none; }
+.cbaz-strong:hover { text-decoration: underline; }
+.cbaz-faint { color: var(--faint); }
+.cbaz-back { margin: 0 0 12px; font-size: 12.5px; }
+.cbaz-back a { color: var(--muted); text-decoration: none; }
+
+.cbaz-hero { display: flex; gap: 20px; justify-content: space-between; flex-wrap: wrap; }
+.cbaz-hero__main { flex: 1 1 300px; min-width: 0; }
+.cbaz-hero__main h2 { margin: 8px 0 4px; font-size: 20px; font-weight: 700; }
+.cbaz-hero__links { flex: 0 1 340px; display: flex; flex-direction: column; gap: 8px; }
+
+.cbaz-presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 16px; }
+.cbaz-preset {
+    padding: 5px 11px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: var(--surface);
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    cursor: pointer;
+}
+.cbaz-preset:hover { border-color: var(--ink); }
+.cbaz-preset.is-active { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+.cbaz-preview {
+    margin: 4px 0 0;
+    padding: 10px 12px;
+    border: 1px dashed var(--line);
+    border-radius: 8px;
+    background: var(--canvas);
+}
+.cbaz-preview > span { display: block; margin-bottom: 5px; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.cbaz-preview code { font-size: 11.5px; color: var(--ink-soft); word-break: break-all; background: none; padding: 0; }
+
+.cbaz-note--tight { margin-top: 4px; margin-bottom: 10px; }
+
+.cbaz-linklabel {
+    margin: 6px 0 -2px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--muted);
+}
+.cbaz-linklabel:first-child { margin-top: 0; }
+
+/* ═══════════════════════════════════════════════════════
+   COMMANDES D'EN-TÊTE
+   ═══════════════════════════════════════════════════════ */
+/* margin-left auto plutôt que justify-content sur le parent : quand
+   l'en-tête passe à la ligne — écran étroit, titre long — un
+   space-between recale le second rang à gauche, alors qu'une marge
+   automatique le maintient à droite dans les deux cas. */
+.cbaz-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-left: auto;
+}
+.cbaz-top > div:first-child { flex: 1 1 320px; min-width: 0; }
+.cbaz-livepill { margin-left: auto; }
+
+.cbaz-ctrl {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 34px;
+    padding: 0 13px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.cbaz-ctrl:hover { border-color: var(--ink); color: var(--ink); }
+.cbaz-ctrl svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.cbaz-ctrl.is-on { background: var(--canvas); border-color: var(--ink); color: var(--ink); }
+.cbaz-ctrl--primary { background: var(--ink); border-color: var(--ink); color: #fff; }
+.cbaz-ctrl--primary:hover { background: #000; color: #fff; }
+.cbaz-ctrl--mini { height: 28px; padding: 0 10px; font-size: 11.5px; }
+
+.cbaz-livepill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    font-size: 12.5px;
+    color: var(--muted);
+}
+.cbaz-livepill strong { font-size: 20px; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* ── Menus déroulants ────────────────────────────────── */
+.cbaz-drop { position: relative; }
+.cbaz-drop__btn {
+    height: 28px;
+    padding: 0 10px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: var(--surface);
+    font-size: 12px;
+    color: var(--ink-soft);
+    cursor: pointer;
+}
+.cbaz-drop__btn:hover { border-color: var(--ink); }
+.cbaz-drop.is-set .cbaz-drop__btn { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+.cbaz-drop__menu {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 6px);
+    left: 0;
+    min-width: 210px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 5px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    box-shadow: 0 12px 30px -12px rgba(16, 24, 32, .28);
+}
+.cbaz-drop__menu[hidden] { display: none; }
+.cbaz-drop__menu a {
+    display: block;
+    padding: 7px 10px;
+    border-radius: 6px;
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    text-decoration: none;
+}
+.cbaz-drop__menu a:hover { background: var(--canvas); color: var(--ink); }
+.cbaz-drop__menu a.is-active { background: var(--ink); color: #fff; }
+.cbaz-drop__empty { margin: 0; padding: 8px 10px; font-size: 12px; color: var(--faint); }
+.cbaz-drop--range .cbaz-drop__menu { left: auto; right: 0; }
+
+/* ── Barre de filtres ────────────────────────────────── */
+.cbaz-filters {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 0 0 16px;
+}
+/* Aucune marge propre sur les enfants : l'espacement vient du gap et
+   de lui seul, sinon il se cumule et devient impossible à régler. */
+.cbaz-filters > * { margin: 0; }
+.cbaz-filters__label { margin-right: 4px; }
+.cbaz-filters .cbaz-chip { margin-left: 4px; }
+.cbaz-filters .cbaz-clear { margin-left: 4px; }
+.cbaz-filters__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted);
+}
+.cbaz-filters__label svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+
+.cbaz-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 30px;
+    padding: 0 11px;
+    border-radius: 20px;
+    background: var(--canvas);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    font-size: 12px;
+    text-decoration: none;
+}
+.cbaz-chip:hover { border-color: var(--ink); color: var(--ink); }
+.cbaz-chip span { color: var(--faint); }
+.cbaz-clear { font-size: 12px; color: var(--muted); text-decoration: none; }
+.cbaz-clear:hover { color: var(--ink); text-decoration: underline; }
+
+/* ── Sparklines ──────────────────────────────────────── */
+.cbaz-spark { display: block; width: 100%; height: 36px; margin-top: 10px; }
+.cbaz-spark__line { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.cbaz-spark__area { fill: rgba(22, 24, 29, .07); }
+.cbaz-kpi__delta { display: flex; align-items: center; gap: 7px; margin: 0; }
+.cbaz-kpi__vs { font-size: 11px; color: var(--faint); }
+
+/* ── Anneau ──────────────────────────────────────────── */
+.cbaz-donut { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.cbaz-donut svg { width: 140px; height: 140px; flex: 0 0 auto; transform: rotate(-90deg); }
+.cbaz-donut__arc { fill: none; stroke-width: 18; }
+.cbaz-donut__legend { flex: 1 1 140px; margin: 0; padding: 0; list-style: none; }
+.cbaz-donut__legend li { display: flex; align-items: center; gap: 9px; padding: 5px 0; font-size: 12.5px; }
+.cbaz-donut__legend li .cbaz-num { margin-left: auto; }
+.cbaz-dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+
+.cbaz-donut__arc--0, .cbaz-dot--0 { stroke: #16181d; background: #16181d; }
+.cbaz-donut__arc--1, .cbaz-dot--1 { stroke: #4b5563; background: #4b5563; }
+.cbaz-donut__arc--2, .cbaz-dot--2 { stroke: #9aa1ac; background: #9aa1ac; }
+.cbaz-donut__arc--3, .cbaz-dot--3 { stroke: #c6cbd2; background: #c6cbd2; }
+.cbaz-donut__arc--4, .cbaz-dot--4 { stroke: #e2e5e9; background: #e2e5e9; }
+
+.cbaz-bar--0 > span { background: #16181d; }
+.cbaz-bar--1 > span { background: #4b5563; }
+.cbaz-bar--2 > span { background: #6b7280; }
+.cbaz-bar--3 > span { background: #9aa1ac; }
+.cbaz-bar--4 > span { background: #c6cbd2; }
+
+/* ── Attribution ─────────────────────────────────────── */
+.cbaz-compare__row { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.cbaz-compare__label { flex: 0 0 150px; font-size: 12.5px; font-weight: 500; }
+.cbaz-compare__bars { flex: 1 1 auto; display: flex; flex-direction: column; gap: 4px; }
+.cbaz-compare__bar { position: relative; height: 18px; border-radius: 4px; background: var(--line-soft); }
+.cbaz-compare__fill { display: block; height: 100%; border-radius: 4px; }
+.cbaz-compare__fill--first { background: #6b7280; }
+.cbaz-compare__fill--last { background: var(--ink); }
+.cbaz-compare__bar em {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    font-style: normal; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums;
+}
+.cbaz-key--first::before { background: #6b7280; }
+.cbaz-key--last::before { background: var(--ink); }
+
+.cbaz-tag {
+    display: inline-block; padding: 2px 9px; border-radius: 20px;
+    font-size: 11.5px; white-space: nowrap;
+}
+.cbaz-tag--first { background: var(--line-soft); color: var(--ink-soft); }
+.cbaz-tag--last { background: var(--up-bg); color: var(--up); }
+
+/* ── Rapports ────────────────────────────────────────── */
+.cbaz-reports { margin: 0; padding: 0; list-style: none; }
+.cbaz-reports li {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 14px 0; border-bottom: 1px solid var(--line-soft);
+}
+.cbaz-reports li:last-child { border-bottom: 0; }
+.cbaz-reports strong { font-size: 13px; }
+.cbaz-reports p { margin: 3px 0 0; font-size: 12px; color: var(--muted); }
+.cbaz-reports li > div { flex: 1 1 auto; min-width: 0; }
+.cbaz-reports__cols { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px !important; }
+.cbaz-reports__cols span {
+    padding: 1px 7px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-size: 10.5px;
+    color: var(--faint);
+}
+
+/* ── Géographie ──────────────────────────────────────── */
+
+.cbaz-globe {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / .78;
+    border-radius: 12px;
+    background: radial-gradient(120% 100% at 50% 40%, #2b3038 0%, #171a1f 55%, #101216 100%);
+    overflow: hidden;
+    cursor: grab;
+    touch-action: none;
+}
+.cbaz-globe:active { cursor: grabbing; }
+/* L'enfant DIRECT, et lui seul : cette règle attrapait aussi les
+   icônes des boutons, qu'elle étirait à la taille du globe. */
+.cbaz-globe > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+.cbaz-globe .sphere { fill: rgba(255, 255, 255, .045); stroke: rgba(255, 255, 255, .10); stroke-width: .5; }
+.cbaz-globe .grat { fill: none; stroke: rgba(255, 255, 255, .07); stroke-width: .4; }
+.cbaz-globe .land { fill: rgba(150, 190, 245, .78); }
+.cbaz-globe .pt { fill: rgba(255, 255, 255, .92); pointer-events: none; }
+.cbaz-globe .pt--halo { fill: rgba(255, 255, 255, .14); }
+.cbaz-globe .pt.is-active { fill: #fff; }
+/* Le point sélectionné se signale par son halo, agrandi et net. */
+.cbaz-globe .pt.is-active + .pt--halo,
+.cbaz-globe .pt--halo.is-active { fill: rgba(255, 255, 255, .32); }
+
+/* Les cartes passent SOUS le globe.
+   Posées par-dessus, elles masquaient les points qu'elles servaient à
+   commenter — et il fallait les éviter pour survoler un pays. */
+.cbaz-floats {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+.cbaz-float {
+    flex: 1 1 150px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    font-size: 12px;
+}
+.cbaz-float--wide { flex: 2 1 260px; }
+.cbaz-float__label { margin: 0 0 4px; font-size: 11.5px; line-height: 1.35; color: var(--muted); }
+.cbaz-float__value { margin: 0; font-size: 22px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.cbaz-float__title { margin: 0 0 8px; font-size: 11.5px; font-weight: 600; color: var(--ink); }
+.cbaz-float__row { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; font-size: 11.5px; }
+.cbaz-float__row > span { flex: 0 0 40%; color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cbaz-float__row .cbaz-bar { flex: 1 1 auto; margin: 0; }
+.cbaz-float__row em { font-style: normal; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+
+
+.cbaz-footer {
+    margin: 24px 0 10px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px;
+    color: var(--faint);
+}
+
+.cbaz-list > li.is-active { background: var(--canvas); border-radius: 8px; padding: 6px 8px; margin-left: -8px; margin-right: -8px; }
+.cbaz-readout__flag { margin: 0; }
+
+/* ═══════════════════════════════════════════════════════
+   DONNÉES EN COULEUR
+   ═══════════════════════════════════════════════════════ */
+.cbaz-bar--0 > span { background: var(--d1); }
+.cbaz-bar--1 > span { background: var(--d2); }
+.cbaz-bar--2 > span { background: var(--d3); }
+.cbaz-bar--3 > span { background: var(--d4); }
+.cbaz-bar--4 > span { background: var(--d5); }
+.cbaz-bar--5 > span { background: var(--d6); }
+
+.cbaz-donut__arc--0, .cbaz-dot--0 { stroke: var(--d1); background: var(--d1); }
+.cbaz-donut__arc--1, .cbaz-dot--1 { stroke: var(--d2); background: var(--d2); }
+.cbaz-donut__arc--2, .cbaz-dot--2 { stroke: var(--d3); background: var(--d3); }
+.cbaz-donut__arc--3, .cbaz-dot--3 { stroke: var(--d4); background: var(--d4); }
+.cbaz-donut__arc--4, .cbaz-dot--4 { stroke: var(--d5); background: var(--d5); }
+.cbaz-donut__arc { transition: opacity .15s; }
+.cbaz-donut svg:hover .cbaz-donut__arc { opacity: .45; }
+.cbaz-donut svg .cbaz-donut__arc:hover { opacity: 1; }
+
+/*
+ * La couleur de la courbe se décidait par la POSITION du bloc dans la
+ * rangée — deuxième en vert, quatrième en orange — pendant que celle
+ * de l'icône se décidait par le SENS de l'indicateur. Les deux ne
+ * pouvaient donc s'accorder que par hasard : « Pages vues » avait une
+ * icône verte et une courbe bleue.
+ *
+ * L'icône marque désormais sa teinte sur son conteneur, et la courbe,
+ * qui la suit dans le bloc, s'y raccroche par le combinateur de
+ * frères. Une seule décision, prise à un seul endroit.
+ */
+.cbaz-spark__line { stroke: var(--d1); }
+.cbaz-spark__area { fill: var(--d1-soft); }
+
+.cbaz-tone-1 ~ .cbaz-spark .cbaz-spark__line { stroke: var(--d1); }
+.cbaz-tone-1 ~ .cbaz-spark .cbaz-spark__area { fill: var(--d1-soft); }
+.cbaz-tone-2 ~ .cbaz-spark .cbaz-spark__line { stroke: var(--d2); }
+.cbaz-tone-2 ~ .cbaz-spark .cbaz-spark__area { fill: var(--d2-soft); }
+.cbaz-tone-3 ~ .cbaz-spark .cbaz-spark__line { stroke: var(--d3); }
+.cbaz-tone-3 ~ .cbaz-spark .cbaz-spark__area { fill: var(--d3-soft); }
+.cbaz-tone-4 ~ .cbaz-spark .cbaz-spark__line { stroke: var(--d4); }
+.cbaz-tone-4 ~ .cbaz-spark .cbaz-spark__area { fill: rgba(123, 75, 216, .12); }
+.cbaz-tone-5 ~ .cbaz-spark .cbaz-spark__line { stroke: var(--d5); }
+.cbaz-tone-5 ~ .cbaz-spark .cbaz-spark__area { fill: rgba(194, 54, 95, .12); }
+.cbaz-tone-6 ~ .cbaz-spark .cbaz-spark__line { stroke: var(--d6); }
+.cbaz-tone-6 ~ .cbaz-spark .cbaz-spark__area { fill: rgba(15, 124, 146, .12); }
+
+.cbaz-compare__fill--first { background: var(--d4); }
+.cbaz-compare__fill--last { background: var(--d2); }
+.cbaz-key--first::before { background: var(--d4); }
+.cbaz-key--last::before { background: var(--d2); }
+.cbaz-tag--first { background: rgba(123, 75, 216, .12); color: var(--d4); }
+.cbaz-tag--last { background: var(--d2-soft); color: var(--d2); }
+
+/* ═══════════════════════════════════════════════════════
+   ENTONNOIR
+   ═══════════════════════════════════════════════════════ */
+.cbaz-steps { margin: 0; }
+
+.cbaz-step {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--d1-soft), rgba(31, 111, 235, .02));
+    overflow: hidden;
+}
+.cbaz-step::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--d1);
+}
+.cbaz-step__n {
+    flex: 0 0 auto;
+    width: 22px; height: 22px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: var(--d1);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+}
+.cbaz-step__label { flex: 1 1 auto; font-size: 13.5px; font-weight: 600; }
+.cbaz-step__share {
+    flex: 0 0 auto;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, .85);
+    font-size: 11.5px;
+    color: var(--muted);
+}
+.cbaz-step__value {
+    flex: 0 0 auto;
+    min-width: 62px;
+    text-align: right;
+    font-size: 19px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+/* La ligne d'abandon EST l'information : c'est là que l'argent se
+   perd, pas dans les étapes qui restent.
+
+   Nom de classe distinct de .cbaz-drop, le menu déroulant : les deux
+   se sont déjà télescopés une fois, et comme celle-ci était déclarée
+   plus bas, elle repoussait les filtres de 18 px et leur ajoutait un
+   trait vertical. */
+.cbaz-loss {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 18px 7px 30px;
+    font-size: 12px;
+    color: var(--down);
+}
+.cbaz-loss::before {
+    content: "";
+    display: inline-block;
+    margin-left: -18px;
+    width: 1px; height: 18px;
+    background: var(--line);
+}
+.cbaz-loss strong { font-weight: 600; }
+
+.cbaz-leaks { margin: 0; padding: 0; list-style: none; }
+.cbaz-leaks li { padding: 0 0 14px; margin-bottom: 14px; border-bottom: 1px solid var(--line-soft); }
+.cbaz-leaks li:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
+.cbaz-leaks__head { display: flex; justify-content: space-between; gap: 12px; font-size: 12.5px; margin-bottom: 6px; }
+.cbaz-leaks__pct { font-weight: 700; color: var(--down); font-variant-numeric: tabular-nums; }
+.cbaz-leaks__bar { height: 6px; border-radius: 3px; background: var(--line-soft); overflow: hidden; }
+.cbaz-leaks__bar > span { display: block; height: 100%; background: var(--down); border-radius: 3px; }
+.cbaz-leaks__note { margin: 5px 0 0; font-size: 11.5px; color: var(--faint); }
+
+/* ═══════════════════════════════════════════════════════
+   SOUS-ONGLETS DE CARTE
+   ═══════════════════════════════════════════════════════ */
+.cbaz-subtabs {
+    display: flex;
+    gap: 2px;
+    flex-wrap: wrap;
+    padding: 3px;
+    border-radius: 9px;
+    background: var(--canvas);
+}
+.cbaz-subtab {
+    padding: 6px 12px;
+    border-radius: 7px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.cbaz-subtab:hover { color: var(--ink); }
+.cbaz-subtab.is-active { background: var(--surface); color: var(--ink); font-weight: 600; box-shadow: 0 1px 2px rgba(16, 24, 40, .08); }
+
+/* Bascules de série sur le graphique principal. */
+.cbaz-series { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 14px; }
+.cbaz-serie {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 12px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: var(--surface);
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+}
+.cbaz-serie::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.cbaz-serie.is-on { color: var(--ink); border-color: currentColor; font-weight: 600; }
+.cbaz-serie[data-serie="sessions"].is-on  { color: var(--d1); }
+.cbaz-serie[data-serie="pageviews"].is-on { color: var(--d2); }
+.cbaz-serie[data-serie="revenue"].is-on   { color: var(--d3); }
+.cbaz-serie[data-serie="orders"].is-on    { color: var(--d4); }
+
+.cbaz-chart__serie { fill: none; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+.cbaz-chart__serie--sessions  { stroke: var(--d1); }
+.cbaz-chart__serie--pageviews { stroke: var(--d2); }
+.cbaz-chart__serie--orders    { stroke: var(--d4); }
+.cbaz-chart__fill--sessions { fill: var(--d1-soft); }
+.cbaz-chart__bar { fill: var(--d3); fill-opacity: .55; }
+.cbaz-chart__bar:hover { fill-opacity: .85; }
+.cbaz-chart [hidden] { display: none; }
+
+/* ── Repères de valeur ───────────────────────────────── */
+.cbaz-chart__label { font-size: 11px; fill: var(--faint); }
+.cbaz-hint {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 15px; height: 15px;
+    margin-left: 5px;
+    border-radius: 50%;
+    background: var(--line-soft);
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    cursor: help;
+    vertical-align: 1px;
+}
+
+/* ── Titres de sous-bloc ─────────────────────────────── */
+.cbaz-h3 {
+    margin: 0 0 12px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+/* ── Classement produits ─────────────────────────────── */
+.cbaz-rank { margin: 0; padding: 0; list-style: none; }
+.cbaz-rank li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line-soft);
+}
+.cbaz-rank li:last-child { border-bottom: 0; }
+.cbaz-rank__n {
+    flex: 0 0 auto;
+    width: 22px; height: 22px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 6px;
+    background: var(--canvas);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+}
+.cbaz-rank__name { flex: 0 0 30%; font-size: 13px; font-weight: 500; }
+.cbaz-rank__bar { flex: 1 1 auto; }
+.cbaz-rank__bar .cbaz-bar { margin: 0; height: 8px; }
+.cbaz-rank__value { flex: 0 0 auto; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 782px) {
+    .cbaz-rank li { flex-wrap: wrap; }
+    .cbaz-rank__name { flex: 1 1 auto; }
+    .cbaz-rank__bar { flex: 1 1 100%; order: 3; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   HISTOGRAMMES
+   ═══════════════════════════════════════════════════════ */
+.cbaz-vchart svg { width: 100%; height: 220px; display: block; }
+.cbaz-vchart__axis {
+    display: flex;
+    padding: 0 30px;
+    font-size: 11px;
+    color: var(--faint);
+    text-align: center;
+}
+.cbaz-vbar { transition: fill-opacity .15s; fill-opacity: .9; }
+.cbaz-vbar:hover { fill-opacity: 1; }
+.cbaz-vbar--0 { fill: var(--d1); }
+.cbaz-vbar--1 { fill: var(--d2); }
+.cbaz-vbar--2 { fill: var(--d3); }
+.cbaz-vbar--3 { fill: var(--d4); }
+.cbaz-vbar--4 { fill: var(--d5); }
+.cbaz-vbar--5 { fill: var(--d6); }
+
+.cbaz-hbars { margin: 0; padding: 0; list-style: none; }
+.cbaz-hbars li { display: flex; align-items: center; gap: 12px; padding: 7px 0; font-size: 12.5px; }
+.cbaz-hbars__label { flex: 0 0 32%; color: var(--ink-soft); }
+.cbaz-hbars__track { flex: 1 1 auto; height: 8px; border-radius: 4px; background: var(--line-soft); overflow: hidden; }
+.cbaz-hbars__fill { display: block; height: 100%; border-radius: 4px; }
+.cbaz-hbars__fill--0 { background: var(--d1); }
+.cbaz-hbars__fill--1 { background: var(--d2); }
+.cbaz-hbars__fill--2 { background: var(--d3); }
+.cbaz-hbars__fill--3 { background: var(--d4); }
+.cbaz-hbars__fill--4 { background: var(--d5); }
+.cbaz-hbars__fill--5 { background: var(--d6); }
+.cbaz-hbars__value { flex: 0 0 auto; font-variant-numeric: tabular-nums; font-weight: 600; }
+
+/* ── Pastilles de source ─────────────────────────────── */
+.cbaz-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    margin-right: 9px;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    vertical-align: -6px;
+}
+.cbaz-avatar--0 { background: var(--d1); }
+.cbaz-avatar--1 { background: var(--d2); }
+.cbaz-avatar--2 { background: var(--d3); }
+.cbaz-avatar--3 { background: var(--d4); }
+.cbaz-avatar--4 { background: var(--d5); }
+.cbaz-avatar--5 { background: var(--d6); }
+
+/* ── Outils de tableau ───────────────────────────────── */
+.cbaz-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 14px; }
+.cbaz-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1 1 240px;
+    max-width: 320px;
+}
+.cbaz-search svg {
+    position: absolute; left: 11px;
+    width: 14px; height: 14px;
+    fill: none; stroke: var(--faint); stroke-width: 1.8; stroke-linecap: round;
+    pointer-events: none;
+}
+.cbaz-search input {
+    width: 100%;
+    height: 34px;
+    padding: 0 12px 0 33px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    font-size: 12.5px;
+    box-shadow: none;
+}
+.cbaz-search input:focus { border-color: var(--ink); outline: none; box-shadow: none; }
+.cbaz-tools .cbaz-ctrl { margin-left: auto; }
+
+.cbaz-count { margin: 12px 0 0; font-size: 12px; color: var(--faint); }
+.cbaz-table tr[hidden] { display: none; }
+
+/* ── Interrupteur ────────────────────────────────────── */
+.cbaz-switch { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; }
+.cbaz-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+.cbaz-switch__track {
+    position: relative;
+    width: 40px; height: 22px;
+    border-radius: 20px;
+    background: #cfd4da;
+    transition: background .16s ease;
+    flex: 0 0 auto;
+}
+.cbaz-switch__knob {
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .25);
+    transition: transform .16s ease;
+}
+.cbaz-switch input:checked + .cbaz-switch__track { background: var(--d2); }
+.cbaz-switch input:checked + .cbaz-switch__track .cbaz-switch__knob { transform: translateX(18px); }
+.cbaz-switch input:focus-visible + .cbaz-switch__track { outline: 2px solid var(--ink); outline-offset: 2px; }
+.cbaz-switch__label { font-size: 12.5px; }
+
+/* ── Lignes de réglage ───────────────────────────────── */
+.cbaz-setting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line-soft);
+}
+.cbaz-setting:last-of-type { border-bottom: 0; }
+.cbaz-setting__text { flex: 1 1 auto; }
+.cbaz-setting__text strong { display: block; font-size: 13px; font-weight: 600; }
+.cbaz-setting__text p { margin: 3px 0 0; font-size: 12px; color: var(--muted); }
+.cbaz-setting__field { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; }
+.cbaz-setting__field select,
+.cbaz-setting__field input[type="number"],
+.cbaz-setting__field input[type="text"] {
+    height: 34px;
+    min-width: 120px;
+    padding: 0 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    box-shadow: none;
+    font-size: 12.5px;
+}
+.cbaz-setting__unit { font-size: 12px; color: var(--muted); }
+.cbaz-saved { margin-left: auto; font-size: 12px; color: var(--faint); }
+
+/* ── Temps réel ──────────────────────────────────────── */
+.cbaz-badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+.cbaz-badge--view     { background: var(--d1-soft); color: var(--d1); }
+.cbaz-badge--cart     { background: var(--d3-soft); color: var(--d3); }
+.cbaz-badge--checkout { background: rgba(123, 75, 216, .12); color: var(--d4); }
+.cbaz-badge--order    { background: var(--d2-soft); color: var(--d2); }
+
+.cbaz-timeline { margin: 0; padding: 0; list-style: none; }
+.cbaz-timeline li {
+    position: relative;
+    padding: 0 0 16px 20px;
+    font-size: 12.5px;
+}
+.cbaz-timeline li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 5px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--d1);
+}
+.cbaz-timeline li::after {
+    content: "";
+    position: absolute;
+    left: 3.5px; top: 17px; bottom: 0;
+    width: 1px;
+    background: var(--line);
+}
+.cbaz-timeline li:last-child { padding-bottom: 0; }
+.cbaz-timeline li:last-child::after { display: none; }
+.cbaz-timeline__top { display: flex; align-items: center; gap: 9px; margin-bottom: 3px; }
+.cbaz-timeline__time { font-size: 11.5px; color: var(--faint); font-variant-numeric: tabular-nums; }
+.cbaz-timeline__what { font-weight: 500; }
+
+/* Le nom d'un produit mène à sa fiche : discret tant qu'on lit la
+   frise, souligné au survol quand on veut y aller. */
+.cbaz-timeline__what a { color: inherit; text-decoration: none; }
+.cbaz-timeline__what a:hover,
+.cbaz-timeline__what a:focus-visible { text-decoration: underline; }
+.cbaz-timeline__who { font-size: 11.5px; color: var(--faint); }
+
+.cbaz-pill--live {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border-color: transparent;
+    background: var(--d2-soft);
+    color: var(--d2);
+    font-weight: 600;
+}
+.cbaz-pill--live::before {
+    content: "";
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--d2);
+}
+@media (min-width: 1100px) { .cbaz-grid--3 { grid-template-columns: repeat(3, 1fr); } }
+
+.cbaz-label { display: block; margin: 16px 0 6px; font-size: 12.5px; font-weight: 600; }
+.cbaz-textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    font-family: Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    box-shadow: none;
+}
+.cbaz-fieldset { display: flex; flex-wrap: wrap; gap: 10px 24px; }
+.cbaz-setting__field input[disabled] { background: var(--canvas); color: var(--muted); }
+
+.cbaz-status-pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+.cbaz-status-pill--active  { background: var(--d2-soft); color: var(--d2); }
+.cbaz-status-pill--planned { background: var(--d1-soft); color: var(--d1); }
+.cbaz-status-pill--ended   { background: var(--line-soft); color: var(--muted); }
+
+/* ── Histogramme groupé ──────────────────────────────── */
+.cbaz-gbar { fill-opacity: .92; transition: fill-opacity .15s; }
+.cbaz-gbar:hover { fill-opacity: 1; }
+.cbaz-gbar--a { fill: var(--d4); }
+.cbaz-gbar--b { fill: var(--d2); }
+.cbaz-chart { position: relative; margin-top: 4px; }
+
+.cbaz-arrow { margin: 0 4px; color: var(--faint); font-size: 11px; }
+
+/* ── Fiches de campagne ──────────────────────────────── */
+.cbaz-campaigns { margin: 0; padding: 0; list-style: none; display: grid; gap: 14px; }
+@media (min-width: 1100px) { .cbaz-campaigns { grid-template-columns: 1fr 1fr; } }
+
+.cbaz-campaigns > li {
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    transition: border-color .16s ease;
+}
+.cbaz-campaigns > li:hover { border-color: var(--ink-soft); }
+
+.cbaz-campaign__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.cbaz-campaign__name { font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; }
+.cbaz-campaign__name:hover { text-decoration: underline; }
+
+.cbaz-campaign__stats { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 12px; }
+.cbaz-campaign__stats span { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.cbaz-campaign__stats em { display: block; font-style: normal; font-size: 11px; font-weight: 400; color: var(--muted); margin-bottom: 2px; }
+
+.cbaz-campaign__actions { display: flex; align-items: center; gap: 14px; margin-top: 10px; font-size: 12px; }
+.cbaz-campaign__actions a { color: var(--ink-soft); text-decoration: none; }
+.cbaz-campaign__actions a:hover { color: var(--ink); text-decoration: underline; }
+.cbaz-campaign__actions form { display: inline; }
+
+.cbaz-blank { text-align: center; padding: 34px 20px; border: 1px dashed var(--line) !important; }
+.cbaz-blank__title { margin: 0 0 6px; font-size: 14px; font-weight: 600; }
+.cbaz-blank p { margin: 0 auto 16px; max-width: 380px; font-size: 12.5px; color: var(--muted); }
+
+.cbaz-fieldlabel { margin: 0 0 8px; font-size: 12px; font-weight: 600; color: var(--muted); }
+
+/* ═══════════════════════════════════════════════════════
+   CATALOGUE DE RAPPORTS
+   ═══════════════════════════════════════════════════════ */
+.cbaz-reportgroup { margin-bottom: 22px; }
+.cbaz-reportgroup:last-of-type { margin-bottom: 0; }
+.cbaz-reportgroup[hidden] { display: none; }
+.cbaz-reportgroup__title {
+    margin: 0 0 10px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.cbaz-reportgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.cbaz-report {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    transition: border-color .14s ease, box-shadow .14s ease;
+}
+.cbaz-report[hidden] { display: none; }
+.cbaz-report:hover {
+    border-color: var(--ink-soft);
+    box-shadow: 0 2px 4px rgba(16, 24, 40, .05), 0 6px 14px -8px rgba(16, 24, 40, .16);
+}
+.cbaz-report.is-fav { border-color: var(--d1); background: var(--d1-soft); }
+
+.cbaz-report__link {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 13px 14px;
+    text-decoration: none;
+    color: inherit;
+}
+.cbaz-report__icon {
+    flex: 0 0 auto;
+    width: 28px; height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    background: var(--canvas);
+}
+.cbaz-report.is-fav .cbaz-report__icon { background: #fff; }
+.cbaz-report__icon svg {
+    width: 15px; height: 15px;
+    fill: none; stroke: var(--muted);
+    stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
+}
+.cbaz-report__text { min-width: 0; }
+.cbaz-report__text strong { display: block; font-size: 13px; font-weight: 600; color: var(--ink); }
+.cbaz-report__text span { display: block; margin-top: 2px; font-size: 11.5px; line-height: 1.45; color: var(--muted); }
+
+.cbaz-report__tools { display: flex; align-items: center; gap: 2px; padding: 11px 10px 0 0; }
+.cbaz-report__csv,
+.cbaz-report__star {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    color: var(--faint);
+}
+.cbaz-report__csv:hover, .cbaz-report__star:hover { background: var(--canvas); color: var(--ink); }
+.cbaz-report__csv svg, .cbaz-report__star svg {
+    width: 14px; height: 14px;
+    fill: none; stroke: currentColor;
+    stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
+}
+/* Étoile pleine dès qu'elle est en favori : le contour seul se
+   distingue mal d'une icône décorative. */
+.cbaz-report.is-fav .cbaz-report__star { color: var(--d1); }
+.cbaz-report.is-fav .cbaz-report__star svg { fill: currentColor; }
+
+.cbaz-card__head .cbaz-search { flex: 0 1 280px; max-width: 280px; }
+
+/* ── Logos de source ─────────────────────────────────── */
+.cbaz-logo {
+    display: inline-block;
+    flex: 0 0 auto;
+    width: 18px; height: 18px;
+    margin-right: 9px;
+    vertical-align: -4px;
+}
+
+/* ── Fil d'activité, par nature d'évènement ──────────── */
+.cbaz-timeline--cart::before     { background: var(--d3); }
+.cbaz-timeline--checkout::before { background: var(--d4); }
+.cbaz-timeline--order::before    { background: var(--d2); width: 10px; height: 10px; left: -1px; top: 4px; }
+
+/* ═══════════════════════════════════════════════════════
+   BLOCS QUI SE TASSENT
+
+   Une grille aligne les rangées : une carte courte laisse un vide
+   sous elle jusqu'à la rangée suivante. Les colonnes CSS empilent
+   au contraire chaque bloc sous le précédent, à sa propre hauteur.
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Parcours visiteurs ──────────────────────────────── */
+.cbaz-flowintro { margin: 0 0 16px; font-size: 12.5px; color: var(--muted); }
+.cbaz-flowintro .cbaz-chip { height: 24px; }
+.cbaz-flowintro .cbaz-chip a { margin-left: 4px; color: var(--faint); text-decoration: none; }
+
+.cbaz-flow {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+.cbaz-flow__col { flex: 1 1 0; min-width: 190px; }
+.cbaz-flow__arrow {
+    flex: 0 0 auto;
+    align-self: center;
+    color: var(--faint);
+    font-size: 15px;
+    padding-top: 18px;
+}
+
+.cbaz-flow__title {
+    margin: 0 0 9px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.cbaz-flow__page {
+    display: block;
+    padding: 9px 11px;
+    margin-bottom: 6px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--surface);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color .14s ease;
+}
+a.cbaz-flow__page:hover { border-color: var(--ink); }
+.cbaz-flow__page.is-active { border-color: var(--d1); background: var(--d1-soft); }
+.cbaz-flow__page.is-other { border-style: dashed; background: transparent; }
+
+.cbaz-flow__name {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.cbaz-flow__page.is-other .cbaz-flow__name { color: var(--faint); font-weight: 400; }
+
+.cbaz-flow__bar {
+    display: block;
+    height: 5px;
+    margin: 6px 0 5px;
+    border-radius: 3px;
+    background: var(--line-soft);
+    overflow: hidden;
+}
+.cbaz-flow__bar > span { display: block; height: 100%; border-radius: 3px; }
+.cbaz-flow__bar--0 > span { background: var(--d1); }
+.cbaz-flow__bar--1 > span { background: var(--d2); }
+.cbaz-flow__bar--2 > span { background: var(--d3); }
+.cbaz-flow__bar--3 > span { background: var(--d4); }
+.cbaz-flow__bar--4 > span { background: var(--d5); }
+.cbaz-flow__bar--5 > span { background: var(--d6); }
+
+.cbaz-flow__meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+.cbaz-flow__meta em { font-style: normal; color: var(--down); }
+
+/* ── Vignettes produit ───────────────────────────────── */
+.cbaz-thumb {
+    display: inline-block;
+    width: 34px; height: 34px;
+    margin-right: 11px;
+    border-radius: 7px;
+    background: var(--canvas);
+    object-fit: cover;
+    vertical-align: -11px;
+}
+.cbaz-prod { display: flex; align-items: center; gap: 0; }
+.cbaz-rank .cbaz-thumb { margin-right: 0; flex: 0 0 auto; }
+.cbaz-prod__name { display: block; font-weight: 600; }
+.cbaz-prod__price { display: block; margin-top: 2px; font-size: 11.5px; color: var(--muted); }
+
+/* ═══════════════════════════════════════════════════════
+   RYTHME VERTICAL
+
+   Bloc final, donc prioritaire : il impose le même pas partout,
+   quelles que soient les valeurs écrites plus haut au fil de
+   l'écriture.
+   ═══════════════════════════════════════════════════════ */
+
+.cbaz-top { margin: 16px 0 var(--gap); }
+.cbaz-filters,
+.cbaz-status,
+.cbaz-notice,
+.cbaz-kpis { margin-bottom: var(--gap); }
+
+.cbaz-kpis { gap: var(--gap); }
+.cbaz-grid { gap: var(--gap); }
+.cbaz-campaigns { gap: var(--gap); }
+
+/* Une carte porte sa marge basse quand elle s'empile ; dans une
+   grille, c'est le gap qui s'en charge — sinon les deux s'ajoutent. */
+.cbaz-card { margin-bottom: var(--gap); }
+.cbaz-grid > .cbaz-card { margin-bottom: 0; }
+.cbaz-stack > .cbaz-card:last-child { margin-bottom: 0; }
+.cbaz-card:last-child { margin-bottom: 0; }
+
+/* Mais la grille elle-même doit alors porter la sienne : sans ça, deux
+   grilles qui se suivent se retrouvent bord à bord, alors que leurs
+   cartes respirent à l'intérieur. C'est ce qui collait la rangée des
+   « Top » sous l'entonnoir. */
+.cbaz-grid { margin-bottom: var(--gap); }
+.cbaz-grid:last-child { margin-bottom: 0; }
+
+/* Une section pleine largeur suivie d'une grille, et l'inverse :
+   même pas dans les deux sens. */
+.cbaz-card + .cbaz-grid,
+.cbaz-grid + .cbaz-card,
+.cbaz-grid + .cbaz-grid,
+.cbaz-kpis + .cbaz-grid { margin-top: 0; }
+
+
+.cbaz-reportgroup { margin-bottom: calc(var(--gap) * 1.25); }
+.cbaz-reportgroup:last-of-type { margin-bottom: 0; }
+.cbaz-footer { margin-top: calc(var(--gap) * 1.5); }
+
+/* Deux blocs qui se suivent hors carte gardent le même pas. */
+.cbaz-back { margin: 0 0 var(--gap); }
+.cbaz-floats { margin-top: var(--gap); }
+
+
+/* ═══════════════════════════════════════════════════════
+   GRILLES
+
+   Deux mécaniques, parce qu'il y a deux besoins.
+
+   Les grilles à colonnes ÉGALES coulent en colonnes, pas en lignes :
+   une carte courte à côté d'une carte longue laissait sinon un grand
+   blanc sous la première, en attendant la fin de la ligne. Ici chaque
+   carte se glisse sous sa voisine du dessus dès qu'il y a la place.
+
+   Le piège historique des colonnes CSS — la marge restante reportée
+   en haut de la colonne suivante — se règle en rendant les cartes
+   inline-block : la marge basse ne peut alors plus fuir.
+
+   Les grilles à colonnes INÉGALES (2-1, globe) restent de vraies
+   grilles : les colonnes CSS ne savent pas faire de largeurs
+   différentes.
+   ═══════════════════════════════════════════════════════ */
+.cbaz-grid {
+    display: grid;
+    gap: var(--gap);
+    align-items: start;
+    grid-template-columns: 1fr;
+}
+.cbaz-grid > .cbaz-card,
+.cbaz-grid > * { margin-bottom: 0; }
+
+/* ── Colonnes égales : écoulement vertical ─────────────── */
+.cbaz-grid--2,
+.cbaz-grid--3 {
+    display: block;
+    columns: 1;
+    column-gap: var(--gap);
+    /* Neutralise les blancs entre inline-blocks ; les enfants
+       reprennent la taille de base juste en dessous. */
+    font-size: 0;
+}
+
+/* Les deux dernières lignes ne sont pas redondantes : sans elles,
+   `.cbaz-grid > .cbaz-card` — deux classes — l'emporte sur
+   `.cbaz-grid--3 > *` — une seule — et remet la marge basse à zéro.
+   Les cartes se retrouvaient collées les unes aux autres. */
+.cbaz-grid--2 > *,
+.cbaz-grid--3 > *,
+.cbaz-grid--2 > .cbaz-card,
+.cbaz-grid--3 > .cbaz-card {
+    display: inline-block;
+    width: 100%;
+    margin: 0 0 var(--gap);
+    font-size: 13px;
+    vertical-align: top;
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.cbaz-grid--2 > :last-child,
+.cbaz-grid--3 > :last-child,
+.cbaz-grid--2 > .cbaz-card:last-child,
+.cbaz-grid--3 > .cbaz-card:last-child { margin-bottom: 0; }
+
+@media (min-width: 782px) {
+    .cbaz-grid--3 { columns: 2; }
+    .cbaz-grid--2 { columns: 2; }
+}
+
+@media (min-width: 1100px) {
+    .cbaz-grid--3 { columns: 3; }
+    .cbaz-grid--2 { columns: 2; }
+    .cbaz-grid--2-1 { grid-template-columns: 2fr 1fr; }
+    .cbaz-grid--globe { grid-template-columns: 1.75fr 1fr; }
+}
+
+/* Une pile de cartes dans une cellule garde son propre rythme. */
+.cbaz-stack { display: flex; flex-direction: column; gap: var(--gap); }
+.cbaz-stack > .cbaz-card { margin-bottom: 0; }
+
+/* Filet de sécurité : une extension qui imprime son bandeau hors des
+   hooks habituels — dans le pied de page, ou en dur — serait sinon
+   déplacée par WordPress au milieu de nos écrans. */
+.cbaz > .notice,
+.cbaz > .updated,
+.cbaz > .error,
+.cbaz > .update-nag,
+.cbaz > .notice-warning,
+.cbaz > .notice-success { display: none !important; }
+
+.cbaz-cookiestate {
+    margin: 0 0 14px;
+    padding: 11px 14px;
+    border-radius: 9px;
+    font-size: 12.5px;
+    line-height: 1.55;
+}
+.cbaz-cookiestate--off { background: var(--up-bg); color: var(--up); }
+.cbaz-cookiestate--on { background: var(--warn-bg); color: var(--warn); }
+.cbaz-cookiestate strong { color: inherit; }
+
+.cbaz-kpi__value--sm { font-size: 16px; display: flex; align-items: center; }
+.cbaz-timeline__gap { margin-left: auto; font-size: 11px; color: var(--faint); font-variant-numeric: tabular-nums; }
+.cbaz-timeline__top { width: 100%; }
+
+/* ── PARCOURS INDIVIDUELS ─────────────────────────────────
+   Une visite = une ligne, lue de gauche à droite. Les chips
+   reprennent la palette de données des évènements ; seul le
+   dernier bloc est coloré vert ou rouge, parce que c'est la
+   seule information qu'on cherche vraiment : est-ce que ça a
+   abouti, et sinon, où ça s'est arrêté. */
+
+.cbaz-trails { margin: 0; padding: 0; list-style: none; }
+
+.cbaz-trip { padding: 14px 0; border-top: 1px solid var(--line-soft); }
+.cbaz-trip:first-child { border-top: 0; padding-top: 4px; }
+
+.cbaz-trip__head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.cbaz-trip__when {
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    font-variant-numeric: tabular-nums;
+}
+.cbaz-trip__when:hover { color: var(--ink); text-decoration: underline; }
+
+.cbaz-trip__src { display: inline-flex; align-items: center; gap: 6px; }
+.cbaz-trip__src em { font-style: normal; color: var(--faint); }
+.cbaz-trip__ctx { display: inline-flex; align-items: center; gap: 5px; }
+
+.cbaz-trip__meta {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+.cbaz-trail { display: flex; align-items: stretch; flex-wrap: wrap; gap: 10px 22px; }
+
+.cbaz-trail__step,
+.cbaz-trail__end,
+.cbaz-trail__more {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1px;
+    max-width: 190px;
+    padding: 7px 10px;
+    border: 1px solid var(--line);
+    border-left-width: 3px;
+    border-radius: 9px;
+    background: var(--surface);
+    text-decoration: none;
+}
+
+.cbaz-trail__step b,
+.cbaz-trail__end b,
+.cbaz-trail__more b {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cbaz-trail__step em,
+.cbaz-trail__end em {
+    font-style: normal;
+    font-size: 10.5px;
+    color: var(--faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* La flèche vit dans l'espace entre deux chips : elle relie sans
+   consommer de largeur, et disparaît d'elle-même en fin de ligne. */
+.cbaz-trail__step::after,
+.cbaz-trail__more::after {
+    content: '→';
+    position: absolute;
+    right: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--faint);
+    font-size: 11px;
+}
+
+.cbaz-trail__step--view     { border-left-color: var(--d1); }
+.cbaz-trail__step--cart     { border-left-color: var(--d3); background: var(--d3-soft); }
+.cbaz-trail__step--checkout { border-left-color: var(--d4); background: rgba(123, 75, 216, .10); }
+.cbaz-trail__step--order    { border-left-color: var(--d2); background: var(--d2-soft); }
+
+.cbaz-trail__more {
+    border-style: dashed;
+    border-left-width: 1px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 11.5px;
+    justify-content: center;
+}
+.cbaz-trail__more:hover { border-color: var(--ink); color: var(--ink); }
+
+.cbaz-trail__end--stop { border-color: #f0cfcc; border-left-color: var(--down); background: var(--down-bg); }
+.cbaz-trail__end--stop b { color: var(--down); }
+.cbaz-trail__end--won  { border-color: #c7e3d4; border-left-color: var(--up); background: var(--up-bg); }
+.cbaz-trail__end--won b { color: var(--up); }
+
+.cbaz-badge--stop { background: var(--down-bg); color: var(--down); }
+.cbaz-timeline--stop::before { background: var(--down); }
+
+@media (max-width: 782px) {
+    .cbaz-trip__meta { margin-left: 0; width: 100%; }
+    .cbaz-trail__step, .cbaz-trail__end, .cbaz-trail__more { max-width: 100%; }
+}
+
+/* ── Sélecteur d'année de l'historique ────────────────── */
+.cbaz-years { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+.cbaz-year {
+    padding: 5px 11px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+}
+.cbaz-year:hover { border-color: var(--ink); color: var(--ink); }
+.cbaz-year.is-active { border-color: var(--ink); background: var(--ink); color: #fff; }
+
+/* ── Icône d'en-tête de carte ─────────────────────────────
+   Un repère, pas une décoration : la même icône désigne toujours la
+   même famille de données, ce qui permet de retrouver un bloc d'un
+   coup d'œil sans lire son titre. */
+/* L'en-tête répartit ses enfants aux deux bouts : avec l'icône en
+   premier, le titre partait donc à droite. Il reprend sa place en
+   poussant lui-même ce qui suit — bouton, pastille, recherche. */
+.cbaz-card__head { align-items: flex-start; }
+.cbaz-card__head > div:first-of-type { margin-right: auto; }
+.cbaz-card__head .cbaz-card__icon { margin-right: 0; }
+
+.cbaz-card__icon {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    margin-right: 11px;
+    border-radius: 9px;
+    background: var(--canvas);
+    color: var(--ink-soft);
+}
+.cbaz-card__icon svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Une teinte par famille : la même que les séries de données, pour
+   que l'œil fasse le lien entre l'icône et les barres du bloc. */
+.cbaz-card__icon--1 { background: var(--d1-soft); color: var(--d1); }
+.cbaz-card__icon--2 { background: var(--d2-soft); color: var(--d2); }
+.cbaz-card__icon--3 { background: var(--d3-soft); color: var(--d3); }
+.cbaz-card__icon--4 { background: rgba(123, 75, 216, .12); color: var(--d4); }
+.cbaz-card__icon--5 { background: rgba(194, 54, 95, .12); color: var(--d5); }
+.cbaz-card__icon--6 { background: rgba(15, 124, 146, .12); color: var(--d6); }
+
+/* ── Plage de dates dans le sélecteur de période ─────────── */
+.cbaz-daterange {
+    margin-top: 6px;
+    padding: 12px 13px 13px;
+    border-top: 1px solid var(--line);
+}
+.cbaz-daterange__title {
+    margin: 0 0 9px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--faint);
+}
+.cbaz-daterange label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 7px;
+    font-size: 12px;
+    color: var(--muted);
+}
+.cbaz-daterange label input {
+    flex: 1;
+    min-width: 0;
+    padding: 6px 9px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+.cbaz-daterange label input:focus { border-color: var(--ink); outline: none; }
+.cbaz-daterange button { width: 100%; margin-top: 4px; justify-content: center; }
+.cbaz-drop--range .cbaz-drop__menu { min-width: 246px; }
+
+/* ═══════════════════════════════════════════════════════
+   SURVOL
+
+   Un effet au survol est une promesse : il annonce qu'il va se
+   passer quelque chose au clic. Les blocs et les indicateurs ne se
+   cliquent pas — leur donner un relief au passage de la souris
+   promettait donc dans le vide.
+
+   Pire, sur les écrans où un grand bloc contient trois colonnes de
+   graphiques, survoler l'une d'elles allumait le bloc ENTIER : d'où
+   l'impression que l'animation « prend toute la colonne ». Le bloc
+   réagissait bien à la souris, mais il est trop grand pour que ce
+   soit lisible.
+
+   Le relief est donc réservé à ce qui se clique vraiment : fiches de
+   rapport, fiches de campagne, lignes de tableau, boutons et liens.
+   En échange, les blocs reçoivent une ombre au repos un peu plus
+   présente, pour ne pas paraître plats.
+   ═══════════════════════════════════════════════════════ */
+.cbaz-card {
+    box-shadow: 0 1px 2px rgba(16, 24, 40, .05), 0 2px 6px -2px rgba(16, 24, 40, .07);
+}
+
+.cbaz-kpi {
+    box-shadow: 0 1px 2px rgba(16, 24, 40, .05), 0 2px 6px -2px rgba(16, 24, 40, .07);
+}
+
+/* Ce qui se clique, en revanche, se soulève. */
+.cbaz-campaigns > li,
+.cbaz-report { cursor: default; }
+.cbaz-campaigns > li:hover,
+.cbaz-report:hover { box-shadow: 0 2px 4px rgba(16, 24, 40, .05), 0 6px 14px -8px rgba(16, 24, 40, .16); }
+
+/* ── Mentions légales des réglages ────────────────────────
+   Un encadré sobre, nettement séparé des réglages : ce n'est pas une
+   option qu'on règle, c'est un texte qu'on lit une fois. Le fond
+   neutre plutôt qu'un bandeau d'alerte — rien ici n'est une erreur à
+   corriger. */
+.cbaz-legal {
+    margin-top: 22px;
+    padding: 18px 20px 4px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--canvas);
+}
+
+.cbaz-legal__title {
+    margin: 0 0 8px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--ink);
+}
+.cbaz-legal__title + p { margin-top: 0; }
+.cbaz-legal p { margin: 0 0 14px; font-size: 12.5px; color: var(--ink-soft); }
+.cbaz-legal > p + .cbaz-legal__title { margin-top: 20px; }
+
+.cbaz-legal__list {
+    margin: 0 0 16px;
+    padding-left: 20px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+}
+.cbaz-legal__list li { margin-bottom: 9px; }
+.cbaz-legal__list strong { color: var(--ink); }
+
+.cbaz-legal__foot {
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* ── Variation dans une liste ─────────────────────────────
+   Posée avant le chiffre plutôt qu'après : dans une liste, l'œil
+   descend la colonne des nombres, qui doit rester alignée à droite.
+   La variation se glisse à sa gauche sans la décaler. */
+.cbaz-list__delta { margin-right: 8px; }
+.cbaz-list__delta .cbaz-delta { font-size: 10.5px; padding: 1px 6px; }
+
+/* Dans les points de fuite et l'entonnoir, la pastille suit le taux. */
+.cbaz-leaks__pct .cbaz-delta,
+.cbaz-loss .cbaz-delta { margin-left: 8px; font-size: 10.5px; padding: 1px 6px; }
+
+/* ── Icône d'indicateur ───────────────────────────────────
+   En haut à droite, discrète : elle aide à repérer un bloc dans une
+   rangée de cinq sans jamais disputer la lecture au chiffre, qui
+   reste ce qu'on vient chercher.
+
+   Ni fond ni couleur imposés ici : la teinte vient de la classe
+   cbaz-card__icon--N, qui reprend la couleur de la série du graphique
+   correspondant — visites en bleu, pages vues en vert, chiffre
+   d'affaires en orange, commandes en violet. */
+.cbaz-kpi { position: relative; }
+
+.cbaz-kpi__icon .cbaz-card__icon {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 26px;
+    height: 26px;
+    margin: 0;
+    border-radius: 8px;
+}
+.cbaz-kpi__icon .cbaz-card__icon svg { width: 14px; height: 14px; }
+
+/* Le libellé s'arrête avant l'icône : sur un écran étroit, un intitulé
+   long passait sinon dessous. */
+.cbaz-kpi__label { padding-right: 34px; }
+
+/* ── Bloc de texte à copier ───────────────────────────────
+   Le bouton flotte dans l'angle plutôt qu'en dessous : la zone de
+   texte est haute, et un bouton relégué sous douze lignes se perd. */
+.cbaz-copyblock { position: relative; margin: 0 0 12px; }
+
+.cbaz-copyblock textarea {
+    width: 100%;
+    padding: 14px 16px 14px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--ink-soft);
+    font-family: inherit;
+    font-size: 12.5px;
+    line-height: 1.65;
+    resize: vertical;
+}
+.cbaz-copyblock textarea:focus { border-color: var(--ink); outline: none; }
+
+.cbaz-copyblock button {
+    position: absolute;
+    top: 9px;
+    right: 9px;
+}
+
+.cbaz-legal__hint {
+    margin: 0 0 16px !important;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   GLOBE
+
+   Pavage hexagonal turquoise sur océan blanc, sphère plus grande que
+   son cadre. Tout en SVG, sans bibliothèque.
+
+   Le parti pris qui change tout : la sphère DÉBORDE. On n'en voit
+   jamais le tour entier, exactement comme sur les cartes du même
+   genre. Une bille entière posée au milieu d'un carré paraît petite
+   quoi qu'on fasse ; un globe qu'on regarde de près remplit l'espace.
+
+   Conséquence heureuse : plus de halo extérieur à faire tenir dans le
+   cadre. La lumière du limbe est peinte à l'intérieur de la sphère,
+   où rien ne peut la tronquer.
+   ═══════════════════════════════════════════════════════ */
+.cbaz {
+    --globe-land:   #45cdc0;
+    --globe-thread: #4b7fd0;
+    --globe-signal: #1e46b8;
+    --globe-point:  #1b3fa8;
+}
+
+.cbaz-card--globe .cbaz-globe,
+.cbaz-globe {
+    position: relative;
+    width: 100%;
+    /* Une déclaration bien plus haut dans ce fichier bridait la
+       largeur à 460 px : on la relâche ici, sans quoi le globe reste
+       petit quelle que soit la place disponible. */
+    max-width: none;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: none;
+}
+.cbaz-globe:active { cursor: grabbing; }
+.cbaz-globe > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+.cbaz-globe .ocean { fill: url(#cbazOcean); }
+.cbaz-globe .limb { fill: url(#cbazLimb); pointer-events: none; }
+
+/* Deux densités de pavage : les cellules proches du limbe s'effacent,
+   ce qui fait tourner la surface avec la sphère au lieu de la coller
+   dessus comme un autocollant. */
+.cbaz-globe .land { fill: var(--globe-land); }
+.cbaz-globe .land--far { fill: var(--globe-land); }
+
+/* ── Liaisons ─────────────────────────────────────────────
+   Le fil est fin et discret ; le signal qui le remonte est net et
+   bref. C'est le contraste entre les deux qui donne le mouvement,
+   pas l'épaisseur du trait. */
+.cbaz-globe .thread {
+    fill: none;
+    stroke: var(--globe-thread);
+    stroke-width: .55;
+    stroke-opacity: .26;
+    stroke-linecap: round;
+}
+
+.cbaz-globe .signal {
+    fill: none;
+    stroke: var(--globe-signal);
+    stroke-width: 1.7;
+    stroke-opacity: .85;
+    stroke-linecap: round;
+}
+
+/* ── Pays visités ─────────────────────────────────────────
+   Un cœur net, un halo doux, une onde qui se propage. Les ondes sont
+   décalées d'un point à l'autre : ensemble elles donnent l'impression
+   d'un trafic qui arrive de partout, quand une cadence commune
+   donnerait une guirlande. */
+.cbaz-globe .pt {
+    fill: var(--globe-point);
+    pointer-events: none;
+    transition: fill .12s;
+}
+
+.cbaz-globe .halo { fill: var(--globe-point); fill-opacity: .14; }
+.cbaz-globe .ping { fill: none; stroke: var(--globe-point); stroke-width: .9; }
+
+.cbaz-globe .pt.is-active { fill: var(--ink); stroke: #fff; stroke-width: 1.3; }
+
+/* ── Commandes du globe ───────────────────────────────────
+   Le bloc de zoom que tout le monde connaît : en bas à droite, une
+   colonne blanche, plus au-dessus, moins en dessous, un filet entre
+   les deux. Aucune invention — on ne demande à personne d'apprendre
+   à se servir d'une carte. */
+.cbaz-globe__tools {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, .12);
+    overflow: hidden;
+}
+
+.cbaz-globe__tools button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    border-top: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink-soft);
+    font: inherit;
+    font-size: 17px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.cbaz-globe__tools button:first-child { border-top: 0; }
+.cbaz-globe__tools button:hover { background: var(--canvas); color: var(--ink); }
+
+.cbaz-globe__tools svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+}
+
+/* ── Découverte du module Pro ─────────────────────────────── */
+
+.cbaz-badge-pro {
+	background: #1d2327;
+	border-radius: 3px;
+	color: #fff;
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: .04em;
+	padding: 2px 6px;
+	text-transform: uppercase;
+	vertical-align: middle;
+}
+
+.cbaz-card--pro {
+	border-style: dashed;
+}
