@@ -1,10 +1,10 @@
 <?php
 /**
- * Plugin Name: CamiBijoux – Analytics
+ * Plugin Name: Shop Analytics for WooCommerce
  * Description: Mesure d'audience, de ventes et de campagnes, intégrée à WordPress. Sans service tiers : les données restent sur ton serveur. Suivi UTM avec budgets, retour sur investissement et liens courts.
  * Version:     4.31.0
- * Author:      CamiBijoux
- * Text Domain: camibijoux-analytics
+ * Author:      Syaanure
+ * Text Domain: shop-analytics-for-woocommerce
  *
  * Parti pris : aucune donnée personnelle n'est conservée. L'adresse IP
  * sert une fraction de seconde à calculer une empreinte, puis elle est

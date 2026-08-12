@@ -1,10 +1,10 @@
-# CamiBijoux Analytics
+# Shop Analytics for WooCommerce
 
 Mesure d'audience, de ventes et de campagnes pour WooCommerce, sans service
 tiers : les données restent sur le serveur.
 
 **Version gratuite.** Fonctionne seule. L'extension
-`camibijoux-analytics-pro` s'y greffe pour les fonctions avancées, mais
+`shop-analytics-for-woocommerce-pro` s'y greffe pour les fonctions avancées, mais
 n'est jamais nécessaire.
 
 ## État

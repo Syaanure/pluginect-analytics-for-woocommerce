@@ -1,5 +1,5 @@
-=== CamiBijoux Analytics ===
-Contributors: camibijoux
+=== Shop Analytics for WooCommerce ===
+Contributors: syaanure
 Tags: analytics, woocommerce, statistiques, utm, rgpd
 Requires at least: 6.0
 Tested up to: 6.8

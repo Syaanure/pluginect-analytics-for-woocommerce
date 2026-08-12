@@ -5,7 +5,7 @@
 Deux extensions WordPress distinctes, sans duplication de code.
 
 ```
-camibijoux-analytics/          FREE — autonome, destiné à WordPress.org
+shop-analytics-for-woocommerce/          FREE — autonome, destiné à WordPress.org
 ├── includes/
 │   ├── features.php           registre Free/Pro + limites (nouveau)
 │   ├── db.php track.php       cœur partagé : suivi, base, WooCommerce
@@ -14,7 +14,7 @@ camibijoux-analytics/          FREE — autonome, destiné à WordPress.org
 │   └── admin.php              menu, filtres, rendu des écrans
 └── views/                     11 écrans gratuits
 
-camibijoux-analytics-pro/      PRO — add-on, nécessite FREE
+shop-analytics-for-woocommerce-pro/      PRO — add-on, nécessite FREE
 ├── includes/
 │   ├── campaigns-stats.php    performances, attribution, ROI
 │   ├── exports.php            exports CSV
@@ -87,7 +87,7 @@ PRO ne charge ses fichiers que depuis `cbaz_ready`, jamais avant.
 
 ## 5. Fichiers propres à PRO
 
-- `camibijoux-analytics-pro.php` — amorçage et vérification de dépendance
+- `shop-analytics-for-woocommerce-pro.php` — amorçage et vérification de dépendance
 - `includes/campaigns-stats.php` — 11 fonctions extraites de `campaigns.php`
 - `includes/exports.php` — 10 fonctions extraites d'`admin.php`
 - `includes/screens.php` — greffe des écrans
@@ -108,7 +108,7 @@ construction échoue si l'un d'eux s'y retrouve.
 1. Ajouter la clé dans `cbaz_pro_features()` (FREE) — elle devient
    indisponible sans PRO ;
 2. Garder les appels côté FREE derrière `cbaz_can( 'ma-cle' )` ;
-3. Écrire le code dans `camibijoux-analytics-pro/includes/` ;
+3. Écrire le code dans `shop-analytics-for-woocommerce-pro/includes/` ;
 4. Pour un écran : l'ajouter à `cbaz_pro_screens()` et créer la vue.
 
 Appliquer les limites **dans la requête**, jamais à l'affichage — voir
@@ -120,6 +120,6 @@ Appliquer les limites **dans la requête**, jamais à l'affichage — voir
 ./build.sh
 ```
 
-Produit `dist/camibijoux-analytics/` et `dist/camibijoux-analytics-pro/`,
+Produit `dist/shop-analytics-for-woocommerce/` et `dist/shop-analytics-for-woocommerce-pro/`,
 plus les deux ZIP. Le script vérifie qu'aucun module premium ne s'est
 glissé dans le paquet gratuit et s'interrompt si c'est le cas.
