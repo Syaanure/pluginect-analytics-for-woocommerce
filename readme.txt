@@ -1,4 +1,4 @@
-=== Shop Analytics for WooCommerce ===
+=== Pluginect Analytics – Statistics & Reports for WooCommerce ===
 Contributors: pluginect
 Tags: analytics, woocommerce, statistiques, utm, rgpd
 Requires at least: 6.0

@@ -17,9 +17,9 @@ function cbaz_privacy_policy_content() {
 		return;
 	}
 
-	$content = sprintf( '<p>%1$s</p>', esc_html__( 'Shop Analytics for WooCommerce conserve localement des visites pseudonymes quotidiennes, les pages consultées, des événements de navigation et des informations techniques (préfixe réseau utilisé sans être stocké, navigateur, appareil, langue, résolution et pays estimé). Une visite convertie est reliée à la commande WooCommerce. Aucun cookie n’est déposé par défaut ; la mémoire d’attribution facultative dépose un cookie de provenance signé. Les durées de conservation sont configurables dans Analytics → Paramètres.', 'shop-analytics-for-woocommerce' ) );
+	$content = sprintf( '<p>%1$s</p>', esc_html__( 'Pluginect Analytics conserve localement des visites pseudonymes quotidiennes, les pages consultées, des événements de navigation et des informations techniques (préfixe réseau utilisé sans être stocké, navigateur, appareil, langue, résolution et pays estimé). Une visite convertie est reliée à la commande WooCommerce. Aucun cookie n’est déposé par défaut ; la mémoire d’attribution facultative dépose un cookie de provenance signé. Les durées de conservation sont configurables dans Analytics → Paramètres.', 'shop-analytics-for-woocommerce' ) );
 
-	wp_add_privacy_policy_content( __( 'Shop Analytics for WooCommerce', 'shop-analytics-for-woocommerce' ), wp_kses_post( $content ) );
+	wp_add_privacy_policy_content( __( 'Pluginect Analytics', 'shop-analytics-for-woocommerce' ), wp_kses_post( $content ) );
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1191,9 +1191,9 @@ function cbaz_render_page() {
 
 		<footer class="cbaz-footer">
 			<?php if ( cbaz_hpos() ) : ?>
-				<?php /* translators: %1$s: plugin version. */ printf( esc_html__( 'Shop Analytics for WooCommerce %1$s · données hébergées sur ton serveur · stockage WooCommerce moderne', 'shop-analytics-for-woocommerce' ), esc_html( CBAZ_VERSION ) ); ?>
+				<?php /* translators: %1$s: plugin version. */ printf( esc_html__( 'Pluginect Analytics %1$s · données hébergées sur ton serveur · stockage WooCommerce moderne', 'shop-analytics-for-woocommerce' ), esc_html( CBAZ_VERSION ) ); ?>
 			<?php else : ?>
-				<?php /* translators: %1$s: plugin version. */ printf( esc_html__( 'Shop Analytics for WooCommerce %1$s · données hébergées sur ton serveur', 'shop-analytics-for-woocommerce' ), esc_html( CBAZ_VERSION ) ); ?>
+				<?php /* translators: %1$s: plugin version. */ printf( esc_html__( 'Pluginect Analytics %1$s · données hébergées sur ton serveur', 'shop-analytics-for-woocommerce' ), esc_html( CBAZ_VERSION ) ); ?>
 			<?php endif; ?>
 		</footer>
 	</div>

@@ -1,4 +1,4 @@
-# Shop Analytics for WooCommerce
+# Pluginect Analytics – Statistics & Reports for WooCommerce
 
 Mesure d'audience, de ventes et de campagnes pour WooCommerce, sans service
 tiers : les données restent sur le serveur.

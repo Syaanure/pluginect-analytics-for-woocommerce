@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Shop Analytics for WooCommerce
+ * Plugin Name: Pluginect Analytics – Statistics & Reports for WooCommerce
  * Description: Mesure locale d'audience et de ventes pour WooCommerce, sans service tiers ni cookie par défaut.
  * Version:     4.31.1
  * Requires at least: 6.0
