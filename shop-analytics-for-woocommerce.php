@@ -7,7 +7,10 @@
  * Requires PHP: 7.4
  * Requires Plugins: woocommerce
  * Author:      Syaanure
+ * License:     GPL-2.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: shop-analytics-for-woocommerce
+ * Domain Path: /languages
  *
  * L'adresse IP sert une fraction de seconde à calculer un identifiant
  * pseudonyme quotidien, puis elle est oubliée. Un seul cookie est possible,
@@ -21,6 +24,27 @@ defined( 'ABSPATH' ) || exit;
 define( 'CBAZ_VERSION', '4.31.1' );
 define( 'CBAZ_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CBAZ_URL', plugin_dir_url( __FILE__ ) );
+
+add_action( 'init', 'cbaz_load_textdomain' );
+/** Charge les traductions après l'initialisation de WordPress. */
+function cbaz_load_textdomain() {
+	$domain = 'shop-analytics-for-woocommerce';
+	$locale = determine_locale();
+	$file   = CBAZ_DIR . 'languages/' . $domain . '-' . $locale . '.mo';
+
+	load_plugin_textdomain( $domain, false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
+	// Les variantes anglaises non livrées utilisent le catalogue anglais commun.
+	if ( ! is_readable( $file ) && 0 === strpos( $locale, 'en_' ) ) {
+		$file = CBAZ_DIR . 'languages/' . $domain . '-en_US.mo';
+	}
+
+	// Le chargement explicite garantit les catalogues embarqués, y compris depuis WP 6.7.
+	if ( is_readable( $file ) ) {
+		unload_textdomain( $domain, true );
+		load_textdomain( $domain, $file );
+	}
+}
 
 /** Durée d'inactivité au-delà de laquelle une nouvelle visite commence. */
 const CBAZ_SESSION_GAP = 30 * MINUTE_IN_SECONDS;

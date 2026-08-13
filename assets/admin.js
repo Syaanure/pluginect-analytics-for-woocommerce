@@ -8,6 +8,10 @@
 (function () {
     'use strict';
 
+    var __ = wp.i18n.__;
+    var sprintf = wp.i18n.sprintf;
+    var locale = document.documentElement.lang || undefined;
+
     function html(value) {
         return String(value == null ? '' : value).replace(/[&<>"']/g, function (char) {
             return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char];
@@ -574,10 +578,10 @@
                     '<p class="cbaz-readout__flag">' + html(p.flag) + '</p>' +
                     '<p class="cbaz-readout__name">' + html(p.name) + '</p>' +
                     '<dl class="cbaz-stats">' +
-                    '<div><dt>Visites</dt><dd>' + p.sessions.toLocaleString('fr-FR') + '</dd></div>' +
-                    '<div><dt>Commandes</dt><dd>' + p.orders.toLocaleString('fr-FR') + '</dd></div>' +
-                    '<div><dt>Chiffre d’affaires</dt><dd>' + html(p.money) + '</dd></div>' +
-                    '<div><dt>Conversion</dt><dd>' +
+					'<div><dt>' + html(__('Visites', 'shop-analytics-for-woocommerce')) + '</dt><dd>' + p.sessions.toLocaleString(locale) + '</dd></div>' +
+					'<div><dt>' + html(__('Commandes', 'shop-analytics-for-woocommerce')) + '</dt><dd>' + p.orders.toLocaleString(locale) + '</dd></div>' +
+                    '<div><dt>' + html(__('Chiffre d’affaires', 'shop-analytics-for-woocommerce')) + '</dt><dd>' + html(p.money) + '</dd></div>' +
+                    '<div><dt>' + html(__('Conversion', 'shop-analytics-for-woocommerce')) + '</dt><dd>' +
                         (p.sessions ? ((p.orders / p.sessions) * 100).toFixed(2).replace('.', ',') : '0,00') + ' %</dd></div>' +
                     '</dl>';
             }
@@ -699,7 +703,9 @@
         if (spinBtn) {
             spinBtn.addEventListener('click', function () {
                 spinning = !spinning;
-                spinBtn.textContent = spinning ? 'Pause rotation' : 'Reprendre la rotation';
+                spinBtn.textContent = spinning
+                    ? __('Pause rotation', 'shop-analytics-for-woocommerce')
+                    : __('Reprendre la rotation', 'shop-analytics-for-woocommerce');
             });
         }
 
@@ -758,7 +764,7 @@
         if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
             spinning = false;
             intro = 1;
-            if (spinBtn) spinBtn.textContent = 'Reprendre la rotation';
+            if (spinBtn) spinBtn.textContent = __('Reprendre la rotation', 'shop-analytics-for-woocommerce');
         }
 
         draw();
@@ -810,10 +816,10 @@
         root.appendChild(tip);
 
         var labels = {
-            sessions: 'Visites',
-            pageviews: 'Pages vues',
-            revenue: 'Chiffre d’affaires',
-            orders: 'Commandes',
+            sessions: __('Visites', 'shop-analytics-for-woocommerce'),
+            pageviews: __('Pages vues', 'shop-analytics-for-woocommerce'),
+            revenue: __('Chiffre d’affaires', 'shop-analytics-for-woocommerce'),
+            orders: __('Commandes', 'shop-analytics-for-woocommerce'),
         };
 
         root.addEventListener('mousemove', function (e) {
@@ -864,8 +870,8 @@
         input.select();
 
         var done = function () {
-            btn.textContent = 'Copié';
-            setTimeout(function () { btn.textContent = 'Copier'; }, 1600);
+            btn.textContent = __('Copié', 'shop-analytics-for-woocommerce');
+            setTimeout(function () { btn.textContent = __('Copier', 'shop-analytics-for-woocommerce'); }, 1600);
         };
 
         if (navigator.clipboard) {
@@ -949,7 +955,7 @@
                 .then(function (json) {
                     if (!json || !json.success) return;
 
-                    if (online) online.textContent = Number(json.data.online).toLocaleString('fr-FR');
+                    if (online) online.textContent = Number(json.data.online).toLocaleString(locale);
 
                     if (feed && json.data.feed.length) {
                         feed.innerHTML = json.data.feed.map(function (f) {
@@ -1009,9 +1015,14 @@
 
         if (count) {
             var total = body.querySelectorAll(selector).length;
-            count.textContent = shown === total
-                ? '1–' + total + ' sur ' + total + ' ' + count.dataset.unit
-                : shown + ' sur ' + total + ' ' + count.dataset.unit;
+            /* translators: 1: displayed range, 2: total result count, 3: result type. */
+        if (shown === total) {
+            /* translators: 1: displayed row count, 2: total row count, 3: row type. */
+            count.textContent = sprintf(__('1–%1$d sur %2$d %3$s', 'shop-analytics-for-woocommerce'), total, total, count.dataset.unit);
+        } else {
+            /* translators: 1: displayed row count, 2: total row count, 3: row type. */
+            count.textContent = sprintf(__('%1$d sur %2$d %3$s', 'shop-analytics-for-woocommerce'), shown, total, count.dataset.unit);
+        }
         }
     });
 

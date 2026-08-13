@@ -14,11 +14,11 @@ defined( 'ABSPATH' ) || exit;
 
 function cbaz_presets() {
 	return [
-		'today' => "Aujourd'hui",
-		'7d'    => '7 derniers jours',
-		'30d'   => '30 derniers jours',
-		'90d'   => '90 derniers jours',
-		'12m'   => '12 derniers mois',
+		'today' => __( "Aujourd'hui", 'shop-analytics-for-woocommerce' ),
+		'7d'    => __( '7 derniers jours', 'shop-analytics-for-woocommerce' ),
+		'30d'   => __( '30 derniers jours', 'shop-analytics-for-woocommerce' ),
+		'90d'   => __( '90 derniers jours', 'shop-analytics-for-woocommerce' ),
+		'12m'   => __( '12 derniers mois', 'shop-analytics-for-woocommerce' ),
 	];
 }
 
@@ -102,7 +102,7 @@ function cbaz_custom_dates() {
 /** Intitulé lisible de la période en cours. */
 function cbaz_range_label( array $range ) {
 	if ( 'perso' !== $range['preset'] ) {
-		return cbaz_presets()[ $range['preset'] ] ?? '30 derniers jours';
+		return cbaz_presets()[ $range['preset'] ] ?? __( '30 derniers jours', 'shop-analytics-for-woocommerce' );
 	}
 
 	$du = strtotime( $range['du'] );
@@ -207,12 +207,12 @@ function cbaz_kpis( array $range ) {
 	$then = cbaz_totals( $range['prev_from'], $range['prev_to'] );
 
 	$defs = [
-		[ 'visitors', 'Visiteurs', 'int' ],
-		[ 'sessions', 'Visites', 'int' ],
-		[ 'pageviews', 'Pages vues', 'int' ],
-		[ 'revenue', "Chiffre d'affaires", 'money' ],
-		[ 'cr', 'Taux de conversion', 'pct' ],
-		[ 'aov', 'Panier moyen', 'money' ],
+		[ 'visitors', __( 'Visiteurs', 'shop-analytics-for-woocommerce' ), 'int' ],
+		[ 'sessions', __( 'Visites', 'shop-analytics-for-woocommerce' ), 'int' ],
+		[ 'pageviews', __( 'Pages vues', 'shop-analytics-for-woocommerce' ), 'int' ],
+		[ 'revenue', __( "Chiffre d'affaires", 'shop-analytics-for-woocommerce' ), 'money' ],
+		[ 'cr', __( 'Taux de conversion', 'shop-analytics-for-woocommerce' ), 'pct' ],
+		[ 'aov', __( 'Panier moyen', 'shop-analytics-for-woocommerce' ), 'money' ],
 	];
 
 	$out = [];
@@ -541,10 +541,10 @@ function cbaz_funnel( array $range ) {
 	};
 
 	$steps = [
-		[ 'label' => 'Visites', 'value' => $sessions ],
-		[ 'label' => 'Ajout au panier', 'value' => $step( 'add_to_cart' ) ],
-		[ 'label' => 'Commande entamée', 'value' => $step( 'begin_checkout' ) ],
-		[ 'label' => 'Achat', 'value' => $step( 'purchase' ) ],
+		[ 'label' => __( 'Visites', 'shop-analytics-for-woocommerce' ), 'value' => $sessions ],
+		[ 'label' => __( 'Ajout au panier', 'shop-analytics-for-woocommerce' ), 'value' => $step( 'add_to_cart' ) ],
+		[ 'label' => __( 'Commande entamée', 'shop-analytics-for-woocommerce' ), 'value' => $step( 'begin_checkout' ) ],
+		[ 'label' => __( 'Achat', 'shop-analytics-for-woocommerce' ), 'value' => $step( 'purchase' ) ],
 	];
 
 	// Le pourcentage se lit par rapport au départ, et la perte par
@@ -738,13 +738,13 @@ function cbaz_realtime() {
  */
 function cbaz_event_label( $kind, $object_id = 0, $value = 0, $stored = '' ) {
 	$map = [
-		'view'           => [ 'Page vue', 'view' ],
-		'view_item'      => [ 'Consultation produit', 'view' ],
-		'add_to_cart'    => [ 'Ajout au panier', 'cart' ],
-		'view_cart'      => [ 'Panier consulté', 'cart' ],
-		'begin_checkout' => [ 'Début de commande', 'checkout' ],
-		'purchase'       => [ 'Commande', 'order' ],
-		'search'         => [ 'Recherche', 'view' ],
+		'view'           => [ __( 'Page vue', 'shop-analytics-for-woocommerce' ), 'view' ],
+		'view_item'      => [ __( 'Consultation produit', 'shop-analytics-for-woocommerce' ), 'view' ],
+		'add_to_cart'    => [ __( 'Ajout au panier', 'shop-analytics-for-woocommerce' ), 'cart' ],
+		'view_cart'      => [ __( 'Panier consulté', 'shop-analytics-for-woocommerce' ), 'cart' ],
+		'begin_checkout' => [ __( 'Début de commande', 'shop-analytics-for-woocommerce' ), 'checkout' ],
+		'purchase'       => [ __( 'Commande', 'shop-analytics-for-woocommerce' ), 'order' ],
+		'search'         => [ __( 'Recherche', 'shop-analytics-for-woocommerce' ), 'view' ],
 	];
 
 	$meta = $map[ $kind ] ?? [ ucfirst( str_replace( '_', ' ', $kind ) ), 'view' ];
@@ -810,7 +810,8 @@ function cbaz_pct( $n, $decimals = 2 ) {
 function cbaz_duration( $seconds ) {
 	$seconds = max( 0, (int) $seconds );
 
-	return sprintf( '%d min %02d s', intdiv( $seconds, 60 ), $seconds % 60 );
+	/* translators: 1: number of minutes, 2: number of seconds. */
+	return sprintf( __( '%1$d min %2$02d s', 'shop-analytics-for-woocommerce' ), intdiv( $seconds, 60 ), $seconds % 60 );
 }
 
 function cbaz_format( $value, $format ) {
@@ -1236,7 +1237,7 @@ function cbaz_pretty_path( $path ) {
 		return '';
 	}
 
-	return '/' === $path ? 'Accueil' : trim( $path, '/' );
+	return '/' === $path ? __( 'Accueil', 'shop-analytics-for-woocommerce' ) : trim( $path, '/' );
 }
 
 /** Une étape de parcours : son intitulé, sa nature et sa couleur. */

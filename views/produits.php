@@ -31,23 +31,23 @@ $rev      = array_sum( array_map( fn( $p ) => (float) $p->revenue, $products ) )
 ?>
 
 <div class="cbaz-kpis cbaz-kpis--4">
-	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'Références vendues' ); // phpcs:ignore ?><p class="cbaz-kpi__label">Références vendues</p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_int( count( $products ) ) ); ?></p></div>
-	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'Articles vendus' ); // phpcs:ignore ?><p class="cbaz-kpi__label">Articles vendus</p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_int( $qty ) ); ?></p></div>
-	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'CA produits' ); // phpcs:ignore ?><p class="cbaz-kpi__label">CA produits</p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_money( $rev ) ); ?></p></div>
-	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'Prix moyen' ); // phpcs:ignore ?><p class="cbaz-kpi__label">Prix moyen</p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_money( $qty ? $rev / $qty : 0 ) ); ?></p></div>
+	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'Références vendues' ); // phpcs:ignore ?><p class="cbaz-kpi__label"><?php echo esc_html__( 'Références vendues', 'shop-analytics-for-woocommerce' ); ?></p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_int( count( $products ) ) ); ?></p></div>
+	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'Articles vendus' ); // phpcs:ignore ?><p class="cbaz-kpi__label"><?php echo esc_html__( 'Articles vendus', 'shop-analytics-for-woocommerce' ); ?></p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_int( $qty ) ); ?></p></div>
+	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'CA produits' ); // phpcs:ignore ?><p class="cbaz-kpi__label"><?php echo esc_html__( 'CA produits', 'shop-analytics-for-woocommerce' ); ?></p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_money( $rev ) ); ?></p></div>
+	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'Prix moyen' ); // phpcs:ignore ?><p class="cbaz-kpi__label"><?php echo esc_html__( 'Prix moyen', 'shop-analytics-for-woocommerce' ); ?></p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_money( $qty ? $rev / $qty : 0 ) ); ?></p></div>
 </div>
 
 <section class="cbaz-card">
 	<header class="cbaz-card__head">
 		<?php echo cbaz_icon( 'box', 3 ); // phpcs:ignore ?>
-			<div><h2>Produits les plus performants</h2><p>Commandes terminées, en cours et en attente. Les montants viennent de WooCommerce.</p></div>
+			<div><h2><?php echo esc_html__( 'Produits les plus performants', 'shop-analytics-for-woocommerce' ); ?></h2><p><?php echo esc_html__( 'Commandes terminées, en cours et en attente. Les montants viennent de WooCommerce.', 'shop-analytics-for-woocommerce' ); ?></p></div>
 		<?php
 		$tri = cbaz_subtabs( 'tri', [
-			'vues'     => 'Plus vus',
-			'paniers'  => 'Plus ajoutés au panier',
-			'quantite' => 'Plus vendus',
-			'ca'       => 'Plus gros CA',
-			'conv'     => 'Meilleure conversion',
+			'vues'     => __( 'Plus vus', 'shop-analytics-for-woocommerce' ),
+			'paniers'  => __( 'Plus ajoutés au panier', 'shop-analytics-for-woocommerce' ),
+			'quantite' => __( 'Plus vendus', 'shop-analytics-for-woocommerce' ),
+			'ca'       => __( 'Plus gros CA', 'shop-analytics-for-woocommerce' ),
+			'conv'     => __( 'Meilleure conversion', 'shop-analytics-for-woocommerce' ),
 		], 'ca' );
 
 		$vues = fn( $p ) => isset( $funnel[ $p->product_id ] ) ? (int) $funnel[ $p->product_id ]->views : 0;
@@ -87,31 +87,31 @@ $rev      = array_sum( array_map( fn( $p ) => (float) $p->revenue, $products ) )
 				<span class="cbaz-rank__value"><?php echo esc_html( cbaz_money( $p->revenue ) ); ?></span>
 			</li>
 		<?php endforeach; ?>
-		<?php if ( ! $products ) : ?><li class="cbaz-empty">Aucune vente sur la période.</li><?php endif; ?>
+		<?php if ( ! $products ) : ?><li class="cbaz-empty"><?php echo esc_html__( 'Aucune vente sur la période.', 'shop-analytics-for-woocommerce' ); ?></li><?php endif; ?>
 	</ul>
 </section>
 
 <section class="cbaz-card">
 	<header class="cbaz-card__head">
 		<?php echo cbaz_icon( 'box', 3 ); // phpcs:ignore ?>
-			<div><h2>Tous les produits</h2><p>Quantités, commandes et part du chiffre d’affaires.</p></div>
+			<div><h2><?php echo esc_html__( 'Tous les produits', 'shop-analytics-for-woocommerce' ); ?></h2><p><?php echo esc_html__( 'Quantités, commandes et part du chiffre d’affaires.', 'shop-analytics-for-woocommerce' ); ?></p></div>
 	</header>
 
-	<?php echo cbaz_table_tools( 'Rechercher un produit…', 'produits' ); // phpcs:ignore ?>
+	<?php echo cbaz_table_tools( __( 'Rechercher un produit…', 'shop-analytics-for-woocommerce' ), 'produits' ); // phpcs:ignore ?>
 
 	<table class="cbaz-table">
 		<thead>
 			<tr>
-				<th>Produit</th>
-				<th class="num">Vues</th>
-				<th class="num">Visiteurs</th>
-				<th class="num">Ajouts panier</th>
-				<th class="num">Taux d’ajout</th>
-				<th class="num">Commandes</th>
-				<th class="num">Conversion</th>
-				<th class="num">Quantités</th>
-				<th class="num">CA</th>
-				<th class="num">Évolution</th>
+				<th><?php echo esc_html__( 'Produit', 'shop-analytics-for-woocommerce' ); ?></th>
+				<th class="num"><?php echo esc_html__( 'Vues', 'shop-analytics-for-woocommerce' ); ?></th>
+				<th class="num"><?php echo esc_html__( 'Visiteurs', 'shop-analytics-for-woocommerce' ); ?></th>
+				<th class="num"><?php echo esc_html__( 'Ajouts panier', 'shop-analytics-for-woocommerce' ); ?></th>
+				<th class="num"><?php echo esc_html__( 'Taux d’ajout', 'shop-analytics-for-woocommerce' ); ?></th>
+				<th class="num"><?php echo esc_html__( 'Commandes', 'shop-analytics-for-woocommerce' ); ?></th>
+				<th class="num"><?php echo esc_html__( 'Conversion', 'shop-analytics-for-woocommerce' ); ?></th>
+				<th class="num"><?php echo esc_html__( 'Quantités', 'shop-analytics-for-woocommerce' ); ?></th>
+				<th class="num"><?php echo esc_html_x( 'CA', 'revenue abbreviation', 'shop-analytics-for-woocommerce' ); ?></th>
+				<th class="num"><?php echo esc_html__( 'Évolution', 'shop-analytics-for-woocommerce' ); ?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -156,14 +156,14 @@ $rev      = array_sum( array_map( fn( $p ) => (float) $p->revenue, $products ) )
 				</td>
 			</tr>
 		<?php endforeach; ?>
-		<?php if ( ! $products ) : ?><tr><td colspan="10" class="cbaz-empty">Aucune vente sur la période.</td></tr><?php endif; ?>
+		<?php if ( ! $products ) : ?><tr><td colspan="10" class="cbaz-empty"><?php echo esc_html__( 'Aucune vente sur la période.', 'shop-analytics-for-woocommerce' ); ?></td></tr><?php endif; ?>
 		</tbody>
 	</table>
 
-	<?php echo cbaz_table_count( count( $products ), count( $products ), 'produits' ); // phpcs:ignore ?>
+	<?php echo cbaz_table_count( count( $products ), count( $products ), __( 'produits', 'shop-analytics-for-woocommerce' ) ); // phpcs:ignore ?>
 
 	<p class="cbaz-note">
-		Un tiret signale un produit dont aucune consultation n’a encore été mesurée — les vues ne sont enregistrées
-		que depuis l’installation de cette version.
+		<?php echo esc_html__( 'Un tiret signale un produit dont aucune consultation n’a encore été mesurée — les vues ne sont enregistrées
+		que depuis l’installation de cette version.', 'shop-analytics-for-woocommerce' ); ?>
 	</p>
 </section>

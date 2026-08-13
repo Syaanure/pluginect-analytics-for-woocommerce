@@ -47,9 +47,9 @@ function cbaz_campaign_by_slug( $slug ) {
 
 function cbaz_statuses() {
 	return [
-		'active'  => 'En cours',
-		'planned' => 'Planifiée',
-		'ended'   => 'Terminée',
+		'active'  => __( 'En cours', 'shop-analytics-for-woocommerce' ),
+		'planned' => __( 'Planifiée', 'shop-analytics-for-woocommerce' ),
+		'ended'   => __( 'Terminée', 'shop-analytics-for-woocommerce' ),
 	];
 }
 
@@ -88,7 +88,7 @@ function cbaz_save_campaign( array $data, $id = 0 ) {
 	];
 
 	if ( '' === $row['campaign'] || '' === $row['source'] ) {
-		return new WP_Error( 'cbaz_incomplete', 'Une campagne a besoin au minimum d’une source et d’un nom de campagne.' );
+		return new WP_Error( 'cbaz_incomplete', __( 'Une campagne a besoin au minimum d’une source et d’un nom de campagne.', 'shop-analytics-for-woocommerce' ) );
 	}
 
 	$t = cbaz_table( 'campaigns' );

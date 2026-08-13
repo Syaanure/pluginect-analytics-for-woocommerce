@@ -44,15 +44,15 @@ foreach ( $report as $r ) {
 }
 
 $notices = [
-	'enregistree' => [ 'ok', 'Campagne enregistrée.' ],
-	'supprimee'   => [ 'ok', 'Fiche supprimée. Les commandes gardent leur attribution.' ],
-	'incomplete'  => [ 'ko', 'Il faut au minimum une source et un nom de campagne.' ],
+	'enregistree' => [ 'ok', __( 'Campagne enregistrée.', 'shop-analytics-for-woocommerce' ) ],
+	'supprimee'   => [ 'ok', __( 'Fiche supprimée. Les commandes gardent leur attribution.', 'shop-analytics-for-woocommerce' ) ],
+	'incomplete'  => [ 'ko', __( 'Il faut au minimum une source et un nom de campagne.', 'shop-analytics-for-woocommerce' ) ],
 ];
 
-$sous_onglets = [ 'liste' => 'Mes campagnes' ];
+$sous_onglets = [ 'liste' => __( 'Mes campagnes', 'shop-analytics-for-woocommerce' ) ];
 
 if ( $stats_on ) {
-	$sous_onglets['performances'] = 'Performances';
+	$sous_onglets['performances'] = __( 'Performances', 'shop-analytics-for-woocommerce' );
 }
 
 $onglet = count( $sous_onglets ) > 1
@@ -66,14 +66,14 @@ $onglet = count( $sous_onglets ) > 1
 
 <?php if ( $stats_on ) : ?>
 <div class="cbaz-kpis cbaz-kpis--4">
-	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'CA des campagnes' ); // phpcs:ignore ?><p class="cbaz-kpi__label">CA des campagnes</p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_money( $revenue ) ); ?></p><p class="cbaz-kpi__note">remboursements déduits</p></div>
-	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'Investi' ); // phpcs:ignore ?><p class="cbaz-kpi__label">Investi</p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_money( $cost ) ); ?></p></div>
+	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'CA des campagnes' ); // phpcs:ignore ?><p class="cbaz-kpi__label"><?php echo esc_html__( 'CA des campagnes', 'shop-analytics-for-woocommerce' ); ?></p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_money( $revenue ) ); ?></p><p class="cbaz-kpi__note"><?php echo esc_html__( 'remboursements déduits', 'shop-analytics-for-woocommerce' ); ?></p></div>
+	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'Investi' ); // phpcs:ignore ?><p class="cbaz-kpi__label"><?php echo esc_html__( 'Investi', 'shop-analytics-for-woocommerce' ); ?></p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_money( $cost ) ); ?></p></div>
 	<div class="cbaz-kpi">
-		<?php echo cbaz_kpi_icon( 'Retour global' ); // phpcs:ignore ?><p class="cbaz-kpi__label">Retour global</p>
+		<?php echo cbaz_kpi_icon( 'Retour global' ); // phpcs:ignore ?><p class="cbaz-kpi__label"><?php echo esc_html__( 'Retour global', 'shop-analytics-for-woocommerce' ); ?></p>
 		<p class="cbaz-kpi__value"><?php echo $cost > 0 ? esc_html( number_format_i18n( $revenue / $cost, 2 ) . ' ×' ) : '<span class="cbaz-faint">—</span>'; ?></p>
-		<p class="cbaz-kpi__note">euros rentrés par euro dépensé</p>
+		<p class="cbaz-kpi__note"><?php echo esc_html__( 'euros rentrés par euro dépensé', 'shop-analytics-for-woocommerce' ); ?></p>
 	</div>
-	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'Commandes' ); // phpcs:ignore ?><p class="cbaz-kpi__label">Commandes</p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_int( $orders ) ); ?></p><p class="cbaz-kpi__note"><?php echo esc_html( cbaz_int( $visits ) ); ?> visites</p></div>
+	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'Commandes' ); // phpcs:ignore ?><p class="cbaz-kpi__label"><?php echo esc_html__( 'Commandes', 'shop-analytics-for-woocommerce' ); ?></p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_int( $orders ) ); ?></p><p class="cbaz-kpi__note"><?php /* translators: %1$s: number of visits. */ printf( esc_html__( '%1$s visites', 'shop-analytics-for-woocommerce' ), esc_html( cbaz_int( $visits ) ) ); ?></p></div>
 </div>
 <?php endif; ?>
 
@@ -82,18 +82,18 @@ $onglet = count( $sous_onglets ) > 1
 	<section class="cbaz-card">
 		<header class="cbaz-card__head">
 			<?php echo cbaz_icon( 'money', 2 ); // phpcs:ignore ?>
-			<div><h2>Rentabilité par campagne</h2><p>Chiffre d’affaires net lu sur les commandes. Toute visite balisée apparaît, fiche créée ou non.</p></div>
+			<div><h2><?php echo esc_html__( 'Rentabilité par campagne', 'shop-analytics-for-woocommerce' ); ?></h2><p><?php echo esc_html__( 'Chiffre d’affaires net lu sur les commandes. Toute visite balisée apparaît, fiche créée ou non.', 'shop-analytics-for-woocommerce' ); ?></p></div>
 		</header>
 
-		<?php echo cbaz_table_tools( 'Rechercher une campagne…', 'campagnes' ); // phpcs:ignore ?>
+		<?php echo cbaz_table_tools( __( 'Rechercher une campagne…', 'shop-analytics-for-woocommerce' ), 'campagnes' ); // phpcs:ignore ?>
 
 		<table class="cbaz-table">
 			<thead>
 				<tr>
-					<th>Campagne</th><th>Source</th>
-					<th class="num">Visiteurs</th><th class="num">Visites</th>
-					<th class="num">Commandes</th><th class="num">Conv.</th>
-					<th class="num">CA net</th><th class="num">Retour</th>
+					<th><?php echo esc_html__( 'Campagne', 'shop-analytics-for-woocommerce' ); ?></th><th><?php echo esc_html__( 'Source', 'shop-analytics-for-woocommerce' ); ?></th>
+					<th class="num"><?php echo esc_html__( 'Visiteurs', 'shop-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html__( 'Visites', 'shop-analytics-for-woocommerce' ); ?></th>
+					<th class="num"><?php echo esc_html__( 'Commandes', 'shop-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html__( 'Conv.', 'shop-analytics-for-woocommerce' ); ?></th>
+					<th class="num"><?php echo esc_html__( 'CA net', 'shop-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html_x( 'Retour', 'return on ad spend', 'shop-analytics-for-woocommerce' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -119,11 +119,11 @@ $onglet = count( $sous_onglets ) > 1
 					</td>
 				</tr>
 			<?php endforeach; ?>
-			<?php if ( ! $report ) : ?><tr><td colspan="8" class="cbaz-empty">Aucune campagne mesurée sur la période.</td></tr><?php endif; ?>
+			<?php if ( ! $report ) : ?><tr><td colspan="8" class="cbaz-empty"><?php echo esc_html__( 'Aucune campagne mesurée sur la période.', 'shop-analytics-for-woocommerce' ); ?></td></tr><?php endif; ?>
 			</tbody>
 		</table>
 
-		<?php echo cbaz_table_count( count( $report ), count( $report ), 'campagnes' ); // phpcs:ignore ?>
+		<?php echo cbaz_table_count( count( $report ), count( $report ), __( 'campagnes', 'shop-analytics-for-woocommerce' ) ); // phpcs:ignore ?>
 	</section>
 
 <?php else : ?>
@@ -131,10 +131,10 @@ $onglet = count( $sous_onglets ) > 1
 	<section class="cbaz-card">
 		<header class="cbaz-card__head">
 			<?php echo cbaz_icon( 'tag', 3 ); // phpcs:ignore ?>
-			<div><h2>Mes campagnes</h2><p>Les opérations en place, leur lien à diffuser et ce qu’elles rapportent.</p></div>
+			<div><h2><?php echo esc_html__( 'Mes campagnes', 'shop-analytics-for-woocommerce' ); ?></h2><p><?php echo esc_html__( 'Les opérations en place, leur lien à diffuser et ce qu’elles rapportent.', 'shop-analytics-for-woocommerce' ); ?></p></div>
 			<a class="cbaz-ctrl cbaz-ctrl--primary" href="<?php echo esc_url( cbaz_url( [ 'nouvelle' => 1 ] ) ); ?>">
 				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-				Créer une campagne
+				<?php echo esc_html__( 'Créer une campagne', 'shop-analytics-for-woocommerce' ); ?>
 			</a>
 		</header>
 
@@ -154,26 +154,26 @@ $onglet = count( $sous_onglets ) > 1
 
 					<?php if ( $stats_on ) : ?>
 					<div class="cbaz-campaign__stats">
-						<span><em>Visites</em><?php echo esc_html( cbaz_int( $st ? $st->sessions : 0 ) ); ?></span>
-						<span><em>Commandes</em><?php echo esc_html( cbaz_int( $st ? $st->orders : 0 ) ); ?></span>
-						<span><em>CA net</em><?php echo esc_html( cbaz_money( $st ? $st->revenue : 0 ) ); ?></span>
-						<span><em>Retour</em><?php echo ( $st && null !== $st->roas ) ? esc_html( number_format_i18n( $st->roas, 2 ) . ' ×' ) : '<span class="cbaz-faint">—</span>'; ?></span>
+						<span><em><?php echo esc_html__( 'Visites', 'shop-analytics-for-woocommerce' ); ?></em><?php echo esc_html( cbaz_int( $st ? $st->sessions : 0 ) ); ?></span>
+						<span><em><?php echo esc_html__( 'Commandes', 'shop-analytics-for-woocommerce' ); ?></em><?php echo esc_html( cbaz_int( $st ? $st->orders : 0 ) ); ?></span>
+						<span><em><?php echo esc_html__( 'CA net', 'shop-analytics-for-woocommerce' ); ?></em><?php echo esc_html( cbaz_money( $st ? $st->revenue : 0 ) ); ?></span>
+						<span><em><?php echo esc_html_x( 'Retour', 'return on ad spend', 'shop-analytics-for-woocommerce' ); ?></em><?php echo ( $st && null !== $st->roas ) ? esc_html( number_format_i18n( $st->roas, 2 ) . ' ×' ) : '<span class="cbaz-faint">—</span>'; ?></span>
 					</div>
 					<?php endif; ?>
 
 					<div class="cbaz-copy">
 						<input type="text" readonly value="<?php echo esc_attr( cbaz_campaign_url( $c ) ); ?>">
-						<button type="button" class="cbaz-btn cbaz-btn--mini" data-cbaz-copy>Copier</button>
+						<button type="button" class="cbaz-btn cbaz-btn--mini" data-cbaz-copy><?php echo esc_html__( 'Copier', 'shop-analytics-for-woocommerce' ); ?></button>
 					</div>
 
 					<div class="cbaz-campaign__actions">
-						<a href="<?php echo esc_url( cbaz_url( [ 'id' => $c->id ] ) ); ?>">Voir le détail</a>
-						<a href="<?php echo esc_url( cbaz_url( [ 'edit' => $c->id ] ) ); ?>">Modifier</a>
-						<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" onsubmit="return confirm('Supprimer cette fiche ? Les commandes déjà attribuées seront conservées.');">
+						<a href="<?php echo esc_url( cbaz_url( [ 'id' => $c->id ] ) ); ?>"><?php echo esc_html__( 'Voir le détail', 'shop-analytics-for-woocommerce' ); ?></a>
+						<a href="<?php echo esc_url( cbaz_url( [ 'edit' => $c->id ] ) ); ?>"><?php echo esc_html__( 'Modifier', 'shop-analytics-for-woocommerce' ); ?></a>
+						<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" onsubmit="return confirm('<?php echo esc_js( __( 'Supprimer cette fiche ? Les commandes déjà attribuées seront conservées.', 'shop-analytics-for-woocommerce' ) ); ?>');">
 							<input type="hidden" name="action" value="cbaz_campaign">
 							<?php wp_nonce_field( 'cbaz_campaign' ); ?>
 							<input type="hidden" name="delete" value="<?php echo (int) $c->id; ?>">
-							<button type="submit" class="cbaz-linkish">Supprimer</button>
+							<button type="submit" class="cbaz-linkish"><?php echo esc_html__( 'Supprimer', 'shop-analytics-for-woocommerce' ); ?></button>
 						</form>
 					</div>
 				</li>
@@ -181,9 +181,9 @@ $onglet = count( $sous_onglets ) > 1
 
 			<?php if ( ! $sheets ) : ?>
 				<li class="cbaz-blank">
-					<p class="cbaz-blank__title">Aucune campagne pour l’instant</p>
-					<p>Crée ta première opération : tu obtiendras un lien court à mettre en story ou en bio, et tu sauras exactement ce qu’il a rapporté.</p>
-					<a class="cbaz-btn" href="<?php echo esc_url( cbaz_url( [ 'nouvelle' => 1 ] ) ); ?>">Créer une campagne</a>
+					<p class="cbaz-blank__title"><?php echo esc_html__( 'Aucune campagne pour l’instant', 'shop-analytics-for-woocommerce' ); ?></p>
+					<p><?php echo esc_html__( 'Crée ta première opération : tu obtiendras un lien court à mettre en story ou en bio, et tu sauras exactement ce qu’il a rapporté.', 'shop-analytics-for-woocommerce' ); ?></p>
+					<a class="cbaz-btn" href="<?php echo esc_url( cbaz_url( [ 'nouvelle' => 1 ] ) ); ?>"><?php echo esc_html__( 'Créer une campagne', 'shop-analytics-for-woocommerce' ); ?></a>
 				</li>
 			<?php endif; ?>
 		</ul>
@@ -197,19 +197,19 @@ $onglet = count( $sous_onglets ) > 1
 		<section class="cbaz-card">
 			<header class="cbaz-card__head">
 				<?php echo cbaz_icon( 'tag', 5 ); // phpcs:ignore ?>
-			<div><h2>Campagnes mesurées sans fiche</h2><p>Des visites balisées sont arrivées sous ces noms, sans qu’une fiche existe.</p></div>
+			<div><h2><?php echo esc_html__( 'Campagnes mesurées sans fiche', 'shop-analytics-for-woocommerce' ); ?></h2><p><?php echo esc_html__( 'Des visites balisées sont arrivées sous ces noms, sans qu’une fiche existe.', 'shop-analytics-for-woocommerce' ); ?></p></div>
 			</header>
 
 			<ul class="cbaz-list">
 				<?php foreach ( $sans_fiche as $r ) : ?>
 					<li class="cbaz-list__row">
 						<span><strong><?php echo esc_html( $r->campaign ); ?></strong> <em><?php echo esc_html( $r->source ); ?></em></span>
-						<span class="cbaz-num"><?php echo esc_html( cbaz_int( $r->sessions ) ); ?> visites · <?php echo esc_html( cbaz_money( $r->revenue ) ); ?></span>
+						<span class="cbaz-num"><?php /* translators: 1: visit count, 2: revenue. */ printf( esc_html__( '%1$s visites · %2$s', 'shop-analytics-for-woocommerce' ), esc_html( cbaz_int( $r->sessions ) ), esc_html( cbaz_money( $r->revenue ) ) ); ?></span>
 					</li>
 				<?php endforeach; ?>
 			</ul>
 
-			<p class="cbaz-note">Créer la fiche correspondante permet d’y renseigner un budget, donc de calculer un retour. Les visites déjà mesurées la rejoindront.</p>
+			<p class="cbaz-note"><?php echo esc_html__( 'Créer la fiche correspondante permet d’y renseigner un budget, donc de calculer un retour. Les visites déjà mesurées la rejoindront.', 'shop-analytics-for-woocommerce' ); ?></p>
 		</section>
 	<?php endif; ?>
 
@@ -217,13 +217,13 @@ $onglet = count( $sous_onglets ) > 1
 
 <?php if ( ! $stats_on ) : ?>
 	<p class="cbaz-note">
-		Création de campagnes disponible gratuitement. Analyse détaillée des performances disponible avec Pro.
+		<?php echo esc_html__( 'Création de campagnes disponible gratuitement. Analyse détaillée des performances disponible avec Pro.', 'shop-analytics-for-woocommerce' ); ?>
 	</p>
 
 	<?php
 	cbaz_pro_notice(
-		'Performances des campagnes',
-		'Pro mesure les visites, les commandes, le chiffre d’affaires, le taux de conversion et le retour sur investissement de chaque campagne.'
+		__( 'Performances des campagnes', 'shop-analytics-for-woocommerce' ),
+		__( 'Pro mesure les visites, les commandes, le chiffre d’affaires, le taux de conversion et le retour sur investissement de chaque campagne.', 'shop-analytics-for-woocommerce' )
 	);
 	?>
 <?php endif; ?>

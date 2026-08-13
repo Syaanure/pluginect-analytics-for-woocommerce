@@ -1181,7 +1181,7 @@ function cbaz_sync_order_refunds( $order_id ) {
 add_filter( 'manage_edit-shop_order_columns', 'cbaz_order_column', 20 );
 add_filter( 'woocommerce_shop_order_list_table_columns', 'cbaz_order_column', 20 );
 function cbaz_order_column( $columns ) {
-	$columns['cbaz_origin'] = 'Provenance';
+	$columns['cbaz_origin'] = __( 'Provenance', 'shop-analytics-for-woocommerce' );
 
 	return $columns;
 }

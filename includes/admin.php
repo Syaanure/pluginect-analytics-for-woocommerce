@@ -17,9 +17,9 @@ function cbaz_privacy_policy_content() {
 		return;
 	}
 
-	$content = '<p>' . esc_html__( 'Shop Analytics for WooCommerce conserve localement des visites pseudonymes quotidiennes, les pages consultées, des événements de navigation et des informations techniques (préfixe réseau utilisé sans être stocké, navigateur, appareil, langue, résolution et pays estimé). Une visite convertie est reliée à la commande WooCommerce. Aucun cookie n’est déposé par défaut ; la mémoire d’attribution facultative dépose un cookie de provenance signé. Les durées de conservation sont configurables dans Analytics → Paramètres.', 'shop-analytics-for-woocommerce' ) . '</p>';
+	$content = sprintf( '<p>%1$s</p>', esc_html__( 'Shop Analytics for WooCommerce conserve localement des visites pseudonymes quotidiennes, les pages consultées, des événements de navigation et des informations techniques (préfixe réseau utilisé sans être stocké, navigateur, appareil, langue, résolution et pays estimé). Une visite convertie est reliée à la commande WooCommerce. Aucun cookie n’est déposé par défaut ; la mémoire d’attribution facultative dépose un cookie de provenance signé. Les durées de conservation sont configurables dans Analytics → Paramètres.', 'shop-analytics-for-woocommerce' ) );
 
-	wp_add_privacy_policy_content( 'Shop Analytics for WooCommerce', wp_kses_post( $content ) );
+	wp_add_privacy_policy_content( __( 'Shop Analytics for WooCommerce', 'shop-analytics-for-woocommerce' ), wp_kses_post( $content ) );
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -28,17 +28,17 @@ function cbaz_privacy_policy_content() {
 
 function cbaz_tabs() {
 	return [
-		'overview'     => [ "Vue d'ensemble", 'Analysez les performances de votre boutique.' ],
-		'temps-reel'   => [ 'Temps réel', 'Ce qui se passe sur votre boutique en ce moment.' ],
-		'acquisition'  => [ 'Acquisition', "Comprenez d'où viennent vos visiteurs et quelles sources convertissent." ],
-		'comportement' => [ 'Comportement', 'Ce que vos visiteurs consultent et comment ils naviguent.' ],
-		'ecommerce'    => [ 'E-commerce', 'Du visiteur à la commande : où se perdent vos conversions.' ],
-		'produits'     => [ 'Produits', 'Performance de chaque produit du catalogue WooCommerce.' ],
-		'campagnes'    => [ 'Campagnes', 'Suivez les performances de vos campagnes UTM.' ],
-		'geographie'   => [ 'Géographie', 'Localisation des visiteurs et performance commerciale par pays.' ],
-		'visiteurs'    => [ 'Visiteurs', 'Appareils, technologies et fidélité de votre audience.' ],
-		'visites'      => [ 'Parcours', 'Le parcours de chaque visite, page par page.' ],
-		'parametres'   => [ 'Paramètres', 'Configuration du suivi, de la confidentialité et de la synchronisation.' ],
+		'overview'     => [ __( "Vue d'ensemble", 'shop-analytics-for-woocommerce' ), __( 'Analysez les performances de votre boutique.', 'shop-analytics-for-woocommerce' ) ],
+		'temps-reel'   => [ __( 'Temps réel', 'shop-analytics-for-woocommerce' ), __( 'Ce qui se passe sur votre boutique en ce moment.', 'shop-analytics-for-woocommerce' ) ],
+		'acquisition'  => [ __( 'Acquisition', 'shop-analytics-for-woocommerce' ), __( "Comprenez d'où viennent vos visiteurs et quelles sources convertissent.", 'shop-analytics-for-woocommerce' ) ],
+		'comportement' => [ __( 'Comportement', 'shop-analytics-for-woocommerce' ), __( 'Ce que vos visiteurs consultent et comment ils naviguent.', 'shop-analytics-for-woocommerce' ) ],
+		'ecommerce'    => [ __( 'E-commerce', 'shop-analytics-for-woocommerce' ), __( 'Du visiteur à la commande : où se perdent vos conversions.', 'shop-analytics-for-woocommerce' ) ],
+		'produits'     => [ __( 'Produits', 'shop-analytics-for-woocommerce' ), __( 'Performance de chaque produit du catalogue WooCommerce.', 'shop-analytics-for-woocommerce' ) ],
+		'campagnes'    => [ __( 'Campagnes', 'shop-analytics-for-woocommerce' ), __( 'Suivez les performances de vos campagnes UTM.', 'shop-analytics-for-woocommerce' ) ],
+		'geographie'   => [ __( 'Géographie', 'shop-analytics-for-woocommerce' ), __( 'Localisation des visiteurs et performance commerciale par pays.', 'shop-analytics-for-woocommerce' ) ],
+		'visiteurs'    => [ __( 'Visiteurs', 'shop-analytics-for-woocommerce' ), __( 'Appareils, technologies et fidélité de votre audience.', 'shop-analytics-for-woocommerce' ) ],
+		'visites'      => [ __( 'Parcours', 'shop-analytics-for-woocommerce' ), __( 'Le parcours de chaque visite, page par page.', 'shop-analytics-for-woocommerce' ) ],
+		'parametres'   => [ __( 'Paramètres', 'shop-analytics-for-woocommerce' ), __( 'Configuration du suivi, de la confidentialité et de la synchronisation.', 'shop-analytics-for-woocommerce' ) ],
 	];
 
 	/**
@@ -74,12 +74,13 @@ function cbaz_menu() {
 	$tabs  = cbaz_tabs();
 	$first = array_key_first( $tabs );
 
-	add_menu_page( 'Analytics', 'Analytics', 'manage_woocommerce', 'cbaz', 'cbaz_render_page', 'dashicons-chart-area', 56 );
+	add_menu_page( __( 'Analytics', 'shop-analytics-for-woocommerce' ), __( 'Analytics', 'shop-analytics-for-woocommerce' ), 'manage_woocommerce', 'cbaz', 'cbaz_render_page', 'dashicons-chart-area', 56 );
 
 	foreach ( $tabs as $slug => $meta ) {
 		add_submenu_page(
 			'cbaz',
-			$meta[0] . ' — Analytics',
+			/* translators: %1$s: analytics screen title. */
+			sprintf( __( '%1$s — Analytics', 'shop-analytics-for-woocommerce' ), $meta[0] ),
 			$meta[0],
 			'manage_woocommerce',
 			$slug === $first ? 'cbaz' : 'cbaz-' . $slug,
@@ -107,7 +108,7 @@ function cbaz_admin_assets( $hook ) {
 	}
 
 	wp_enqueue_style( 'cbaz-admin', CBAZ_URL . 'assets/admin.css', [], CBAZ_VERSION . '.' . filemtime( CBAZ_DIR . 'assets/admin.css' ) );
-	$dependencies = [];
+	$dependencies = [ 'wp-i18n' ];
 
 	if ( 'cbaz-geographie' === sanitize_key( $_GET['page'] ?? '' ) ) {
 		// Le maillage du monde est volumineux et ne sert qu'au globe.
@@ -116,13 +117,17 @@ function cbaz_admin_assets( $hook ) {
 	}
 
 	wp_enqueue_script( 'cbaz-admin', CBAZ_URL . 'assets/admin.js', $dependencies, CBAZ_VERSION . '.' . filemtime( CBAZ_DIR . 'assets/admin.js' ), true );
+	wp_set_script_translations( 'cbaz-admin', 'shop-analytics-for-woocommerce', CBAZ_DIR . 'languages' );
 }
 
 // ══════════════════════════════════════════════════════════════
 //  MESSAGES DE WORDPRESS
 //
-//  Les bandeaux restent visibles par défaut : certains portent une alerte
-//  de sécurité ou de maintenance que l'extension ne doit pas supprimer.
+//  Les bandeaux des AUTRES extensions sont masqués sur nos écrans : une
+//  page d'analyse couverte de sollicitations commerciales devient
+//  illisible. Les nôtres survivent, et un pied de page indique combien
+//  ont été écartés — escamoter sans le dire serait malhonnête, certains
+//  portent une alerte réelle.
 //
 //  On coupe les actions plutôt que de masquer en CSS : WordPress
 //  déplace les bandeaux en JavaScript juste après le titre de page,
@@ -141,13 +146,145 @@ function cbaz_hide_notices() {
 		return;
 	}
 
-	if ( ! apply_filters( 'cbaz_hide_admin_notices', false ) ) {
+	/**
+	 * Masquer les bandeaux des autres extensions sur nos écrans.
+	 *
+	 * @param bool $masquer Vrai par défaut.
+	 */
+	if ( ! apply_filters( 'cbaz_hide_admin_notices', true ) ) {
 		return;
 	}
 
+	global $wp_filter;
+
+	$masques = 0;
+
 	foreach ( [ 'admin_notices', 'all_admin_notices', 'network_admin_notices', 'user_admin_notices' ] as $hook ) {
+		if ( ! isset( $wp_filter[ $hook ] ) ) {
+			continue;
+		}
+
+		$garder = [];
+
+		foreach ( $wp_filter[ $hook ]->callbacks as $priorite => $rappels ) {
+			foreach ( $rappels as $rappel ) {
+				if ( cbaz_notice_is_ours( $rappel['function'] ) ) {
+					$garder[] = [ $priorite, $rappel['function'], (int) $rappel['accepted_args'] ];
+					continue;
+				}
+
+				++$masques;
+			}
+		}
+
 		remove_all_actions( $hook );
+
+		// Nos propres bandeaux sont remis en place avec leur priorité
+		// d'origine : les réenregistrer à la volée changerait leur ordre.
+		foreach ( $garder as $g ) {
+			add_action( $hook, $g[1], $g[0], $g[2] );
+		}
 	}
+
+	if ( $masques > 0 ) {
+		set_transient( 'cbaz_notices_masquees', $masques, 60 );
+	}
+}
+
+/**
+ * Ce bandeau vient-il de nos extensions ?
+ *
+ * Seuls les nôtres survivent au nettoyage : un message de licence ou un
+ * avertissement de configuration doit rester visible là où il compte.
+ *
+ * Une fonction anonyme est indissociable de son auteur : on la considère
+ * comme extérieure, ce qui est le cas dans l'immense majorité des
+ * extensions.
+ *
+ * @param mixed $rappel Fonction de rappel enregistrée.
+ * @return bool
+ */
+function cbaz_notice_is_ours( $rappel ) {
+	$nom = '';
+
+	if ( is_string( $rappel ) ) {
+		$nom = $rappel;
+	} elseif ( is_array( $rappel ) && isset( $rappel[1] ) ) {
+		$objet = $rappel[0];
+		$nom   = ( is_object( $objet ) ? get_class( $objet ) : (string) $objet ) . '::' . $rappel[1];
+	}
+
+	if ( '' === $nom ) {
+		return false;
+	}
+
+	/**
+	 * Préfixes de bandeaux conservés sur nos écrans.
+	 *
+	 * @param array $prefixes Fragments recherchés dans le nom du rappel.
+	 */
+	$prefixes = apply_filters( 'cbaz_kept_notices', [
+		'cbaz',
+		'ShopAnalytics',
+		'Shop_Analytics_Demo',
+		'sad_',
+	] );
+
+	foreach ( (array) $prefixes as $prefixe ) {
+		if ( false !== stripos( $nom, (string) $prefixe ) ) {
+			return true;
+		}
+	}
+
+	/*
+	 * Quelques bandeaux du cœur de WordPress signalent un incident réel :
+	 * un site en mode dépannage tourne avec une extension neutralisée, et
+	 * l'administrateur doit le savoir où qu'il se trouve. Masquer
+	 * celui-là pour faire joli serait indéfendable.
+	 */
+	$critiques = apply_filters( 'cbaz_critical_notices', [
+		'wp_recovery_mode_nag',
+		'paused_plugins_notice',
+		'paused_themes_notice',
+		'privacy_policy_guide_notice',
+	] );
+
+	return in_array( $nom, (array) $critiques, true );
+}
+
+/**
+ * Signale discrètement ce qui a été masqué.
+ *
+ * Escamoter des messages sans le dire serait malhonnête : certains
+ * portent une alerte de sécurité ou réclament une mise à jour de base de
+ * données. On indique donc combien, et où les retrouver.
+ *
+ * @return void
+ */
+function cbaz_hidden_notice_hint() {
+	$n = (int) get_transient( 'cbaz_notices_masquees' );
+
+	if ( $n < 1 ) {
+		return;
+	}
+
+	delete_transient( 'cbaz_notices_masquees' );
+
+	printf(
+		'<p class="cbaz-note">%1$s <a href="%2$s">%3$s</a></p>',
+		esc_html( sprintf(
+			/* translators: %d : nombre de bandeaux masqués */
+			_n(
+				'%d message d’une autre extension a été masqué sur cet écran.',
+				'%d messages d’autres extensions ont été masqués sur cet écran.',
+				$n,
+				'shop-analytics-for-woocommerce'
+			),
+			$n
+		) ),
+		esc_url( admin_url() ),
+		esc_html__( 'Les consulter', 'shop-analytics-for-woocommerce' )
+	);
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -165,13 +302,13 @@ function cbaz_hide_notices() {
  */
 function cbaz_delta_badge( $value, $invert = false ) {
 	if ( null === $value ) {
-		return '<span class="cbaz-delta cbaz-delta--none" title="Aucune donnée sur la période précédente">nouveau</span>';
+		return sprintf( '<span class="cbaz-delta cbaz-delta--none" title="%1$s">%2$s</span>', esc_attr__( 'Aucune donnée sur la période précédente', 'shop-analytics-for-woocommerce' ), esc_html__( 'nouveau', 'shop-analytics-for-woocommerce' ) );
 	}
 
 	$value = (float) $value;
 
 	if ( 0.0 === $value ) {
-		return '<span class="cbaz-delta cbaz-delta--flat">stable <span class="cbaz-delta__arrow" aria-hidden="true">→</span></span>';
+		return sprintf( '<span class="cbaz-delta cbaz-delta--flat">%1$s <span class="cbaz-delta__arrow" aria-hidden="true">→</span></span>', esc_html__( 'stable', 'shop-analytics-for-woocommerce' ) );
 	}
 
 	$up = $value > 0;
@@ -244,16 +381,16 @@ function cbaz_kpi_icon( $label ) {
 	 * et la courbe qui le raconte parlent ainsi de la même voix.
 	 */
 	$mots = [
-		'money'    => [ 3, [ 'ca ', 'chiffre', 'panier moyen', 'valeur', 'budget', 'investi', 'retour', 'coût', 'prix', 'revenu' ] ],
+		'money'    => [ 3, [ 'ca ', 'chiffre', 'panier moyen', 'valeur', 'budget', 'investi', 'retour', 'coût', 'prix', 'revenu', 'revenue', 'aov' ] ],
 		'clock'    => [ 6, [ 'durée', 'délai', 'temps' ] ],
-		'cart'     => [ 4, [ 'commande', 'conversion', 'achat', 'vendus', 'vente' ] ],
-		'users'    => [ 1, [ 'visiteur', 'audience', 'nouveau', 'fidélité' ] ],
-		'page'     => [ 2, [ 'page' ] ],
+		'cart'     => [ 4, [ 'commande', 'conversion', 'achat', 'vendus', 'vente', 'cr' ] ],
+		'users'    => [ 1, [ 'visiteur', 'audience', 'nouveau', 'fidélité', 'visitors' ] ],
+		'page'     => [ 2, [ 'page', 'pageviews' ] ],
 		'flag'     => [ 5, [ 'rebond', 'fuite', 'sortie' ] ],
 		'box'      => [ 3, [ 'produit', 'référence', 'article', 'catalogue' ] ],
 		'tag'      => [ 4, [ 'campagne' ] ],
 		'globe'    => [ 6, [ 'pays', 'provenance', 'source', 'contexte' ] ],
-		'path'     => [ 1, [ 'parcours', 'visite', 'chemin', 'issue' ] ],
+		'path'     => [ 1, [ 'parcours', 'visite', 'chemin', 'issue', 'sessions' ] ],
 		'calendar' => [ 2, [ 'profondeur', 'mois', 'année', 'période' ] ],
 	];
 
@@ -316,7 +453,7 @@ function cbaz_donut( array $rows, $total ) {
 	}
 
 	if ( ! $rows ) {
-		return '<p class="cbaz-empty">Aucune visite sur la période.</p>';
+		return sprintf( '<p class="cbaz-empty">%1$s</p>', esc_html__( 'Aucune visite sur la période.', 'shop-analytics-for-woocommerce' ) );
 	}
 
 	return '<div class="cbaz-donut">'
@@ -348,7 +485,7 @@ function cbaz_meter_list( array $rows, $total, array $previous = [] ) {
 	}
 
 	if ( ! $rows ) {
-		echo '<li class="cbaz-empty">Rien à afficher.</li>';
+		printf( '<li class="cbaz-empty">%1$s</li>', esc_html__( 'Rien à afficher.', 'shop-analytics-for-woocommerce' ) );
 	}
 
 	echo '</ul>';
@@ -414,14 +551,14 @@ function cbaz_nice_max( $value ) {
  */
 function cbaz_chart( array $series, array $show = [ 'sessions', 'revenue' ] ) {
 	if ( ! $series ) {
-		return '<p class="cbaz-empty">Pas encore de données sur cette période.</p>';
+		return sprintf( '<p class="cbaz-empty">%1$s</p>', esc_html__( 'Pas encore de données sur cette période.', 'shop-analytics-for-woocommerce' ) );
 	}
 
 	$defs = [
-		'sessions'  => 'Visites',
-		'pageviews' => 'Pages vues',
-		'revenue'   => "Chiffre d'affaires",
-		'orders'    => 'Commandes',
+		'sessions'  => __( 'Visites', 'shop-analytics-for-woocommerce' ),
+		'pageviews' => __( 'Pages vues', 'shop-analytics-for-woocommerce' ),
+		'revenue'   => __( "Chiffre d'affaires", 'shop-analytics-for-woocommerce' ),
+		'orders'    => __( 'Commandes', 'shop-analytics-for-woocommerce' ),
 	];
 
 	$w  = 1000;
@@ -521,7 +658,7 @@ function cbaz_chart( array $series, array $show = [ 'sessions', 'revenue' ] ) {
 	</div>
 
 	<div class="cbaz-chart" data-cbaz-chart>
-		<svg viewBox="0 0 <?php echo $w; ?> <?php echo $h; ?>" role="img" aria-label="Évolution sur la période">
+		<svg viewBox="0 0 <?php echo $w; ?> <?php echo $h; ?>" role="img" aria-label="<?php echo esc_attr__( 'Évolution sur la période', 'shop-analytics-for-woocommerce' ); ?>">
 			<?php echo $grid; // phpcs:ignore ?>
 			<g data-serie="revenue"<?php echo in_array( 'revenue', $show, true ) ? '' : ' hidden'; ?>><?php echo $bars; // phpcs:ignore ?></g>
 			<?php echo $lines; // phpcs:ignore ?>
@@ -542,7 +679,7 @@ function cbaz_chart( array $series, array $show = [ 'sessions', 'revenue' ] ) {
  */
 function cbaz_grouped_bars( array $rows, array $legend ) {
 	if ( ! $rows ) {
-		return '<p class="cbaz-empty">Aucune donnée sur la période.</p>';
+		return sprintf( '<p class="cbaz-empty">%1$s</p>', esc_html__( 'Aucune donnée sur la période.', 'shop-analytics-for-woocommerce' ) );
 	}
 
 	$w = 1000;
@@ -582,11 +719,15 @@ function cbaz_grouped_bars( array $rows, array $legend ) {
 			. esc_html( $row['label'] ) . '</text>';
 	}
 
-	return '<div class="cbaz-chart"><svg viewBox="0 0 ' . $w . ' ' . $h . '" role="img" aria-label="Comparaison par canal">' . $svg . '</svg></div>'
-		. '<div class="cbaz-chart__legend">'
-		. '<span class="cbaz-key cbaz-key--first">' . esc_html( $legend[0] ) . '</span>'
-		. '<span class="cbaz-key cbaz-key--last">' . esc_html( $legend[1] ) . '</span>'
-		. '</div>';
+	return sprintf(
+		'<div class="cbaz-chart"><svg viewBox="0 0 %1$d %2$d" role="img" aria-label="%3$s">%4$s</svg></div><div class="cbaz-chart__legend"><span class="cbaz-key cbaz-key--first">%5$s</span><span class="cbaz-key cbaz-key--last">%6$s</span></div>',
+		$w,
+		$h,
+		esc_attr__( 'Comparaison par canal', 'shop-analytics-for-woocommerce' ),
+		$svg,
+		esc_html( $legend[0] ),
+		esc_html( $legend[1] )
+	);
 }
 
 /**
@@ -613,8 +754,7 @@ function cbaz_funnel_block( array $steps, array $previous = [] ) {
 					: null;
 				?>
 				<p class="cbaz-loss">
-					<strong>− <?php echo esc_html( cbaz_int( $lost ) ); ?></strong>
-					abandons (<?php echo esc_html( number_format_i18n( $step['drop'], 1 ) ); ?> %)
+					<?php /* translators: 1: abandoned visitor count, 2: abandonment rate. */ printf( wp_kses_post( __( '<strong>− %1$s</strong> abandons (%2$s %%)', 'shop-analytics-for-woocommerce' ) ), esc_html( cbaz_int( $lost ) ), esc_html( number_format_i18n( $step['drop'], 1 ) ) ); ?>
 					<?php if ( $previous ) : ?>
 						<?php echo cbaz_delta_badge( $drop_delta, true ); // phpcs:ignore ?>
 					<?php endif; ?>
@@ -625,7 +765,7 @@ function cbaz_funnel_block( array $steps, array $previous = [] ) {
 				<span class="cbaz-step__n"><?php echo (int) ( $i + 1 ); ?></span>
 				<span class="cbaz-step__label"><?php echo esc_html( $step['label'] ); ?></span>
 				<span class="cbaz-step__share">
-					<?php echo 0 === $i ? "Point d'entrée" : esc_html( number_format_i18n( $step['pct'], 1 ) . ' % des visites' ); ?>
+					<?php if ( 0 === $i ) { echo esc_html__( "Point d'entrée", 'shop-analytics-for-woocommerce' ); } else { /* translators: %1$s: share of visits. */ printf( esc_html__( '%1$s %% des visites', 'shop-analytics-for-woocommerce' ), esc_html( number_format_i18n( $step['pct'], 1 ) ) ); } ?>
 				</span>
 				<span class="cbaz-step__value"><?php echo esc_html( cbaz_int( $step['value'] ) ); ?></span>
 			</div>
@@ -666,10 +806,10 @@ function cbaz_leaks_block( array $steps, array $previous = [] ) {
 					</span>
 				</div>
 				<div class="cbaz-leaks__bar"><span style="width:<?php echo esc_attr( min( 100, max( 1, $leak['pct'] ) ) ); ?>%"></span></div>
-				<p class="cbaz-leaks__note"><?php echo esc_html( cbaz_int( $leak['lost'] ) ); ?> personnes perdues à cette étape</p>
+				<p class="cbaz-leaks__note"><?php /* translators: %1$s: visitors lost at this step. */ printf( esc_html__( '%1$s personnes perdues à cette étape', 'shop-analytics-for-woocommerce' ), esc_html( cbaz_int( $leak['lost'] ) ) ); ?></p>
 			</li>
 		<?php endforeach; ?>
-		<?php if ( ! $leaks ) : ?><li class="cbaz-empty">Pas encore de parcours mesuré.</li><?php endif; ?>
+		<?php if ( ! $leaks ) : ?><li class="cbaz-empty"><?php echo esc_html__( 'Pas encore de parcours mesuré.', 'shop-analytics-for-woocommerce' ); ?></li><?php endif; ?>
 	</ul>
 	<?php
 	return ob_get_clean();
@@ -685,7 +825,7 @@ function cbaz_leaks_block( array $steps, array $previous = [] ) {
  */
 function cbaz_bars_chart( array $rows, $format = 'money' ) {
 	if ( ! $rows ) {
-		return '<p class="cbaz-empty">Aucune donnée sur la période.</p>';
+		return sprintf( '<p class="cbaz-empty">%1$s</p>', esc_html__( 'Aucune donnée sur la période.', 'shop-analytics-for-woocommerce' ) );
 	}
 
 	$max = max( 1, max( array_map( fn( $r ) => (float) $r['value'], $rows ) ) );
@@ -721,7 +861,7 @@ function cbaz_bars_chart( array $rows, $format = 'money' ) {
 /** Barres horizontales étiquetées, quand les catégories sont nombreuses. */
 function cbaz_hbars( array $rows, $format = 'money' ) {
 	if ( ! $rows ) {
-		return '<p class="cbaz-empty">Aucune donnée sur la période.</p>';
+		return sprintf( '<p class="cbaz-empty">%1$s</p>', esc_html__( 'Aucune donnée sur la période.', 'shop-analytics-for-woocommerce' ) );
 	}
 
 	$max = max( 1, max( array_map( fn( $r ) => (float) $r['value'], $rows ) ) );
@@ -740,7 +880,7 @@ function cbaz_hbars( array $rows, $format = 'money' ) {
 }
 
 /**
- * Logos de marque, dessinés dans le plugin.
+ * Logos de marque, embarqués dans le plugin.
  *
  * La version précédente allait chercher le favicon officiel de chaque
  * réseau. C'était séduisant sur le papier — toujours à jour, rien à
@@ -750,11 +890,11 @@ function cbaz_hbars( array $rows, $format = 'money' ) {
  * silencieusement sur la pastille à la lettre. C'est exactement ce
  * qu'on voyait.
  *
- * Ces marques sont donc dessinées ici, en SVG, servies par le site
- * lui-même. Aucune requête sortante, rien à bloquer, rien à charger :
- * elles s'affichent hors ligne comme derrière n'importe quel filtre.
- * Le prix à payer est de les retoucher si une identité change — c'est
- * arrivé une fois en dix ans pour Twitter.
+ * Ces marques sont donc servies ici en SVG par le site lui-même. Aucune
+ * requête sortante, rien à bloquer, rien à charger : elles s'affichent
+ * hors ligne comme derrière n'importe quel filtre. Les tracés proviennent
+ * de Bootstrap Icons 1.13.1 et, pour Gmail et Etsy, de Tabler Icons 3.46.0.
+ * Les notices MIT correspondantes sont conservées dans le dossier licenses.
  */
 function cbaz_source_icon( $label ) {
 	$svg = [
@@ -764,67 +904,56 @@ function cbaz_source_icon( $label ) {
 			. '<stop offset=".5" stop-color="#D62976"/><stop offset=".75" stop-color="#962FBF"/>'
 			. '<stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs>'
 			. '<rect x="1" y="1" width="22" height="22" rx="6" fill="url(#cbaz-ig)"/>'
-			. '<rect x="5.6" y="5.6" width="12.8" height="12.8" rx="4" fill="none" stroke="#fff" stroke-width="1.7"/>'
-			. '<circle cx="12" cy="12" r="3.3" fill="none" stroke="#fff" stroke-width="1.7"/>'
-			. '<circle cx="16.7" cy="7.3" r="1.05" fill="#fff"/>',
+			. '<path transform="translate(4 4)" fill="#fff" d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/>',
 
 		'Facebook' => '<rect x="1" y="1" width="22" height="22" rx="6" fill="#1877F2"/>'
-			. '<path fill="#fff" d="M15.6 13.1l.46-3.1h-3V8c0-.85.42-1.68 1.76-1.68h1.38V3.68s-1.25-.21-2.45-.21c-2.5 0-4.14 1.51-4.14 4.26V10H6.85v3.1h2.76V21h3.4v-7.9h2.59z"/>',
+			. '<path transform="translate(4 4)" fill="#fff" d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951"/>',
 
 		'Messenger' => '<rect x="1" y="1" width="22" height="22" rx="6" fill="#0084FF"/>'
-			. '<path fill="#fff" d="M12 4.5c-4.2 0-7.5 3.1-7.5 7.2 0 2.35 1.08 4.43 2.78 5.79V20l2.55-1.4c.68.19 1.4.29 2.17.29 4.2 0 7.5-3.1 7.5-7.19S16.2 4.5 12 4.5zm.76 9.66l-1.93-2.05-3.76 2.05 4.13-4.38 1.98 2.05 3.71-2.05-4.13 4.38z"/>',
+			. '<path transform="translate(4 4)" fill="#fff" d="M0 7.76C0 3.301 3.493 0 8 0s8 3.301 8 7.76-3.493 7.76-8 7.76c-.81 0-1.586-.107-2.316-.307a.64.64 0 0 0-.427.03l-1.588.702a.64.64 0 0 1-.898-.566l-.044-1.423a.64.64 0 0 0-.215-.456C.956 12.108 0 10.092 0 7.76m5.546-1.459-2.35 3.728c-.225.358.214.761.551.506l2.525-1.916a.48.48 0 0 1 .578-.002l1.869 1.402a1.2 1.2 0 0 0 1.735-.32l2.35-3.728c.226-.358-.214-.761-.551-.506L9.728 7.381a.48.48 0 0 1-.578.002L7.281 5.98a1.2 1.2 0 0 0-1.735.32z"/>',
 
 		'TikTok' => '<rect x="1" y="1" width="22" height="22" rx="6" fill="#000"/>'
-			. '<path fill="#25F4EE" d="M12.4 4.5h2.4c.15 1.3 1 2.4 2.3 2.7v2.4c-.9 0-1.8-.25-2.55-.7v4.9a4.55 4.55 0 1 1-4.55-4.55c.2 0 .4.01.6.05v2.5a2.1 2.1 0 1 0 1.5 2V4.5z"/>'
-			. '<path fill="#FE2C55" d="M13.6 4.5H16c.15 1.3 1 2.4 2.3 2.7v2.4c-.9 0-1.8-.25-2.55-.7v4.9a4.55 4.55 0 1 1-4.55-4.55c.2 0 .4.01.6.05v2.5a2.1 2.1 0 1 0 1.5 2V4.5z"/>'
-			. '<path fill="#fff" d="M13 4.5h2.4c.15 1.3 1 2.4 2.3 2.7v2.4c-.9 0-1.8-.25-2.55-.7v4.9a4.55 4.55 0 1 1-4.55-4.55c.2 0 .4.01.6.05v2.5a2.1 2.1 0 1 0 1.5 2V4.5z"/>',
+			. '<path transform="translate(4 4)" fill="#fff" d="M9 0h1.98c.144.715.54 1.617 1.235 2.512C12.895 3.389 13.797 4 15 4v2c-1.753 0-3.07-.814-4-1.829V11a5 5 0 1 1-5-5v2a3 3 0 1 0 3 3z"/>',
 
 		'Pinterest' => '<circle cx="12" cy="12" r="11" fill="#E60023"/>'
-			. '<path fill="#fff" d="M12.3 5.3c-3.9 0-5.9 2.6-5.9 4.9 0 1.4.5 2.5 1.7 3 .2.08.38-.01.43-.22l.16-.63c.05-.2.03-.28-.11-.45-.33-.4-.54-.92-.54-1.65 0-2.13 1.6-4.03 4.16-4.03 2.27 0 3.52 1.38 3.52 3.22 0 2.42-1.07 4.46-2.66 4.46-.88 0-1.53-.72-1.32-1.61.25-1.06.74-2.2.74-2.96 0-.68-.37-1.25-1.13-1.25-.9 0-1.62.93-1.62 2.17 0 .79.27 1.33.27 1.33s-.92 3.87-1.08 4.56c-.32 1.36-.05 3.02-.03 3.19.01.1.14.13.2.05.09-.11 1.2-1.48 1.58-2.85.1-.39.61-2.38.61-2.38.3.58 1.19 1.08 2.14 1.08 2.81 0 4.72-2.56 4.72-5.99 0-2.59-2.2-5.02-5.54-5.02z"/>',
+			. '<path transform="translate(4 4)" fill="#fff" d="M8 0a8 8 0 0 0-2.915 15.452c-.07-.633-.134-1.606.027-2.297.146-.625.938-3.977.938-3.977s-.239-.479-.239-1.187c0-1.113.645-1.943 1.448-1.943.682 0 1.012.512 1.012 1.127 0 .686-.437 1.712-.663 2.663-.188.796.4 1.446 1.185 1.446 1.422 0 2.515-1.5 2.515-3.664 0-1.915-1.377-3.254-3.342-3.254-2.276 0-3.612 1.707-3.612 3.471 0 .688.265 1.425.595 1.826a.24.24 0 0 1 .056.23c-.061.252-.196.796-.222.907-.035.146-.116.177-.268.107-1-.465-1.624-1.926-1.624-3.1 0-2.523 1.834-4.84 5.286-4.84 2.775 0 4.932 1.977 4.932 4.62 0 2.757-1.739 4.976-4.151 4.976-.811 0-1.573-.421-1.834-.919l-.498 1.902c-.181.695-.669 1.566-.995 2.097A8 8 0 1 0 8 0"/>',
 
 		'YouTube' => '<rect x="1" y="4.2" width="22" height="15.6" rx="4.4" fill="#FF0000"/>'
-			. '<path fill="#fff" d="M10.1 8.4l6.1 3.6-6.1 3.6z"/>',
+			. '<path transform="translate(4 4)" fill="#fff" d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.01 2.01 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31 31 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.01 2.01 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A100 100 0 0 1 7.858 2zM6.4 5.209v4.818l4.157-2.408z"/>',
 
 		'X' => '<rect x="1" y="1" width="22" height="22" rx="6" fill="#000"/>'
-			. '<path fill="#fff" d="M16.5 5.4h2.4l-5.24 6 6.16 9h-4.83l-3.78-5.53L6.8 20.4H4.4l5.6-6.42L4.1 5.4h4.95l3.42 5.02L16.5 5.4zm-.84 13.06h1.33L8.4 6.85H6.97l8.69 11.61z"/>',
+			. '<path transform="translate(4 4)" fill="#fff" d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>',
 
 		'LinkedIn' => '<rect x="1" y="1" width="22" height="22" rx="4.5" fill="#0A66C2"/>'
-			. '<circle cx="7.1" cy="7.2" r="1.75" fill="#fff"/>'
-			. '<rect x="5.6" y="10" width="3" height="8.6" fill="#fff"/>'
-			. '<path fill="#fff" d="M10.6 10h2.87v1.18c.4-.74 1.38-1.43 2.68-1.43 2.37 0 3.35 1.4 3.35 3.87v4.98h-3v-4.4c0-1.18-.44-1.87-1.47-1.87-1.08 0-1.56.73-1.56 1.87v4.4h-2.87V10z"/>',
+			. '<path transform="translate(4 4)" fill="#fff" d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z"/>',
 
 		'Snapchat' => '<rect x="1" y="1" width="22" height="22" rx="6" fill="#FFFC00"/>'
-			. '<path fill="#fff" stroke="#1a1a1a" stroke-width=".55" stroke-linejoin="round" d="M12 4.9c2.15 0 3.62 1.55 3.68 3.7.02.68-.05 1.32-.05 1.56.02.3.35.34.6.24.3-.12.73-.14.92.05.24.24.1.63-.24.83-.34.2-1.27.39-1.32.83-.05.49.88 2.05 2.44 2.68.34.15.3.49-.05.63-.34.15-.88.2-1.03.44-.1.2 0 .54-.24.68-.3.15-.98-.1-1.66.05-.59.13-1.32 1.07-2.83 1.07s-2.25-.94-2.83-1.07c-.68-.15-1.37.1-1.66-.05-.24-.15-.15-.49-.24-.68-.15-.24-.68-.29-1.03-.44-.34-.15-.39-.49-.05-.63 1.56-.63 2.49-2.2 2.44-2.68-.05-.44-.98-.63-1.32-.83-.34-.2-.49-.59-.24-.83.2-.2.63-.17.92-.05.24.1.58.05.6-.24 0-.24-.07-.88-.05-1.56C8.38 6.45 9.85 4.9 12 4.9z"/>',
+			. '<path transform="translate(4 4)" fill="#fff" d="M15.943 11.526c-.111-.303-.323-.465-.564-.599a1 1 0 0 0-.123-.064l-.219-.111c-.752-.399-1.339-.902-1.746-1.498a3.4 3.4 0 0 1-.3-.531c-.034-.1-.032-.156-.008-.207a.3.3 0 0 1 .097-.1c.129-.086.262-.173.352-.231.162-.104.289-.187.371-.245.309-.216.525-.446.66-.702a1.4 1.4 0 0 0 .069-1.16c-.205-.538-.713-.872-1.329-.872a1.8 1.8 0 0 0-.487.065c.006-.368-.002-.757-.035-1.139-.116-1.344-.587-2.048-1.077-2.61a4.3 4.3 0 0 0-1.095-.881C9.764.216 8.92 0 7.999 0s-1.76.216-2.505.641c-.412.232-.782.53-1.097.883-.49.562-.96 1.267-1.077 2.61-.033.382-.04.772-.036 1.138a1.8 1.8 0 0 0-.487-.065c-.615 0-1.124.335-1.328.873a1.4 1.4 0 0 0 .067 1.161c.136.256.352.486.66.701.082.058.21.14.371.246l.339.221a.4.4 0 0 1 .109.11c.026.053.027.11-.012.217a3.4 3.4 0 0 1-.295.52c-.398.583-.968 1.077-1.696 1.472-.385.204-.786.34-.955.8-.128.348-.044.743.28 1.075q.18.189.409.31a4.4 4.4 0 0 0 1 .4.7.7 0 0 1 .202.09c.118.104.102.26.259.488q.12.178.296.3c.33.229.701.243 1.095.258.355.014.758.03 1.217.18.19.064.389.186.618.328.55.338 1.305.802 2.566.802 1.262 0 2.02-.466 2.576-.806.227-.14.424-.26.609-.321.46-.152.863-.168 1.218-.181.393-.015.764-.03 1.095-.258a1.14 1.14 0 0 0 .336-.368c.114-.192.11-.327.217-.42a.6.6 0 0 1 .19-.087 4.5 4.5 0 0 0 1.014-.404c.16-.087.306-.2.429-.336l.004-.005c.304-.325.38-.709.256-1.047m-1.121.602c-.684.378-1.139.337-1.493.565-.3.193-.122.61-.34.76-.269.186-1.061-.012-2.085.326-.845.279-1.384 1.082-2.903 1.082s-2.045-.801-2.904-1.084c-1.022-.338-1.816-.14-2.084-.325-.218-.15-.041-.568-.341-.761-.354-.228-.809-.187-1.492-.563-.436-.24-.189-.39-.044-.46 2.478-1.199 2.873-3.05 2.89-3.188.022-.166.045-.297-.138-.466-.177-.164-.962-.65-1.18-.802-.36-.252-.52-.503-.402-.812.082-.214.281-.295.49-.295a1 1 0 0 1 .197.022c.396.086.78.285 1.002.338q.04.01.082.011c.118 0 .16-.06.152-.195-.026-.433-.087-1.277-.019-2.066.094-1.084.444-1.622.859-2.097.2-.229 1.137-1.22 2.93-1.22 1.792 0 2.732.987 2.931 1.215.416.475.766 1.013.859 2.098.068.788.009 1.632-.019 2.065-.01.142.034.195.152.195a.4.4 0 0 0 .082-.01c.222-.054.607-.253 1.002-.338a1 1 0 0 1 .197-.023c.21 0 .409.082.49.295.117.309-.04.56-.401.812-.218.152-1.003.638-1.18.802-.184.169-.16.3-.139.466.018.14.413 1.991 2.89 3.189.147.073.394.222-.041.464"/>',
 
 		'WhatsApp' => '<rect x="1" y="1" width="22" height="22" rx="6" fill="#25D366"/>'
-			. '<path fill="#fff" d="M12 5.6a6.35 6.35 0 0 0-5.42 9.66L5.7 18.4l3.5-.86A6.35 6.35 0 1 0 12 5.6zm3.66 8.93c-.15.43-.88.82-1.22.87-.31.05-.7.07-1.13-.07-.26-.08-.6-.19-1.02-.37-1.8-.78-2.97-2.6-3.06-2.72-.09-.12-.73-.97-.73-1.86s.46-1.32.63-1.5c.16-.17.36-.21.48-.21h.34c.11 0 .26-.04.4.31.15.36.51 1.24.55 1.33.05.09.08.19.02.31-.06.12-.09.19-.17.3l-.26.3c-.09.09-.18.19-.08.36.1.18.44.72.94 1.17.64.57 1.18.75 1.35.84.18.09.28.07.38-.05.11-.13.44-.51.55-.68.12-.18.24-.15.4-.09.15.06 1.02.48 1.2.57.17.09.29.13.33.2.05.07.05.42-.1.86z"/>',
+			. '<path transform="translate(4 4)" fill="#fff" d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>',
 
 		'Google' => '<rect x="1" y="1" width="22" height="22" rx="6" fill="#fff" stroke="#e5e7eb"/>'
-			. '<path fill="#4285F4" d="M19.6 12.18c0-.55-.05-1.08-.14-1.58H12v3h4.26a3.64 3.64 0 0 1-1.58 2.39v1.98h2.56c1.5-1.38 2.36-3.4 2.36-5.79z"/>'
-			. '<path fill="#34A853" d="M12 20c2.14 0 3.93-.71 5.24-1.92l-2.56-1.98c-.71.48-1.62.76-2.68.76-2.06 0-3.8-1.39-4.43-3.26H4.93v2.05A8 8 0 0 0 12 20z"/>'
-			. '<path fill="#FBBC05" d="M7.57 13.6a4.8 4.8 0 0 1 0-3.06V8.49H4.93a8 8 0 0 0 0 7.16l2.64-2.05z"/>'
-			. '<path fill="#EA4335" d="M12 7.28c1.16 0 2.21.4 3.03 1.18l2.27-2.27C15.93 4.93 14.14 4.2 12 4.2a8 8 0 0 0-7.07 4.29l2.64 2.05C8.2 8.67 9.94 7.28 12 7.28z"/>',
+			. '<path transform="translate(4 4)" fill="#4285F4" d="M15.545 6.558a9.4 9.4 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.7 7.7 0 0 1 5.352 2.082l-2.284 2.284A4.35 4.35 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.8 4.8 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.7 3.7 0 0 0 1.599-2.431H8v-3.08z"/>',
 
 		'Gmail' => '<rect x="1" y="4.5" width="22" height="15" rx="3" fill="#fff" stroke="#e5e7eb"/>'
-			. '<path fill="#EA4335" d="M1 7.5v-.3a2.7 2.7 0 0 1 4.3-2.16L12 10l6.7-4.96A2.7 2.7 0 0 1 23 7.2v.3l-11 8.15L1 7.5z"/>'
-			. '<path fill="#34A853" d="M1 7.5l4 2.96v9.04H2.5A1.5 1.5 0 0 1 1 18V7.5z"/>'
-			. '<path fill="#4285F4" d="M23 7.5v10.5a1.5 1.5 0 0 1-1.5 1.5H19v-9.04l4-2.96z"/>',
+			. '<g fill="none" stroke="#EA4335" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+			. '<path d="M16 20h3a1 1 0 0 0 1 -1v-14a1 1 0 0 0 -1 -1h-3v16"/>'
+			. '<path d="M5 20h3v-16h-3a1 1 0 0 0 -1 1v14a1 1 0 0 0 1 1"/>'
+			. '<path d="M16 4l-4 4l-4 -4"/><path d="M4 6.5l8 7.5l8 -7.5"/></g>',
 
 		'Reddit' => '<circle cx="12" cy="12" r="11" fill="#FF4500"/>'
-			. '<circle cx="12" cy="13.2" r="6.2" fill="#fff"/>'
-			. '<circle cx="9.7" cy="12.9" r="1.15" fill="#FF4500"/>'
-			. '<circle cx="14.3" cy="12.9" r="1.15" fill="#FF4500"/>'
-			. '<path fill="none" stroke="#FF4500" stroke-width="1.1" stroke-linecap="round" d="M9.6 15.7c1.4.95 3.4.95 4.8 0"/>'
-			. '<circle cx="18" cy="7.4" r="1.5" fill="#fff"/>'
-			. '<path fill="none" stroke="#fff" stroke-width="1.1" stroke-linecap="round" d="M12.4 7.2l1-3.1 3.2.7"/>',
+			. '<g transform="translate(4 4)" fill="#fff"><path d="M6.167 8a.83.83 0 0 0-.83.83c0 .459.372.84.83.831a.831.831 0 0 0 0-1.661m1.843 3.647c.315 0 1.403-.038 1.976-.611a.23.23 0 0 0 0-.306.213.213 0 0 0-.306 0c-.353.363-1.126.487-1.67.487-.545 0-1.308-.124-1.671-.487a.213.213 0 0 0-.306 0 .213.213 0 0 0 0 .306c.564.563 1.652.61 1.977.61zm.992-2.807c0 .458.373.83.831.83s.83-.381.83-.83a.831.831 0 0 0-1.66 0z"/><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.828-1.165c-.315 0-.602.124-.812.325-.801-.573-1.9-.945-3.121-.993l.534-2.501 1.738.372a.83.83 0 1 0 .83-.869.83.83 0 0 0-.744.468l-1.938-.41a.2.2 0 0 0-.153.028.2.2 0 0 0-.086.134l-.592 2.788c-1.24.038-2.358.41-3.17.992-.21-.2-.496-.324-.81-.324a1.163 1.163 0 0 0-.478 2.224q-.03.17-.029.353c0 1.795 2.091 3.256 4.669 3.256s4.668-1.451 4.668-3.256c0-.114-.01-.238-.029-.353.401-.181.688-.592.688-1.069 0-.65-.525-1.165-1.165-1.165"/></g>',
 
 		'Etsy' => '<rect x="1" y="1" width="22" height="22" rx="6" fill="#F1641E"/>'
-			. '<path fill="#fff" d="M9.3 6.6h8.1l.3 2.9h-.9c-.4-1.5-.9-2-2.2-2h-2.5c-.4 0-.5.1-.5.5v3.5h1.9c1 0 1.3-.3 1.5-1.4h.9v3.9h-.9c-.2-1.1-.5-1.4-1.5-1.4h-1.9v3.9c0 .4.1.5.5.5h2.6c1.4 0 2-.6 2.5-2.3h.9l-.4 3.2H9.3v-.9c1.2-.1 1.4-.3 1.4-1.2V8.7c0-.9-.2-1.1-1.4-1.2v-.9z"/>',
+			. '<g fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+			. '<path d="M14 12h-5"/>'
+			. '<path d="M3 8a5 5 0 0 1 5 -5h8a5 5 0 0 1 5 5v8a5 5 0 0 1 -5 5h-8a5 5 0 0 1 -5 -5l0 -8"/>'
+			. '<path d="M15 16h-5a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1h5"/></g>',
 
 		'Amazon' => '<rect x="1" y="1" width="22" height="22" rx="6" fill="#232F3E"/>'
-			. '<path fill="#FF9900" d="M4.6 16.4c2.3 1.7 5 2.5 7.7 2.5 1.9 0 4-.4 5.9-1.3.3-.13.55.19.27.4-1.7 1.3-4.1 2-6.2 2-2.9 0-5.6-1.1-7.7-2.9-.17-.15-.02-.35.06-.7z"/>'
-			. '<path fill="#FF9900" d="M18.4 15.5c-.3-.4-1.9-.2-2.6-.1-.2.03-.24-.16-.05-.3.9-.63 2.4-.45 2.57-.24.18.22-.05 1.75-.9 2.48-.13.11-.26.05-.2-.1.2-.5.63-1.34.44-1.74z"/>'
-			. '<path fill="#fff" d="M11.9 6.4c-1.6 0-3.1.6-3.5 2.6l1.9.2c.18-.9.7-1.2 1.4-1.2.4 0 .85.15 1.05.5.23.4.2.95.2 1.4v.25c-1.1.12-2.5.2-3.5.64-1.15.5-1.95 1.5-1.95 3 0 1.9 1.2 2.85 2.75 2.85 1.3 0 2-.3 3-1.35.33.48.44.7 1.05 1.2.14.07.31.07.43-.05l1.3-1.15c.15-.13.13-.32.02-.48-.36-.5-.75-.9-.75-1.83v-3.1c0-1.3.1-2.5-.87-3.4-.77-.73-2.03-.98-3-.98zm.35 5.3c.35 0 .7 0 .7.01v.45c0 .8.04 1.47-.37 2.18-.33.58-.86.94-1.44.94-.8 0-1.27-.61-1.27-1.51 0-1.78 1.6-2.07 2.38-2.07z"/>',
+			. '<path transform="translate(4 4)" fill="#fff" d="M10.813 11.968c.157.083.36.074.5-.05l.005.005a90 90 0 0 1 1.623-1.405c.173-.143.143-.372.006-.563l-.125-.17c-.345-.465-.673-.906-.673-1.791v-3.3l.001-.335c.008-1.265.014-2.421-.933-3.305C10.404.274 9.06 0 8.03 0 6.017 0 3.77.75 3.296 3.24c-.047.264.143.404.316.443l2.054.22c.19-.009.33-.196.366-.387.176-.857.896-1.271 1.703-1.271.435 0 .929.16 1.188.55.264.39.26.91.257 1.376v.432q-.3.033-.621.065c-1.113.114-2.397.246-3.36.67C3.873 5.91 2.94 7.08 2.94 8.798c0 2.2 1.387 3.298 3.168 3.298 1.506 0 2.328-.354 3.489-1.54l.167.246c.274.405.456.675 1.047 1.166ZM6.03 8.431C6.03 6.627 7.647 6.3 9.177 6.3v.57c.001.776.002 1.434-.396 2.133-.336.595-.87.961-1.465.961-.812 0-1.286-.619-1.286-1.533M.435 12.174c2.629 1.603 6.698 4.084 13.183.997.28-.116.475.078.199.431C13.538 13.96 11.312 16 7.57 16 3.832 16 .968 13.446.094 12.386c-.24-.275.036-.4.199-.299z"/>'
+			. '<path transform="translate(4 4)" fill="#FF9900" d="M13.828 11.943c.567-.07 1.468-.027 1.645.204.135.176-.004.966-.233 1.533-.23.563-.572.961-.762 1.115s-.333.094-.23-.137c.105-.23.684-1.663.455-1.963-.213-.278-1.177-.177-1.625-.13l-.09.009q-.142.013-.233.024c-.193.021-.245.027-.274-.032-.074-.209.779-.556 1.347-.623"/>',
 	];
 
 	return isset( $svg[ $label ] )
@@ -893,7 +1022,7 @@ function cbaz_table_tools( $placeholder, $export = '' ) {
 		<?php if ( $export && cbaz_can( 'exports' ) ) : ?>
 			<a class="cbaz-ctrl cbaz-ctrl--mini" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array_filter( [ 'action' => 'cbaz_export', 'quoi' => $export, 'periode' => cbaz_range()['preset'], 'du' => cbaz_range()['du'], 'au' => cbaz_range()['au'] ] ), admin_url( 'admin-post.php' ) ), 'cbaz_export' ) ); ?>">
 				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 11l5 5 5-5M4 21h16"/></svg>
-				CSV
+				<?php echo esc_html__( 'CSV', 'shop-analytics-for-woocommerce' ); ?>
 			</a>
 		<?php endif; ?>
 	</div>
@@ -902,9 +1031,14 @@ function cbaz_table_tools( $placeholder, $export = '' ) {
 }
 
 /** Pied de tableau : nombre de lignes affichées. */
-function cbaz_table_count( $shown, $total, $unit = 'lignes' ) {
-	return '<p class="cbaz-count" data-cbaz-count data-unit="' . esc_attr( $unit ) . '">'
-		. esc_html( sprintf( '1–%d sur %d %s', $shown, $total, $unit ) ) . '</p>';
+function cbaz_table_count( $shown, $total, $unit = '' ) {
+	$unit = $unit ?: __( 'lignes', 'shop-analytics-for-woocommerce' );
+	return sprintf(
+		'<p class="cbaz-count" data-cbaz-count data-unit="%1$s">%2$s</p>',
+		esc_attr( $unit ),
+		/* translators: 1: displayed row count, 2: total row count, 3: row type. */
+		esc_html( sprintf( __( '1–%1$d sur %2$d %3$s', 'shop-analytics-for-woocommerce' ), $shown, $total, $unit ) )
+	);
 }
 
 /** Interrupteur, pour les réglages qui n'ont que deux états. */
@@ -952,7 +1086,7 @@ function cbaz_hint( $text ) {
 
 function cbaz_render_page() {
 	if ( ! current_user_can( 'manage_woocommerce' ) ) {
-		wp_die( 'Accès refusé.' );
+		wp_die( esc_html__( 'Accès refusé.', 'shop-analytics-for-woocommerce' ) );
 	}
 
 	$tab   = cbaz_current_tab();
@@ -990,36 +1124,36 @@ function cbaz_render_page() {
 									<input type="hidden" name="compare" value="1">
 								<?php endif; ?>
 
-								<p class="cbaz-daterange__title">Plage précise</p>
+								<p class="cbaz-daterange__title"><?php echo esc_html__( 'Plage précise', 'shop-analytics-for-woocommerce' ); ?></p>
 
-								<label>Du
+								<label><?php echo esc_html__( 'Du', 'shop-analytics-for-woocommerce' ); ?>
 									<input type="date" name="du" max="<?php echo esc_attr( gmdate( 'Y-m-d', current_time( 'timestamp' ) ) ); ?>"
 									       value="<?php echo esc_attr( $range['du'] ? $range['du'] : gmdate( 'Y-m-d', strtotime( $range['from'] ) ) ); ?>">
 								</label>
-								<label>Au
+								<label><?php echo esc_html__( 'Au', 'shop-analytics-for-woocommerce' ); ?>
 									<input type="date" name="au" max="<?php echo esc_attr( gmdate( 'Y-m-d', current_time( 'timestamp' ) ) ); ?>"
 									       value="<?php echo esc_attr( $range['au'] ? $range['au'] : gmdate( 'Y-m-d', strtotime( $range['to'] ) ) ); ?>">
 								</label>
 
-								<button type="submit" class="cbaz-btn cbaz-btn--mini">Appliquer</button>
+								<button type="submit" class="cbaz-btn cbaz-btn--mini"><?php echo esc_html__( 'Appliquer', 'shop-analytics-for-woocommerce' ); ?></button>
 							</form>
 						</div>
 					</div>
 
 					<a class="cbaz-ctrl<?php echo cbaz_comparing() ? ' is-on' : ''; ?>"
 					   href="<?php echo esc_url( cbaz_comparing() ? cbaz_url( [], [ 'compare' ] ) : cbaz_url( [ 'compare' => 1 ] ) ); ?>">
-						<?php echo cbaz_comparing() ? 'Courbe comparée' : 'Superposer la période précédente'; ?>
+						<?php echo esc_html( cbaz_comparing() ? __( 'Courbe comparée', 'shop-analytics-for-woocommerce' ) : __( 'Superposer la période précédente', 'shop-analytics-for-woocommerce' ) ); ?>
 					</a>
 
 					<a class="cbaz-ctrl" href="<?php echo esc_url( cbaz_url() ); ?>">
 						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
-						Actualiser
+						<?php echo esc_html__( 'Actualiser', 'shop-analytics-for-woocommerce' ); ?>
 					</a>
 
 					<?php if ( cbaz_can( 'exports' ) ) : ?>
 						<a class="cbaz-ctrl cbaz-ctrl--primary" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array_filter( [ 'action' => 'cbaz_export', 'quoi' => $tab, 'periode' => $range['preset'], 'du' => $range['du'], 'au' => $range['au'] ] ), admin_url( 'admin-post.php' ) ), 'cbaz_export' ) ); ?>">
 							<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 11l5 5 5-5M4 21h16"/></svg>
-							Exporter
+							<?php echo esc_html__( 'Exporter', 'shop-analytics-for-woocommerce' ); ?>
 						</a>
 					<?php endif; ?>
 				</div>
@@ -1027,7 +1161,7 @@ function cbaz_render_page() {
 				<div class="cbaz-livepill">
 					<span class="cbaz-live__pulse"></span>
 					<strong data-cbaz-online><?php echo esc_html( cbaz_int( cbaz_realtime()['online'] ) ); ?></strong>
-					visiteurs actifs maintenant
+					<?php echo esc_html__( 'visiteurs actifs maintenant', 'shop-analytics-for-woocommerce' ); ?>
 				</div>
 			<?php endif; ?>
 		</header>
@@ -1053,9 +1187,14 @@ function cbaz_render_page() {
 		}
 		?>
 
+		<?php cbaz_hidden_notice_hint(); ?>
+
 		<footer class="cbaz-footer">
-			Shop Analytics for WooCommerce <?php echo esc_html( CBAZ_VERSION ); ?> · données hébergées sur ton serveur
-			<?php if ( cbaz_hpos() ) : ?> · stockage WooCommerce moderne<?php endif; ?>
+			<?php if ( cbaz_hpos() ) : ?>
+				<?php /* translators: %1$s: plugin version. */ printf( esc_html__( 'Shop Analytics for WooCommerce %1$s · données hébergées sur ton serveur · stockage WooCommerce moderne', 'shop-analytics-for-woocommerce' ), esc_html( CBAZ_VERSION ) ); ?>
+			<?php else : ?>
+				<?php /* translators: %1$s: plugin version. */ printf( esc_html__( 'Shop Analytics for WooCommerce %1$s · données hébergées sur ton serveur', 'shop-analytics-for-woocommerce' ), esc_html( CBAZ_VERSION ) ); ?>
+			<?php endif; ?>
 		</footer>
 	</div>
 	<?php
@@ -1073,7 +1212,7 @@ function cbaz_comparing() {
 add_action( 'admin_post_cbaz_settings', 'cbaz_save_settings' );
 function cbaz_save_settings() {
 	if ( ! current_user_can( 'manage_options' ) ) {
-		wp_die( 'Accès refusé.' );
+		wp_die( esc_html__( 'Accès refusé.', 'shop-analytics-for-woocommerce' ) );
 	}
 
 	check_admin_referer( 'cbaz_settings' );
@@ -1123,7 +1262,7 @@ function cbaz_save_settings() {
 add_action( 'admin_post_cbaz_campaign', 'cbaz_handle_campaign' );
 function cbaz_handle_campaign() {
 	if ( ! current_user_can( 'manage_woocommerce' ) ) {
-		wp_die( 'Accès refusé.' );
+		wp_die( esc_html__( 'Accès refusé.', 'shop-analytics-for-woocommerce' ) );
 	}
 
 	check_admin_referer( 'cbaz_campaign' );
@@ -1169,7 +1308,7 @@ function cbaz_handle_campaign() {
 add_action( 'admin_post_cbaz_favori', 'cbaz_toggle_favori' );
 function cbaz_toggle_favori() {
 	if ( ! current_user_can( 'manage_woocommerce' ) ) {
-		wp_die( 'Accès refusé.' );
+		wp_die( esc_html__( 'Accès refusé.', 'shop-analytics-for-woocommerce' ) );
 	}
 
 	check_admin_referer( 'cbaz_favori' );

@@ -5,7 +5,7 @@ Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
 Stable tag: 4.31.1
-License: GPLv2 or later
+License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Mesure d'audience et de ventes, hébergée sur votre serveur. Sans service tiers et sans cookie par défaut.

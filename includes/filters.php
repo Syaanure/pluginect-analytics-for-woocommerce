@@ -13,12 +13,12 @@ defined( 'ABSPATH' ) || exit;
 
 function cbaz_filter_dims() {
 	return [
-		'pays'     => [ 'label' => 'Pays', 'column' => 'country' ],
-		'source'   => [ 'label' => 'Source', 'column' => 'source' ],
-		'medium'   => [ 'label' => 'Medium', 'column' => 'medium' ],
-		'campagne' => [ 'label' => 'Campagne', 'column' => 'campaign' ],
-		'appareil' => [ 'label' => 'Appareil', 'column' => 'device' ],
-		'client'   => [ 'label' => 'Client', 'column' => 'is_new' ],
+		'pays'     => [ 'label' => __( 'Pays', 'shop-analytics-for-woocommerce' ), 'column' => 'country' ],
+		'source'   => [ 'label' => __( 'Source', 'shop-analytics-for-woocommerce' ), 'column' => 'source' ],
+		'medium'   => [ 'label' => __( 'Medium', 'shop-analytics-for-woocommerce' ), 'column' => 'medium' ],
+		'campagne' => [ 'label' => __( 'Campagne', 'shop-analytics-for-woocommerce' ), 'column' => 'campaign' ],
+		'appareil' => [ 'label' => __( 'Appareil', 'shop-analytics-for-woocommerce' ), 'column' => 'device' ],
+		'client'   => [ 'label' => __( 'Client', 'shop-analytics-for-woocommerce' ), 'column' => 'is_new' ],
 	];
 }
 
@@ -124,7 +124,7 @@ function cbaz_filter_options( $key, array $range ) {
 	global $wpdb;
 
 	if ( 'client' === $key ) {
-		return [ 'nouveau' => 'Nouveaux visiteurs', 'recurrent' => 'Visiteurs récurrents' ];
+		return [ 'nouveau' => __( 'Nouveaux visiteurs', 'shop-analytics-for-woocommerce' ), 'recurrent' => __( 'Visiteurs récurrents', 'shop-analytics-for-woocommerce' ) ];
 	}
 
 	$dims   = cbaz_filter_dims();
@@ -201,7 +201,7 @@ function cbaz_filter_bar( array $range ) {
 	<div class="cbaz-filters">
 		<span class="cbaz-filters__label">
 			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
-			Filtres
+			<?php echo esc_html__( 'Filtres', 'shop-analytics-for-woocommerce' ); ?>
 		</span>
 
 		<?php foreach ( $dims as $key => $dim ) : ?>
@@ -212,7 +212,7 @@ function cbaz_filter_bar( array $range ) {
 
 				<div class="cbaz-drop__menu" hidden>
 					<?php if ( ! $options ) : ?>
-						<p class="cbaz-drop__empty">Aucune valeur sur la période.</p>
+						<p class="cbaz-drop__empty"><?php echo esc_html__( 'Aucune valeur sur la période.', 'shop-analytics-for-woocommerce' ); ?></p>
 					<?php endif; ?>
 
 					<?php foreach ( $options as $value => $label ) : ?>
@@ -233,7 +233,7 @@ function cbaz_filter_bar( array $range ) {
 		<?php endforeach; ?>
 
 		<?php if ( $active ) : ?>
-			<a class="cbaz-clear" href="<?php echo esc_url( cbaz_url( [], array_map( fn( $k ) => 'f_' . $k, array_keys( $active ) ) ) ); ?>">Tout effacer</a>
+			<a class="cbaz-clear" href="<?php echo esc_url( cbaz_url( [], array_map( fn( $k ) => 'f_' . $k, array_keys( $active ) ) ) ); ?>"><?php echo esc_html__( 'Tout effacer', 'shop-analytics-for-woocommerce' ); ?></a>
 		<?php endif; ?>
 	</div>
 	<?php

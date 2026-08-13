@@ -34,10 +34,10 @@ $max    = $rows ? max( array_map( fn( $r ) => (int) $r->sessions, $rows ) ) : 1;
 
 <?php if ( ! $rows ) : ?>
 	<div class="cbaz-notice cbaz-notice--info">
-		<strong>Le pays n’est pas encore renseigné.</strong>
-		Il est lu dans un en-tête fourni par l’hébergeur ou par Cloudflare, et à défaut dans l’adresse de facturation d’une commande.
+		<strong><?php echo esc_html__( 'Le pays n’est pas encore renseigné.', 'shop-analytics-for-woocommerce' ); ?></strong>
+		<?php echo esc_html__( 'Il est lu dans un en-tête fourni par l’hébergeur ou par Cloudflare, et à défaut dans l’adresse de facturation d’une commande.
 		Aucune base GeoIP n’est embarquée : elle pèserait plusieurs mégaoctets et demanderait une mise à jour mensuelle.
-		Les commandes renseigneront donc les pays au fil de l’eau.
+		Les commandes renseigneront donc les pays au fil de l’eau.', 'shop-analytics-for-woocommerce' ); ?>
 	</div>
 <?php endif; ?>
 
@@ -45,20 +45,20 @@ $max    = $rows ? max( array_map( fn( $r ) => (int) $r->sessions, $rows ) ) : 1;
 	<section class="cbaz-card cbaz-card--globe">
 		<header class="cbaz-card__head">
 			<?php echo cbaz_icon( 'globe', 6 ); // phpcs:ignore ?>
-			<div><h2>Localisation des visiteurs</h2><p>Survolez un pays pour afficher son détail.</p></div>
-			<button type="button" class="cbaz-ctrl cbaz-ctrl--mini" data-cbaz-spin>Pause rotation</button>
+			<div><h2><?php echo esc_html__( 'Localisation des visiteurs', 'shop-analytics-for-woocommerce' ); ?></h2><p><?php echo esc_html__( 'Survolez un pays pour afficher son détail.', 'shop-analytics-for-woocommerce' ); ?></p></div>
+			<button type="button" class="cbaz-ctrl cbaz-ctrl--mini" data-cbaz-spin><?php echo esc_html__( 'Pause rotation', 'shop-analytics-for-woocommerce' ); ?></button>
 		</header>
 
 		<div class="cbaz-globe" data-cbaz-globe
 		     data-metric="sessions"
 		     data-home="<?php echo esc_attr( wp_json_encode( $home_point ) ); ?>"
 		     data-points="<?php echo esc_attr( wp_json_encode( $points ) ); ?>">
-			<svg viewBox="-152 -152 304 304" role="img" aria-label="Globe des visites par pays"></svg>
+			<svg viewBox="-152 -152 304 304" role="img" aria-label="<?php echo esc_attr__( 'Globe des visites par pays', 'shop-analytics-for-woocommerce' ); ?>"></svg>
 
 			<div class="cbaz-globe__tools">
-				<button type="button" data-cbaz-zoom="+" aria-label="Zoomer" title="Zoomer">+</button>
-				<button type="button" data-cbaz-zoom="-" aria-label="Dézoomer" title="Dézoomer">−</button>
-				<button type="button" data-cbaz-reset aria-label="Revenir à la vue initiale" title="Recentrer">
+				<button type="button" data-cbaz-zoom="+" aria-label="<?php echo esc_attr__( 'Zoomer', 'shop-analytics-for-woocommerce' ); ?>" title="<?php echo esc_attr__( 'Zoomer', 'shop-analytics-for-woocommerce' ); ?>">+</button>
+				<button type="button" data-cbaz-zoom="-" aria-label="<?php echo esc_attr__( 'Dézoomer', 'shop-analytics-for-woocommerce' ); ?>" title="<?php echo esc_attr__( 'Dézoomer', 'shop-analytics-for-woocommerce' ); ?>">−</button>
+				<button type="button" data-cbaz-reset aria-label="<?php echo esc_attr__( 'Revenir à la vue initiale', 'shop-analytics-for-woocommerce' ); ?>" title="<?php echo esc_attr__( 'Recentrer', 'shop-analytics-for-woocommerce' ); ?>">
 					<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>
 				</button>
 			</div>
@@ -66,17 +66,17 @@ $max    = $rows ? max( array_map( fn( $r ) => (int) $r->sessions, $rows ) ) : 1;
 
 		<div class="cbaz-floats">
 			<div class="cbaz-float">
-				<p class="cbaz-float__label">Visiteurs présents actuellement</p>
+				<p class="cbaz-float__label"><?php echo esc_html__( 'Visiteurs présents actuellement', 'shop-analytics-for-woocommerce' ); ?></p>
 				<p class="cbaz-float__value"><?php echo esc_html( cbaz_int( cbaz_realtime()['online'] ) ); ?></p>
 			</div>
 
 			<div class="cbaz-float">
-				<p class="cbaz-float__label">Ventes totales sur la période</p>
+				<p class="cbaz-float__label"><?php echo esc_html__( 'Ventes totales sur la période', 'shop-analytics-for-woocommerce' ); ?></p>
 				<p class="cbaz-float__value"><?php echo esc_html( cbaz_money( array_sum( array_map( fn( $r ) => (float) $r->revenue, $rows ) ) ) ); ?></p>
 			</div>
 
 			<div class="cbaz-float cbaz-float--wide">
-				<p class="cbaz-float__title">Principaux emplacements</p>
+				<p class="cbaz-float__title"><?php echo esc_html__( 'Principaux emplacements', 'shop-analytics-for-woocommerce' ); ?></p>
 				<?php foreach ( array_slice( $rows, 0, 3 ) as $r ) : ?>
 					<div class="cbaz-float__row">
 						<span><?php echo cbaz_country_flag( $r->label ); // phpcs:ignore ?> <?php echo esc_html( cbaz_country_name( $r->label ) ); ?></span>
@@ -84,14 +84,13 @@ $max    = $rows ? max( array_map( fn( $r ) => (int) $r->sessions, $rows ) ) : 1;
 						<em><?php echo esc_html( cbaz_int( $r->sessions ) ); ?></em>
 					</div>
 				<?php endforeach; ?>
-				<?php if ( ! $rows ) : ?><p class="cbaz-empty">Aucun pays identifié.</p><?php endif; ?>
+				<?php if ( ! $rows ) : ?><p class="cbaz-empty"><?php echo esc_html__( 'Aucun pays identifié.', 'shop-analytics-for-woocommerce' ); ?></p><?php endif; ?>
 			</div>
 		</div>
 		<p class="cbaz-note">
-			Fais glisser pour faire pivoter, survole un pays pour son détail.
+			<?php echo esc_html__( 'Fais glisser pour faire pivoter, survole un pays pour son détail.', 'shop-analytics-for-woocommerce' ); ?>
 			<?php if ( $rows ) : ?>
-				La taille d’un point suit son nombre de visites — <?php echo esc_html( cbaz_int( $max ) ); ?> au maximum,
-				pour <?php echo esc_html( cbaz_country_name( $rows[0]->label ) ); ?>.
+				<?php /* translators: 1: maximum visit count, 2: country name. */ printf( esc_html__( 'La taille d’un point suit son nombre de visites — %1$s au maximum, pour %2$s.', 'shop-analytics-for-woocommerce' ), esc_html( cbaz_int( $max ) ), esc_html( cbaz_country_name( $rows[0]->label ) ) ); ?>
 			<?php endif; ?>
 		</p>
 	</section>
@@ -99,16 +98,16 @@ $max    = $rows ? max( array_map( fn( $r ) => (int) $r->sessions, $rows ) ) : 1;
 	<div class="cbaz-stack">
 		<section class="cbaz-card cbaz-card--readout">
 			<header class="cbaz-card__head"><?php echo cbaz_icon( 'page', 1 ); // phpcs:ignore ?>
-			<div><h2>Détail</h2></div></header>
+			<div><h2><?php echo esc_html__( 'Détail', 'shop-analytics-for-woocommerce' ); ?></h2></div></header>
 
 			<div class="cbaz-readout" data-cbaz-readout>
-				<p class="cbaz-readout__hint">Survole un pays sur le globe.</p>
+				<p class="cbaz-readout__hint"><?php echo esc_html__( 'Survole un pays sur le globe.', 'shop-analytics-for-woocommerce' ); ?></p>
 			</div>
 		</section>
 
 		<section class="cbaz-card">
 			<header class="cbaz-card__head"><?php echo cbaz_icon( 'flag', 5 ); // phpcs:ignore ?>
-			<div><h2>Top pays</h2><p>Classement par visiteurs sur la période.</p></div></header>
+			<div><h2><?php echo esc_html__( 'Top pays', 'shop-analytics-for-woocommerce' ); ?></h2><p><?php echo esc_html__( 'Classement par visiteurs sur la période.', 'shop-analytics-for-woocommerce' ); ?></p></div></header>
 			<ul class="cbaz-list">
 				<?php foreach ( $rows as $r ) : ?>
 					<li data-cbaz-country="<?php echo esc_attr( strtoupper( $r->label ) ); ?>">
@@ -120,13 +119,10 @@ $max    = $rows ? max( array_map( fn( $r ) => (int) $r->sessions, $rows ) ) : 1;
 							</span>
 						</div>
 						<?php echo cbaz_bar( $r->sessions, $max ); // phpcs:ignore ?>
-						<p class="cbaz-list__note">
-							<?php echo esc_html( cbaz_pct( $total ? ( $r->sessions / $total ) * 100 : 0, 1 ) ); ?> des visites ·
-							<?php echo esc_html( cbaz_money( $r->revenue ) ); ?>
-						</p>
+						<p class="cbaz-list__note"><?php /* translators: 1: share of visits, 2: revenue. */ printf( esc_html__( '%1$s des visites · %2$s', 'shop-analytics-for-woocommerce' ), esc_html( cbaz_pct( $total ? ( $r->sessions / $total ) * 100 : 0, 1 ) ), esc_html( cbaz_money( $r->revenue ) ) ); ?></p>
 					</li>
 				<?php endforeach; ?>
-				<?php if ( ! $rows ) : ?><li class="cbaz-empty">Aucun pays connu sur la période.</li><?php endif; ?>
+				<?php if ( ! $rows ) : ?><li class="cbaz-empty"><?php echo esc_html__( 'Aucun pays connu sur la période.', 'shop-analytics-for-woocommerce' ); ?></li><?php endif; ?>
 			</ul>
 		</section>
 	</div>

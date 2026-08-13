@@ -42,8 +42,8 @@ $online = max( 1, (int) $live['online'] );
 <section class="cbaz-card">
 	<header class="cbaz-card__head">
 		<?php echo cbaz_icon( 'bolt', 3 ); // phpcs:ignore ?>
-			<div><h2>Visiteurs des 30 dernières minutes</h2><p>Mise à jour automatique toutes les 20 secondes.</p></div>
-		<span class="cbaz-pill cbaz-pill--live">En direct</span>
+			<div><h2><?php echo esc_html__( 'Visiteurs des 30 dernières minutes', 'shop-analytics-for-woocommerce' ); ?></h2><p><?php echo esc_html__( 'Mise à jour automatique toutes les 20 secondes.', 'shop-analytics-for-woocommerce' ); ?></p></div>
+		<span class="cbaz-pill cbaz-pill--live"><?php echo esc_html__( 'En direct', 'shop-analytics-for-woocommerce' ); ?></span>
 	</header>
 
 	<?php echo cbaz_chart( $curve, [ 'sessions' ] ); // phpcs:ignore ?>
@@ -52,7 +52,7 @@ $online = max( 1, (int) $live['online'] );
 <div class="cbaz-grid cbaz-grid--3" data-cbaz-live data-nonce="<?php echo esc_attr( wp_create_nonce( 'cbaz_realtime' ) ); ?>">
 	<section class="cbaz-card">
 		<header class="cbaz-card__head"><?php echo cbaz_icon( 'page', 1 ); // phpcs:ignore ?>
-			<div><h2>Pages consultées</h2></div></header>
+			<div><h2><?php echo esc_html__( 'Pages consultées', 'shop-analytics-for-woocommerce' ); ?></h2></div></header>
 		<?php $maxp = $live['pages'] ? max( array_map( fn( $p ) => (int) $p->views, $live['pages'] ) ) : 1; ?>
 		<ul class="cbaz-list">
 			<?php foreach ( $live['pages'] as $i => $p ) : ?>
@@ -61,13 +61,13 @@ $online = max( 1, (int) $live['online'] );
 					<?php echo str_replace( 'cbaz-bar"', 'cbaz-bar cbaz-bar--' . ( $i % 6 ) . '"', cbaz_bar( $p->views, $maxp ) ); // phpcs:ignore ?>
 				</li>
 			<?php endforeach; ?>
-			<?php if ( ! $live['pages'] ) : ?><li class="cbaz-empty">Aucune page consultée récemment.</li><?php endif; ?>
+			<?php if ( ! $live['pages'] ) : ?><li class="cbaz-empty"><?php echo esc_html__( 'Aucune page consultée récemment.', 'shop-analytics-for-woocommerce' ); ?></li><?php endif; ?>
 		</ul>
 	</section>
 
 	<section class="cbaz-card">
 		<header class="cbaz-card__head"><?php echo cbaz_icon( 'flag', 5 ); // phpcs:ignore ?>
-			<div><h2>Pays</h2></div></header>
+			<div><h2><?php echo esc_html__( 'Pays', 'shop-analytics-for-woocommerce' ); ?></h2></div></header>
 		<ul class="cbaz-list">
 			<?php $maxc = $now_countries ? max( array_map( fn( $c ) => (int) $c->sessions, $now_countries ) ) : 1; ?>
 			<?php foreach ( $now_countries as $i => $c ) : ?>
@@ -79,14 +79,14 @@ $online = max( 1, (int) $live['online'] );
 					<?php echo str_replace( 'cbaz-bar"', 'cbaz-bar cbaz-bar--' . ( $i % 6 ) . '"', cbaz_bar( $c->sessions, $maxc ) ); // phpcs:ignore ?>
 				</li>
 			<?php endforeach; ?>
-			<?php if ( ! $now_countries ) : ?><li class="cbaz-empty">Pays non renseignés.</li><?php endif; ?>
+			<?php if ( ! $now_countries ) : ?><li class="cbaz-empty"><?php echo esc_html__( 'Pays non renseignés.', 'shop-analytics-for-woocommerce' ); ?></li><?php endif; ?>
 		</ul>
 
 	</section>
 
 	<section class="cbaz-card">
 		<header class="cbaz-card__head"><?php echo cbaz_icon( 'device', 1 ); // phpcs:ignore ?>
-			<div><h2>Appareils</h2></div></header>
+			<div><h2><?php echo esc_html__( 'Appareils', 'shop-analytics-for-woocommerce' ); ?></h2></div></header>
 		<ul class="cbaz-list">
 			<?php $maxd = $now_devices ? max( array_map( fn( $d ) => (int) $d->sessions, $now_devices ) ) : 1; ?>
 			<?php foreach ( $now_devices as $i => $d ) : ?>
@@ -95,20 +95,20 @@ $online = max( 1, (int) $live['online'] );
 					<?php echo str_replace( 'cbaz-bar"', 'cbaz-bar cbaz-bar--' . ( $i % 6 ) . '"', cbaz_bar( $d->sessions, $maxd ) ); // phpcs:ignore ?>
 				</li>
 			<?php endforeach; ?>
-			<?php if ( ! $now_devices ) : ?><li class="cbaz-empty">Rien à afficher.</li><?php endif; ?>
+			<?php if ( ! $now_devices ) : ?><li class="cbaz-empty"><?php echo esc_html__( 'Rien à afficher.', 'shop-analytics-for-woocommerce' ); ?></li><?php endif; ?>
 		</ul>
 	</section>
 
 	<section class="cbaz-card">
 		<header class="cbaz-card__head">
 			<?php echo cbaz_icon( 'bolt', 3 ); // phpcs:ignore ?>
-			<div><h2>Activité en direct<?php echo cbaz_pro_badge(); // phpcs:ignore ?></h2><p>Évènements anonymisés, aucune donnée personnelle.</p></div>
+			<div><h2><?php echo esc_html__( 'Activité en direct', 'shop-analytics-for-woocommerce' ); ?><?php echo cbaz_pro_badge(); // phpcs:ignore ?></h2><p><?php echo esc_html__( 'Évènements anonymisés, aucune donnée personnelle.', 'shop-analytics-for-woocommerce' ); ?></p></div>
 		</header>
 
 		<?php if ( ! cbaz_can( 'realtime_details' ) ) : ?>
 			<p class="cbaz-note">
-				Le compteur de visiteurs et les répartitions ci-dessus sont gratuits.
-				Le détail évènement par évènement est disponible avec Pro.
+				<?php echo esc_html__( 'Le compteur de visiteurs et les répartitions ci-dessus sont gratuits.
+				Le détail évènement par évènement est disponible avec Pro.', 'shop-analytics-for-woocommerce' ); ?>
 			</p>
 		<?php else : ?>
 
@@ -129,7 +129,7 @@ $online = max( 1, (int) $live['online'] );
 					</p>
 				</li>
 			<?php endforeach; ?>
-			<?php if ( ! $live['feed'] ) : ?><li class="cbaz-empty">Personne sur le site en ce moment.</li><?php endif; ?>
+			<?php if ( ! $live['feed'] ) : ?><li class="cbaz-empty"><?php echo esc_html__( 'Personne sur le site en ce moment.', 'shop-analytics-for-woocommerce' ); ?></li><?php endif; ?>
 		</ul>
 
 		<?php endif; ?>
@@ -138,7 +138,7 @@ $online = max( 1, (int) $live['online'] );
 
 <section class="cbaz-card">
 	<header class="cbaz-card__head"><?php echo cbaz_icon( 'globe', 6 ); // phpcs:ignore ?>
-			<div><h2>Sources actuelles</h2></div></header>
+			<div><h2><?php echo esc_html__( 'Sources actuelles', 'shop-analytics-for-woocommerce' ); ?></h2></div></header>
 	<?php $maxs = $now_sources ? max( array_map( fn( $x ) => (int) $x->sessions, $now_sources ) ) : 1; ?>
 	<ul class="cbaz-list">
 		<?php foreach ( $now_sources as $i => $x ) : ?>
@@ -150,6 +150,6 @@ $online = max( 1, (int) $live['online'] );
 				<?php echo str_replace( 'cbaz-bar"', 'cbaz-bar cbaz-bar--' . ( $i % 6 ) . '"', cbaz_bar( $x->sessions, $maxs ) ); // phpcs:ignore ?>
 			</li>
 		<?php endforeach; ?>
-		<?php if ( ! $now_sources ) : ?><li class="cbaz-empty">Aucune source active.</li><?php endif; ?>
+		<?php if ( ! $now_sources ) : ?><li class="cbaz-empty"><?php echo esc_html__( 'Aucune source active.', 'shop-analytics-for-woocommerce' ); ?></li><?php endif; ?>
 	</ul>
 </section>

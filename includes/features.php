@@ -40,12 +40,12 @@ function cbaz_pro() {
  */
 function cbaz_pro_features() {
 	return [
-		'exports'            => 'Exports CSV',
-		'journeys_full'      => 'Historique complet des parcours',
-		'journeys_filters'   => 'Filtres et recherche de parcours',
-		'journeys_stats'     => 'Statistiques des parcours',
-		'campaign_stats'     => 'Performances des campagnes',
-		'realtime_details'   => 'Temps réel détaillé',
+		'exports'            => __( 'Exports CSV', 'shop-analytics-for-woocommerce' ),
+		'journeys_full'      => __( 'Historique complet des parcours', 'shop-analytics-for-woocommerce' ),
+		'journeys_filters'   => __( 'Filtres et recherche de parcours', 'shop-analytics-for-woocommerce' ),
+		'journeys_stats'     => __( 'Statistiques des parcours', 'shop-analytics-for-woocommerce' ),
+		'campaign_stats'     => __( 'Performances des campagnes', 'shop-analytics-for-woocommerce' ),
+		'realtime_details'   => __( 'Temps réel détaillé', 'shop-analytics-for-woocommerce' ),
 	];
 }
 
@@ -103,16 +103,16 @@ function cbaz_pro_notice( $title, $text ) {
 	<aside class="cbaz-pro">
 		<div class="cbaz-pro__body">
 			<p class="cbaz-pro__title">
-				<span class="cbaz-badge-pro">Pro</span>
+				<span class="cbaz-badge-pro"><?php echo esc_html__( 'Pro', 'shop-analytics-for-woocommerce' ); ?></span>
 				<?php echo esc_html( $title ); ?>
 			</p>
 			<p class="cbaz-pro__text"><?php echo esc_html( $text ); ?></p>
 		</div>
 
 		<a class="cbaz-pro__cta" href="<?php echo esc_url( cbaz_pro_url() ); ?>" target="_blank" rel="noopener">
-			Voir ce que fait Pro
+			<?php echo esc_html__( 'Voir ce que fait Pro', 'shop-analytics-for-woocommerce' ); ?>
 			<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17L17 7M9 7h8v8"/></svg>
-			<span class="screen-reader-text">(ouvre un nouvel onglet)</span>
+			<span class="screen-reader-text"><?php echo esc_html__( '(ouvre un nouvel onglet)', 'shop-analytics-for-woocommerce' ); ?></span>
 		</a>
 	</aside>
 	<?php
@@ -120,5 +120,5 @@ function cbaz_pro_notice( $title, $text ) {
 
 /** Petit badge « Pro » à accoler à un intitulé. */
 function cbaz_pro_badge() {
-	return cbaz_pro() ? '' : ' <span class="cbaz-badge-pro">Pro</span>';
+	return cbaz_pro() ? '' : sprintf( ' <span class="cbaz-badge-pro">%1$s</span>', esc_html__( 'Pro', 'shop-analytics-for-woocommerce' ) );
 }

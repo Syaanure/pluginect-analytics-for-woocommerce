@@ -25,11 +25,11 @@ $prev_new     = cbaz_group_previous( 'is_new', $range );
 $sessions_total = max( 1, (int) $totals['sessions'] );
 
 $kpis = [
-	[ 'Visiteurs uniques', cbaz_int( $totals['visitors'] ), cbaz_delta( $totals['visitors'], $prev['visitors'] ), false ],
-	[ 'Visites par visiteur', number_format_i18n( $totals['visitors'] ? $totals['sessions'] / $totals['visitors'] : 0, 2 ), cbaz_delta( $totals['sessions'], $prev['sessions'] ), false ],
-	[ 'Durée moyenne', cbaz_duration( $totals['duration'] ), cbaz_delta( $totals['duration'], $prev['duration'] ), false ],
-	[ 'Pages par visite', number_format_i18n( $totals['sessions'] ? $totals['pageviews'] / $totals['sessions'] : 0, 1 ), cbaz_delta( $totals['pageviews'], $prev['pageviews'] ), false ],
-	[ 'Taux de rebond', cbaz_pct( $totals['bounce_rate'], 1 ), cbaz_delta( $totals['bounce_rate'], $prev['bounce_rate'] ), true ],
+	[ __( 'Visiteurs uniques', 'shop-analytics-for-woocommerce' ), cbaz_int( $totals['visitors'] ), cbaz_delta( $totals['visitors'], $prev['visitors'] ), false ],
+	[ __( 'Visites par visiteur', 'shop-analytics-for-woocommerce' ), number_format_i18n( $totals['visitors'] ? $totals['sessions'] / $totals['visitors'] : 0, 2 ), cbaz_delta( $totals['sessions'], $prev['sessions'] ), false ],
+	[ __( 'Durée moyenne', 'shop-analytics-for-woocommerce' ), cbaz_duration( $totals['duration'] ), cbaz_delta( $totals['duration'], $prev['duration'] ), false ],
+	[ __( 'Pages par visite', 'shop-analytics-for-woocommerce' ), number_format_i18n( $totals['sessions'] ? $totals['pageviews'] / $totals['sessions'] : 0, 1 ), cbaz_delta( $totals['pageviews'], $prev['pageviews'] ), false ],
+	[ __( 'Taux de rebond', 'shop-analytics-for-woocommerce' ), cbaz_pct( $totals['bounce_rate'], 1 ), cbaz_delta( $totals['bounce_rate'], $prev['bounce_rate'] ), true ],
 ];
 ?>
 
@@ -40,7 +40,7 @@ $kpis = [
 			<p class="cbaz-kpi__value"><?php echo esc_html( $value ); ?></p>
 			<p class="cbaz-kpi__delta">
 				<?php echo cbaz_delta_badge( $delta, $invert ); // phpcs:ignore ?>
-				<span class="cbaz-kpi__vs">vs période préc.</span>
+				<span class="cbaz-kpi__vs"><?php echo esc_html__( 'vs période préc.', 'shop-analytics-for-woocommerce' ); ?></span>
 			</p>
 		</div>
 	<?php endforeach; ?>
@@ -49,47 +49,47 @@ $kpis = [
 <div class="cbaz-grid cbaz-grid--3">
 	<section class="cbaz-card">
 		<header class="cbaz-card__head"><?php echo cbaz_icon( 'device', 1 ); // phpcs:ignore ?>
-			<div><h2>Appareils</h2><p>Répartition des visites.</p></div></header>
+			<div><h2><?php echo esc_html__( 'Appareils', 'shop-analytics-for-woocommerce' ); ?></h2><p><?php echo esc_html__( 'Répartition des visites.', 'shop-analytics-for-woocommerce' ); ?></p></div></header>
 		<?php echo cbaz_donut( $devices, $sessions_total ); // phpcs:ignore ?>
 	</section>
 
 	<section class="cbaz-card">
 		<header class="cbaz-card__head"><?php echo cbaz_icon( 'os', 2 ); // phpcs:ignore ?>
-			<div><h2>Systèmes d’exploitation</h2></div></header>
+			<div><h2><?php echo esc_html__( 'Systèmes d’exploitation', 'shop-analytics-for-woocommerce' ); ?></h2></div></header>
 		<?php cbaz_meter_list( $systems, $sessions_total, $prev_os ); ?>
 	</section>
 
 	<section class="cbaz-card">
 		<header class="cbaz-card__head"><?php echo cbaz_icon( 'browser', 3 ); // phpcs:ignore ?>
-			<div><h2>Navigateurs</h2></div></header>
+			<div><h2><?php echo esc_html__( 'Navigateurs', 'shop-analytics-for-woocommerce' ); ?></h2></div></header>
 		<?php cbaz_meter_list( $browsers, $sessions_total, $prev_browser ); ?>
 	</section>
 	<section class="cbaz-card">
 		<header class="cbaz-card__head"><?php echo cbaz_icon( 'users', 4 ); // phpcs:ignore ?>
-			<div><h2>Nouveaux ou récurrents</h2></div></header>
+			<div><h2><?php echo esc_html__( 'Nouveaux ou récurrents', 'shop-analytics-for-woocommerce' ); ?></h2></div></header>
 		<ul class="cbaz-list">
 			<?php foreach ( $loyalty as $l ) : ?>
 				<li>
 					<div class="cbaz-list__row">
-						<span><?php echo $l->label ? 'Nouveaux visiteurs' : 'Visiteurs récurrents'; ?></span>
+						<span><?php echo esc_html( $l->label ? __( 'Nouveaux visiteurs', 'shop-analytics-for-woocommerce' ) : __( 'Visiteurs récurrents', 'shop-analytics-for-woocommerce' ) ); ?></span>
 						<span class="cbaz-num"><?php echo esc_html( cbaz_int( $l->sessions ) ); ?> · <?php echo esc_html( cbaz_pct( ( $l->sessions / $sessions_total ) * 100, 1 ) ); ?></span>
 					</div>
 					<?php echo cbaz_bar( $l->sessions, $sessions_total ); // phpcs:ignore ?>
 				</li>
 			<?php endforeach; ?>
-			<?php if ( ! $loyalty ) : ?><li class="cbaz-empty">Aucune visite sur la période.</li><?php endif; ?>
+			<?php if ( ! $loyalty ) : ?><li class="cbaz-empty"><?php echo esc_html__( 'Aucune visite sur la période.', 'shop-analytics-for-woocommerce' ); ?></li><?php endif; ?>
 		</ul>
 		<p class="cbaz-note">
-			« Récurrent » signifie ici : revenu au cours de la même journée. L’empreinte changeant chaque nuit,
-			un visiteur qui revient demain sera compté comme nouveau — c’est le prix de l’absence d’identifiant.
+			<?php echo esc_html__( '« Récurrent » signifie ici : revenu au cours de la même journée. L’empreinte changeant chaque nuit,
+			un visiteur qui revient demain sera compté comme nouveau — c’est le prix de l’absence d’identifiant.', 'shop-analytics-for-woocommerce' ); ?>
 		</p>
 	</section>
 
 	<section class="cbaz-card">
 		<header class="cbaz-card__head"><?php echo cbaz_icon( 'globe', 6 ); // phpcs:ignore ?>
-			<div><h2>Conversion par pays</h2></div></header>
+			<div><h2><?php echo esc_html__( 'Conversion par pays', 'shop-analytics-for-woocommerce' ); ?></h2></div></header>
 		<table class="cbaz-table">
-			<thead><tr><th>Pays</th><th class="num">Visites</th><th class="num">Conv.</th><th class="num">CA</th></tr></thead>
+			<thead><tr><th><?php echo esc_html__( 'Pays', 'shop-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html__( 'Visites', 'shop-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html__( 'Conv.', 'shop-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html_x( 'CA', 'revenue abbreviation', 'shop-analytics-for-woocommerce' ); ?></th></tr></thead>
 			<tbody>
 			<?php foreach ( $countries as $c ) : ?>
 				<tr>
@@ -99,31 +99,31 @@ $kpis = [
 					<td class="num"><?php echo esc_html( cbaz_money( $c->revenue ) ); ?></td>
 				</tr>
 			<?php endforeach; ?>
-			<?php if ( ! $countries ) : ?><tr><td colspan="4" class="cbaz-empty">Pays non renseignés — voir Géographie.</td></tr><?php endif; ?>
+			<?php if ( ! $countries ) : ?><tr><td colspan="4" class="cbaz-empty"><?php echo esc_html__( 'Pays non renseignés — voir Géographie.', 'shop-analytics-for-woocommerce' ); ?></td></tr><?php endif; ?>
 			</tbody>
 		</table>
 	</section>
 
 	<section class="cbaz-card">
 		<header class="cbaz-card__head"><?php echo cbaz_icon( 'screen', 5 ); // phpcs:ignore ?>
-			<div><h2>Résolutions d’écran</h2><p>Sur quoi tester la boutique en priorité.</p></div></header>
+			<div><h2><?php echo esc_html__( 'Résolutions d’écran', 'shop-analytics-for-woocommerce' ); ?></h2><p><?php echo esc_html__( 'Sur quoi tester la boutique en priorité.', 'shop-analytics-for-woocommerce' ); ?></p></div></header>
 		<?php cbaz_meter_list( $screens, $sessions_total, $prev_screen ); ?>
 	</section>
 
 	<section class="cbaz-card">
 		<header class="cbaz-card__head"><?php echo cbaz_icon( 'language', 2 ); // phpcs:ignore ?>
-			<div><h2>Langues</h2></div></header>
+			<div><h2><?php echo esc_html__( 'Langues', 'shop-analytics-for-woocommerce' ); ?></h2></div></header>
 		<?php cbaz_meter_list( $langs, $sessions_total, $prev_lang ); ?>
 	</section>
 
 	<section class="cbaz-card">
 		<header class="cbaz-card__head"><?php echo cbaz_icon( 'loyalty', 3 ); // phpcs:ignore ?>
-			<div><h2>Fidélité</h2></div></header>
+			<div><h2><?php echo esc_html__( 'Fidélité', 'shop-analytics-for-woocommerce' ); ?></h2></div></header>
 		<dl class="cbaz-stats">
-			<div><dt>Visites</dt><dd><?php echo esc_html( cbaz_int( $totals['sessions'] ) ); ?></dd></div>
-			<div><dt>Visiteurs uniques</dt><dd><?php echo esc_html( cbaz_int( $totals['visitors'] ) ); ?></dd></div>
-			<div><dt>Pages vues</dt><dd><?php echo esc_html( cbaz_int( $totals['pageviews'] ) ); ?></dd></div>
-			<div><dt>Commandes</dt><dd><?php echo esc_html( cbaz_int( $totals['orders'] ) ); ?></dd></div>
+			<div><dt><?php echo esc_html__( 'Visites', 'shop-analytics-for-woocommerce' ); ?></dt><dd><?php echo esc_html( cbaz_int( $totals['sessions'] ) ); ?></dd></div>
+			<div><dt><?php echo esc_html__( 'Visiteurs uniques', 'shop-analytics-for-woocommerce' ); ?></dt><dd><?php echo esc_html( cbaz_int( $totals['visitors'] ) ); ?></dd></div>
+			<div><dt><?php echo esc_html__( 'Pages vues', 'shop-analytics-for-woocommerce' ); ?></dt><dd><?php echo esc_html( cbaz_int( $totals['pageviews'] ) ); ?></dd></div>
+			<div><dt><?php echo esc_html__( 'Commandes', 'shop-analytics-for-woocommerce' ); ?></dt><dd><?php echo esc_html( cbaz_int( $totals['orders'] ) ); ?></dd></div>
 		</dl>
 	</section>
 </div>

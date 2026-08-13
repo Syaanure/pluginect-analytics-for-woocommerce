@@ -25,17 +25,17 @@ $coverage = $shop['revenue'] ? ( $totals['attributed'] / $shop['revenue'] ) * 10
 ?>
 
 <div class="cbaz-kpis">
-	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'CA WooCommerce' ); // phpcs:ignore ?><p class="cbaz-kpi__label">CA WooCommerce</p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_money( $shop['revenue'] ) ); ?></p></div>
-	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'Commandes' ); // phpcs:ignore ?><p class="cbaz-kpi__label">Commandes</p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_int( $shop['orders'] ) ); ?></p></div>
-	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'Panier moyen' ); // phpcs:ignore ?><p class="cbaz-kpi__label">Panier moyen</p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_money( $shop['orders'] ? $shop['revenue'] / $shop['orders'] : 0 ) ); ?></p></div>
-	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'Taux de conversion' ); // phpcs:ignore ?><p class="cbaz-kpi__label">Taux de conversion</p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_pct( $totals['cr'] ) ); ?></p><?php echo cbaz_delta_badge( cbaz_delta( $totals['cr'], $prev['cr'] ) ); // phpcs:ignore ?></div>
-	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'Valeur par visite' ); // phpcs:ignore ?><p class="cbaz-kpi__label">Valeur par visite</p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_money( $totals['per_session'] ) ); ?></p></div>
-	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'CA rattaché' ); // phpcs:ignore ?><p class="cbaz-kpi__label">CA rattaché</p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_pct( $coverage, 0 ) ); ?></p><p class="cbaz-kpi__note">du CA relié à une visite</p></div>
+	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'CA WooCommerce' ); // phpcs:ignore ?><p class="cbaz-kpi__label"><?php echo esc_html__( 'CA WooCommerce', 'shop-analytics-for-woocommerce' ); ?></p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_money( $shop['revenue'] ) ); ?></p></div>
+	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'Commandes' ); // phpcs:ignore ?><p class="cbaz-kpi__label"><?php echo esc_html__( 'Commandes', 'shop-analytics-for-woocommerce' ); ?></p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_int( $shop['orders'] ) ); ?></p></div>
+	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'Panier moyen' ); // phpcs:ignore ?><p class="cbaz-kpi__label"><?php echo esc_html__( 'Panier moyen', 'shop-analytics-for-woocommerce' ); ?></p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_money( $shop['orders'] ? $shop['revenue'] / $shop['orders'] : 0 ) ); ?></p></div>
+	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'Taux de conversion' ); // phpcs:ignore ?><p class="cbaz-kpi__label"><?php echo esc_html__( 'Taux de conversion', 'shop-analytics-for-woocommerce' ); ?></p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_pct( $totals['cr'] ) ); ?></p><?php echo cbaz_delta_badge( cbaz_delta( $totals['cr'], $prev['cr'] ) ); // phpcs:ignore ?></div>
+	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'Valeur par visite' ); // phpcs:ignore ?><p class="cbaz-kpi__label"><?php echo esc_html__( 'Valeur par visite', 'shop-analytics-for-woocommerce' ); ?></p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_money( $totals['per_session'] ) ); ?></p></div>
+	<div class="cbaz-kpi"><?php echo cbaz_kpi_icon( 'CA rattaché' ); // phpcs:ignore ?><p class="cbaz-kpi__label"><?php echo esc_html__( 'CA rattaché', 'shop-analytics-for-woocommerce' ); ?></p><p class="cbaz-kpi__value"><?php echo esc_html( cbaz_pct( $coverage, 0 ) ); ?></p><p class="cbaz-kpi__note"><?php echo esc_html__( 'du CA relié à une visite', 'shop-analytics-for-woocommerce' ); ?></p></div>
 </div>
 
 <section class="cbaz-card">
 	<header class="cbaz-card__head"><?php echo cbaz_icon( 'chart', 1 ); // phpcs:ignore ?>
-			<div><h2>Chiffre d’affaires et visites</h2></div></header>
+			<div><h2><?php echo esc_html__( 'Chiffre d’affaires et visites', 'shop-analytics-for-woocommerce' ); ?></h2></div></header>
 	<?php echo cbaz_chart( $series ); // phpcs:ignore ?>
 </section>
 
@@ -44,8 +44,8 @@ $coverage = $shop['revenue'] ? ( $totals['attributed'] / $shop['revenue'] ) * 10
 		<header class="cbaz-card__head">
 			<?php echo cbaz_icon( 'cart', 3 ); // phpcs:ignore ?>
 			<div>
-				<h2>Tunnel de conversion</h2>
-				<p>Visites → Ajout au panier → Commande entamée → Achat</p>
+				<h2><?php echo esc_html__( 'Tunnel de conversion', 'shop-analytics-for-woocommerce' ); ?></h2>
+				<p><?php echo esc_html__( 'Visites → Ajout au panier → Commande entamée → Achat', 'shop-analytics-for-woocommerce' ); ?></p>
 			</div>
 		</header>
 
@@ -54,20 +54,20 @@ $coverage = $shop['revenue'] ? ( $totals['attributed'] / $shop['revenue'] ) * 10
 
 	<section class="cbaz-card">
 		<header class="cbaz-card__head"><?php echo cbaz_icon( 'flag', 5 ); // phpcs:ignore ?>
-			<div><h2>Points de fuite</h2><p>Pertes entre chaque étape.</p></div></header>
+			<div><h2><?php echo esc_html__( 'Points de fuite', 'shop-analytics-for-woocommerce' ); ?></h2><p><?php echo esc_html__( 'Pertes entre chaque étape.', 'shop-analytics-for-woocommerce' ); ?></p></div></header>
 		<?php echo cbaz_leaks_block( $funnel, $funnel_prev ); // phpcs:ignore ?>
-		<p class="cbaz-note">L’écart entre le CA WooCommerce et le CA rattaché correspond aux commandes qu’aucune visite mesurée n’explique.</p>
+		<p class="cbaz-note"><?php echo esc_html__( 'L’écart entre le CA WooCommerce et le CA rattaché correspond aux commandes qu’aucune visite mesurée n’explique.', 'shop-analytics-for-woocommerce' ); ?></p>
 	</section>
 </div>
 
 <section class="cbaz-card">
 	<header class="cbaz-card__head">
 		<?php echo cbaz_icon( 'money', 2 ); // phpcs:ignore ?>
-			<div><h2>Rentabilité par source</h2><p>Ce que chaque canal rapporte réellement, visite par visite.</p></div>
+			<div><h2><?php echo esc_html__( 'Rentabilité par source', 'shop-analytics-for-woocommerce' ); ?></h2><p><?php echo esc_html__( 'Ce que chaque canal rapporte réellement, visite par visite.', 'shop-analytics-for-woocommerce' ); ?></p></div>
 	</header>
 
 	<table class="cbaz-table">
-		<thead><tr><th>Source</th><th class="num">Visites</th><th class="num">Commandes</th><th class="num">Conversion</th><th class="num">CA</th><th class="num">Par visite</th></tr></thead>
+		<thead><tr><th><?php echo esc_html__( 'Source', 'shop-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html__( 'Visites', 'shop-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html__( 'Commandes', 'shop-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html__( 'Conversion', 'shop-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html_x( 'CA', 'revenue abbreviation', 'shop-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html__( 'Par visite', 'shop-analytics-for-woocommerce' ); ?></th></tr></thead>
 		<tbody>
 		<?php foreach ( $srcs as $i => $s ) : ?>
 			<tr>
@@ -83,7 +83,7 @@ $coverage = $shop['revenue'] ? ( $totals['attributed'] / $shop['revenue'] ) * 10
 				<td class="num"><?php echo esc_html( cbaz_money( $s->sessions ? $s->revenue / $s->sessions : 0 ) ); ?></td>
 			</tr>
 		<?php endforeach; ?>
-		<?php if ( ! $srcs ) : ?><tr><td colspan="6" class="cbaz-empty">Aucune visite sur la période.</td></tr><?php endif; ?>
+		<?php if ( ! $srcs ) : ?><tr><td colspan="6" class="cbaz-empty"><?php echo esc_html__( 'Aucune visite sur la période.', 'shop-analytics-for-woocommerce' ); ?></td></tr><?php endif; ?>
 		</tbody>
 	</table>
 </section>
