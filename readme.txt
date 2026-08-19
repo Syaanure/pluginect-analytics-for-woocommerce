@@ -4,7 +4,7 @@ Tags: analytics, woocommerce, statistiques, utm, rgpd
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 4.31.1
+Stable tag: 4.31.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -129,6 +129,9 @@ Filtres disponibles :
 Tables créées, toutes préfixées `{$wpdb->prefix}cbaz_` : `sessions`, `views`, `events`, `campaigns`, `daily`, `daily_dim`.
 
 == Changelog ==
+
+= 4.31.2 =
+* Correction : le filtre `cbaz_tabs` était placé après un `return` et n'était donc jamais appliqué. Les écrans ajoutés par une extension — Attribution, Historique et Rapports du module Pro — restaient invisibles dans le menu.
 
 = 4.31.1 =
 * Exactitude : une page vue n'est plus incrémentée par chacun de ses événements ; durée engagée réellement visible.

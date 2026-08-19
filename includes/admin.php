@@ -27,7 +27,7 @@ function cbaz_privacy_policy_content() {
 // ══════════════════════════════════════════════════════════════
 
 function cbaz_tabs() {
-	return [
+	$tabs = [
 		'overview'     => [ __( "Vue d'ensemble", 'shop-analytics-for-woocommerce' ), __( 'Analysez les performances de votre boutique.', 'shop-analytics-for-woocommerce' ) ],
 		'temps-reel'   => [ __( 'Temps réel', 'shop-analytics-for-woocommerce' ), __( 'Ce qui se passe sur votre boutique en ce moment.', 'shop-analytics-for-woocommerce' ) ],
 		'acquisition'  => [ __( 'Acquisition', 'shop-analytics-for-woocommerce' ), __( "Comprenez d'où viennent vos visiteurs et quelles sources convertissent.", 'shop-analytics-for-woocommerce' ) ],

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Pluginect Analytics – Statistics & Reports for WooCommerce
  * Description: Mesure locale d'audience et de ventes pour WooCommerce, sans service tiers ni cookie par défaut.
- * Version:     4.31.1
+ * Version:     4.31.2
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Requires Plugins: woocommerce
@@ -21,7 +21,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'CBAZ_VERSION', '4.31.1' );
+define( 'CBAZ_VERSION', '4.31.2' );
 define( 'CBAZ_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CBAZ_URL', plugin_dir_url( __FILE__ ) );
 
