@@ -11,14 +11,16 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- ce fichier interroge les tables propres au plugin ({prefix}cbaz_*), pour lesquelles WordPress n'offre aucune API : les noms de tables viennent de cbaz_table(), les valeurs passent par $wpdb->prepare(), et les lectures lourdes sont consolidées par jour (history.php) plutôt que mises en cache objet.
+
 function cbaz_filter_dims() {
 	return [
-		'pays'     => [ 'label' => __( 'Pays', 'shop-analytics-for-woocommerce' ), 'column' => 'country' ],
-		'source'   => [ 'label' => __( 'Source', 'shop-analytics-for-woocommerce' ), 'column' => 'source' ],
-		'medium'   => [ 'label' => __( 'Medium', 'shop-analytics-for-woocommerce' ), 'column' => 'medium' ],
-		'campagne' => [ 'label' => __( 'Campagne', 'shop-analytics-for-woocommerce' ), 'column' => 'campaign' ],
-		'appareil' => [ 'label' => __( 'Appareil', 'shop-analytics-for-woocommerce' ), 'column' => 'device' ],
-		'client'   => [ 'label' => __( 'Client', 'shop-analytics-for-woocommerce' ), 'column' => 'is_new' ],
+		'pays'     => [ 'label' => __( 'Country', 'pluginect-analytics-for-woocommerce' ), 'column' => 'country' ],
+		'source'   => [ 'label' => __( 'Source', 'pluginect-analytics-for-woocommerce' ), 'column' => 'source' ],
+		'medium'   => [ 'label' => __( 'Medium', 'pluginect-analytics-for-woocommerce' ), 'column' => 'medium' ],
+		'campagne' => [ 'label' => __( 'Campaign', 'pluginect-analytics-for-woocommerce' ), 'column' => 'campaign' ],
+		'appareil' => [ 'label' => __( 'Device', 'pluginect-analytics-for-woocommerce' ), 'column' => 'device' ],
+		'client'   => [ 'label' => __( 'Customer', 'pluginect-analytics-for-woocommerce' ), 'column' => 'is_new' ],
 	];
 }
 
@@ -33,7 +35,7 @@ function cbaz_filters() {
 	$active = [];
 
 	foreach ( cbaz_filter_dims() as $key => $dim ) {
-		$value = sanitize_text_field( wp_unslash( $_GET[ 'f_' . $key ] ?? '' ) );
+		$value = isset( $_GET[ 'f_' . $key ] ) ? sanitize_text_field( wp_unslash( $_GET[ 'f_' . $key ] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- lecture seule, paramètres d'affichage
 
 		if ( '' !== $value ) {
 			$active[ $key ] = substr( $value, 0, 120 );
@@ -124,7 +126,7 @@ function cbaz_filter_options( $key, array $range ) {
 	global $wpdb;
 
 	if ( 'client' === $key ) {
-		return [ 'nouveau' => __( 'Nouveaux visiteurs', 'shop-analytics-for-woocommerce' ), 'recurrent' => __( 'Visiteurs récurrents', 'shop-analytics-for-woocommerce' ) ];
+		return [ 'nouveau' => __( 'New visitors', 'pluginect-analytics-for-woocommerce' ), 'recurrent' => __( 'Returning visitors', 'pluginect-analytics-for-woocommerce' ) ];
 	}
 
 	$dims   = cbaz_filter_dims();
@@ -135,6 +137,7 @@ function cbaz_filter_options( $key, array $range ) {
 	}
 
 	$s    = cbaz_table( 'sessions' );
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$rows = $wpdb->get_col( $wpdb->prepare(
 		"SELECT {$column} FROM {$s}
 		WHERE started_at BETWEEN %s AND %s AND {$column} <> ''
@@ -142,6 +145,7 @@ function cbaz_filter_options( $key, array $range ) {
 		$range['from'],
 		$range['to']
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 	$out = [];
 
@@ -160,7 +164,7 @@ function cbaz_url( array $changes = [], $drop = [] ) {
 
 	$args = array_merge(
 		[
-			'page'    => sanitize_key( $_GET['page'] ?? 'cbaz' ),
+			'page'    => sanitize_key( $_GET['page'] ?? 'cbaz' ), // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- lecture seule, paramètres d'affichage
 			'periode' => $range['preset'],
 		],
 		[],
@@ -183,7 +187,7 @@ function cbaz_url( array $changes = [], $drop = [] ) {
 		unset( $args[ $key ] );
 	}
 
-	if ( ! empty( $_GET['compare'] ) && ! isset( $changes['compare'] ) ) {
+	if ( ! empty( $_GET['compare'] ) && ! isset( $changes['compare'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- lecture seule, paramètres d'affichage
 		$args['compare'] = 1;
 	}
 
@@ -201,7 +205,7 @@ function cbaz_filter_bar( array $range ) {
 	<div class="cbaz-filters">
 		<span class="cbaz-filters__label">
 			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
-			<?php echo esc_html__( 'Filtres', 'shop-analytics-for-woocommerce' ); ?>
+			<?php echo esc_html__( 'Filters', 'pluginect-analytics-for-woocommerce' ); ?>
 		</span>
 
 		<?php foreach ( $dims as $key => $dim ) : ?>
@@ -212,7 +216,7 @@ function cbaz_filter_bar( array $range ) {
 
 				<div class="cbaz-drop__menu" hidden>
 					<?php if ( ! $options ) : ?>
-						<p class="cbaz-drop__empty"><?php echo esc_html__( 'Aucune valeur sur la période.', 'shop-analytics-for-woocommerce' ); ?></p>
+						<p class="cbaz-drop__empty"><?php echo esc_html__( 'No value over the period.', 'pluginect-analytics-for-woocommerce' ); ?></p>
 					<?php endif; ?>
 
 					<?php foreach ( $options as $value => $label ) : ?>
@@ -233,7 +237,7 @@ function cbaz_filter_bar( array $range ) {
 		<?php endforeach; ?>
 
 		<?php if ( $active ) : ?>
-			<a class="cbaz-clear" href="<?php echo esc_url( cbaz_url( [], array_map( fn( $k ) => 'f_' . $k, array_keys( $active ) ) ) ); ?>"><?php echo esc_html__( 'Tout effacer', 'shop-analytics-for-woocommerce' ); ?></a>
+			<a class="cbaz-clear" href="<?php echo esc_url( cbaz_url( [], array_map( fn( $k ) => 'f_' . $k, array_keys( $active ) ) ) ); ?>"><?php echo esc_html__( 'Clear all', 'pluginect-analytics-for-woocommerce' ); ?></a>
 		<?php endif; ?>
 	</div>
 	<?php

@@ -1,15 +1,17 @@
 <?php
 /**
  * Plugin Name: Pluginect Analytics – Statistics & Reports for WooCommerce
- * Description: Mesure locale d'audience et de ventes pour WooCommerce, sans service tiers ni cookie par défaut.
- * Version:     4.31.2
+ * Description: Local audience and sales measurement for WooCommerce, without third-party services or cookies by default.
+ * Version:     4.31.4
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Requires Plugins: woocommerce
+ * WC requires at least: 8.0
+ * WC tested up to: 11.1
  * Author:      Pluginect
  * License:     GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: shop-analytics-for-woocommerce
+ * Text Domain: pluginect-analytics-for-woocommerce
  * Domain Path: /languages
  *
  * L'adresse IP sert une fraction de seconde à calculer un identifiant
@@ -21,23 +23,24 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'CBAZ_VERSION', '4.31.2' );
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- ce fichier interroge les tables propres au plugin ({prefix}cbaz_*), pour lesquelles WordPress n'offre aucune API : les noms de tables viennent de cbaz_table(), les valeurs passent par $wpdb->prepare(), et les lectures lourdes sont consolidées par jour (history.php) plutôt que mises en cache objet.
+
+define( 'CBAZ_VERSION', '4.31.4' );
 define( 'CBAZ_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CBAZ_URL', plugin_dir_url( __FILE__ ) );
 
 add_action( 'init', 'cbaz_load_textdomain' );
-/** Charge les traductions après l'initialisation de WordPress. */
+/**
+ * Charge le catalogue embarqué de la langue du site.
+ *
+ * Les chaînes source sont en anglais ; les autres langues vivent dans
+ * `languages/`. Un pack de langue installé dans wp-content/languages
+ * prend le relais automatiquement dès qu'il existe.
+ */
 function cbaz_load_textdomain() {
-	$domain = 'shop-analytics-for-woocommerce';
+	$domain = 'pluginect-analytics-for-woocommerce';
 	$locale = determine_locale();
 	$file   = CBAZ_DIR . 'languages/' . $domain . '-' . $locale . '.mo';
-
-	load_plugin_textdomain( $domain, false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-
-	// Les variantes anglaises non livrées utilisent le catalogue anglais commun.
-	if ( ! is_readable( $file ) && 0 === strpos( $locale, 'en_' ) ) {
-		$file = CBAZ_DIR . 'languages/' . $domain . '-en_US.mo';
-	}
 
 	// Le chargement explicite garantit les catalogues embarqués, y compris depuis WP 6.7.
 	if ( is_readable( $file ) ) {
@@ -50,6 +53,8 @@ function cbaz_load_textdomain() {
 const CBAZ_SESSION_GAP = 30 * MINUTE_IN_SECONDS;
 
 require_once CBAZ_DIR . 'includes/features.php';
+require_once CBAZ_DIR . 'includes/help.php';
+require_once CBAZ_DIR . 'includes/insights.php';
 require_once CBAZ_DIR . 'includes/db.php';
 require_once CBAZ_DIR . 'includes/orders.php';
 require_once CBAZ_DIR . 'includes/track.php';
@@ -117,6 +122,8 @@ function cbaz_defaults() {
 		'exclude_roles'    => [ 'administrator', 'shop_manager' ],
 		'exclude_paths'    => "/wp-admin\n/checkout-pay",
 		'track_events'     => 1,
+		/* Les pistes à explorer : des règles prudentes, désactivables. */
+		'insights'         => 1,
 		/*
 		 * Les robots ne sont pas des clients. Un aspirateur de contenu
 		 * ou une sonde de supervision qui passe toutes les minutes
@@ -190,6 +197,38 @@ function cbaz_deactivate() {
  * chaque chargement d'administration, jamais côté public — dbDelta est
  * coûteux et n'a rien à faire dans le chemin d'une page vue.
  */
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'cbaz_action_links' );
+/**
+ * Liens sous le nom de l'extension, dans la liste des extensions.
+ *
+ * « Settings » d'abord, comme partout dans WordPress. Le lien vers Pro
+ * n'apparaît que sans le module : un client qui l'a déjà n'a pas à le
+ * revoir. Pas de couleur criarde, pas de « Upgrade ! » — un mot.
+ *
+ * @param string[] $links Liens existants (Activer, Supprimer…).
+ * @return string[]
+ */
+function cbaz_action_links( $links ) {
+	array_unshift(
+		$links,
+		sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( admin_url( 'admin.php?page=cbaz-parametres' ) ),
+			esc_html__( 'Settings', 'pluginect-analytics-for-woocommerce' )
+		)
+	);
+
+	if ( function_exists( 'cbaz_pro' ) && ! cbaz_pro() ) {
+		$links[] = sprintf(
+			'<a href="%s" target="_blank" rel="noopener">%s</a>',
+			esc_url( cbaz_pro_url( 'plugins-list' ) ),
+			esc_html__( 'Pro', 'pluginect-analytics-for-woocommerce' )
+		);
+	}
+
+	return $links;
+}
+
 add_action( 'admin_init', 'cbaz_maybe_upgrade' );
 function cbaz_maybe_upgrade() {
 	global $wpdb;
@@ -249,10 +288,12 @@ function cbaz_maybe_canon_sources() {
 	$table = cbaz_table( 'sessions' );
 
 	foreach ( [ 'source', 'first_source' ] as $colonne ) {
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 		$valeurs = $wpdb->get_col( "SELECT DISTINCT {$colonne} FROM {$table} WHERE {$colonne} <> ''" );
 
 		foreach ( $valeurs as $brut ) {
 			$propre = cbaz_canon_source( $brut );
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 			if ( $propre !== $brut ) {
 				$wpdb->update( $table, [ $colonne => $propre ], [ $colonne => $brut ] );
@@ -310,8 +351,13 @@ function cbaz_purge_old_data() {
 	$years = max( 1, (int) cbaz_opt( 'history_years' ) );
 	$limit = gmdate( 'Y-m-d', strtotime( "-{$years} years" ) );
 
-	$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . cbaz_table( 'daily' ) . ' WHERE day < %s', $limit ) );
-	$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . cbaz_table( 'daily_dim' ) . ' WHERE day < %s', $limit ) );
+	$daily = cbaz_table( 'daily' );
+	$dims  = cbaz_table( 'daily_dim' );
+
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
+	$wpdb->query( $wpdb->prepare( "DELETE FROM {$daily} WHERE day < %s", $limit ) );
+	$wpdb->query( $wpdb->prepare( "DELETE FROM {$dims} WHERE day < %s", $limit ) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 }
 
 /*

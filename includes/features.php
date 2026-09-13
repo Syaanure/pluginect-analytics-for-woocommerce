@@ -6,7 +6,7 @@
  * Sans lui, la question « est-ce Pro ? » se retrouverait dispersée dans
  * une vingtaine de fichiers, et chaque oubli deviendrait une fuite.
  *
- * @package CamiBijoux\Analytics
+ * @package Pluginect\Analytics
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -40,12 +40,12 @@ function cbaz_pro() {
  */
 function cbaz_pro_features() {
 	return [
-		'exports'            => __( 'Exports CSV', 'shop-analytics-for-woocommerce' ),
-		'journeys_full'      => __( 'Historique complet des parcours', 'shop-analytics-for-woocommerce' ),
-		'journeys_filters'   => __( 'Filtres et recherche de parcours', 'shop-analytics-for-woocommerce' ),
-		'journeys_stats'     => __( 'Statistiques des parcours', 'shop-analytics-for-woocommerce' ),
-		'campaign_stats'     => __( 'Performances des campagnes', 'shop-analytics-for-woocommerce' ),
-		'realtime_details'   => __( 'Temps réel détaillé', 'shop-analytics-for-woocommerce' ),
+		'exports'            => __( 'CSV exports', 'pluginect-analytics-for-woocommerce' ),
+		'journeys_full'      => __( 'Complete journey history', 'pluginect-analytics-for-woocommerce' ),
+		'journeys_filters'   => __( 'Journey filters and search', 'pluginect-analytics-for-woocommerce' ),
+		'journeys_stats'     => __( 'Journey statistics', 'pluginect-analytics-for-woocommerce' ),
+		'campaign_stats'     => __( 'Campaign performance', 'pluginect-analytics-for-woocommerce' ),
+		'realtime_details'   => __( 'Detailed real-time', 'pluginect-analytics-for-woocommerce' ),
 	];
 }
 
@@ -77,9 +77,36 @@ function cbaz_journeys_limit( $wanted = 40 ) {
 	return max( 1, min( 500, (int) $wanted ) );
 }
 
-/** Adresse de présentation du module Pro. */
-function cbaz_pro_url() {
-	return apply_filters( 'cbaz_pro_url', 'https://pluginect.com/shop-analytics/' );
+/**
+ * Adresse de présentation du module Pro.
+ *
+ * Chaque appel à l'action porte son contexte en paramètres UTM : on saura
+ * ainsi quel écran du plugin gratuit amène réellement à la page Pro — le
+ * plugin mesure les campagnes des autres, autant mesurer la sienne.
+ *
+ * @param string $context D'où vient le clic (« journeys », « export »…).
+ * @return string
+ */
+function cbaz_pro_url( $context = '' ) {
+	$url = 'https://pluginect.com/pluginect-analytics/';
+
+	$url = add_query_arg(
+		array_filter( [
+			'utm_source'   => 'plugin-free',
+			'utm_medium'   => 'cta',
+			'utm_campaign' => 'pro',
+			'utm_content'  => sanitize_key( $context ),
+		] ),
+		$url
+	);
+
+	/**
+	 * Adresse de la page Pro.
+	 *
+	 * @param string $url     Adresse complète, paramètres UTM compris.
+	 * @param string $context Contexte du clic.
+	 */
+	return apply_filters( 'cbaz_pro_url', $url, $context );
 }
 
 /**
@@ -92,10 +119,11 @@ function cbaz_pro_url() {
  * Le libellé de l'action est explicite plutôt qu'impératif : « Voir ce
  * que fait Pro » informe, là où « Acheter » presse.
  *
- * @param string $title Ce dont il s'agit.
- * @param string $text  Ce que Pro apporte, en une phrase.
+ * @param string $title   Ce dont il s'agit.
+ * @param string $text    Ce que Pro apporte, en une phrase.
+ * @param string $context Contexte transmis à cbaz_pro_url().
  */
-function cbaz_pro_notice( $title, $text ) {
+function cbaz_pro_notice( $title, $text, $context = '' ) {
 	if ( cbaz_pro() ) {
 		return;
 	}
@@ -103,16 +131,16 @@ function cbaz_pro_notice( $title, $text ) {
 	<aside class="cbaz-pro">
 		<div class="cbaz-pro__body">
 			<p class="cbaz-pro__title">
-				<span class="cbaz-badge-pro"><?php echo esc_html__( 'Pro', 'shop-analytics-for-woocommerce' ); ?></span>
+				<span class="cbaz-badge-pro"><?php echo esc_html__( 'Pro', 'pluginect-analytics-for-woocommerce' ); ?></span>
 				<?php echo esc_html( $title ); ?>
 			</p>
 			<p class="cbaz-pro__text"><?php echo esc_html( $text ); ?></p>
 		</div>
 
-		<a class="cbaz-pro__cta" href="<?php echo esc_url( cbaz_pro_url() ); ?>" target="_blank" rel="noopener">
-			<?php echo esc_html__( 'Voir ce que fait Pro', 'shop-analytics-for-woocommerce' ); ?>
+		<a class="cbaz-pro__cta" href="<?php echo esc_url( cbaz_pro_url( $context ) ); ?>" target="_blank" rel="noopener">
+			<?php echo esc_html__( 'See what Pro does', 'pluginect-analytics-for-woocommerce' ); ?>
 			<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17L17 7M9 7h8v8"/></svg>
-			<span class="screen-reader-text"><?php echo esc_html__( '(ouvre un nouvel onglet)', 'shop-analytics-for-woocommerce' ); ?></span>
+			<span class="screen-reader-text"><?php echo esc_html__( '(opens a new tab)', 'pluginect-analytics-for-woocommerce' ); ?></span>
 		</a>
 	</aside>
 	<?php
@@ -120,5 +148,5 @@ function cbaz_pro_notice( $title, $text ) {
 
 /** Petit badge « Pro » à accoler à un intitulé. */
 function cbaz_pro_badge() {
-	return cbaz_pro() ? '' : sprintf( ' <span class="cbaz-badge-pro">%1$s</span>', esc_html__( 'Pro', 'shop-analytics-for-woocommerce' ) );
+	return cbaz_pro() ? '' : sprintf( ' <span class="cbaz-badge-pro">%1$s</span>', esc_html__( 'Pro', 'pluginect-analytics-for-woocommerce' ) );
 }

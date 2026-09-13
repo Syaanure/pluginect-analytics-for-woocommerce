@@ -22,6 +22,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- ce fichier interroge les tables propres au plugin ({prefix}cbaz_*), pour lesquelles WordPress n'offre aucune API : les noms de tables viennent de cbaz_table(), les valeurs passent par $wpdb->prepare(), et les lectures lourdes sont consolidées par jour (history.php) plutôt que mises en cache objet.
+
 // ══════════════════════════════════════════════════════════════
 //  BALISE CÔTÉ NAVIGATEUR
 // ══════════════════════════════════════════════════════════════
@@ -78,8 +80,27 @@ function cbaz_should_track() {
 	return true;
 }
 
+/**
+ * Valeur nettoyée d'une entrée de $_SERVER.
+ *
+ * Tout ce qui vient du client — adresse, signature de navigateur, langue,
+ * en-têtes de proxy — passe par ici : une seule porte d'entrée, un seul
+ * nettoyage, et aucune lecture brute dispersée dans le fichier.
+ *
+ * @param string $key Clé de $_SERVER.
+ * @return string Chaîne vide si absente.
+ */
+function cbaz_server( $key ) {
+	if ( ! isset( $_SERVER[ $key ] ) ) {
+		return '';
+	}
+
+	return sanitize_text_field( wp_unslash( $_SERVER[ $key ] ) );
+}
+
 function cbaz_current_path() {
-	$path = wp_parse_url( $_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH );
+	$uri  = cbaz_server( 'REQUEST_URI' );
+	$path = wp_parse_url( '' === $uri ? '/' : $uri, PHP_URL_PATH );
 
 	return $path ? substr( $path, 0, 190 ) : '/';
 }
@@ -241,8 +262,8 @@ function cbaz_visitor_hash() {
 		set_transient( 'cbaz_salt', $salt, DAY_IN_SECONDS );
 	}
 
-	$ip = cbaz_narrow_ip( $_SERVER['REMOTE_ADDR'] ?? '' );
-	$ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+	$ip = cbaz_narrow_ip( cbaz_server( 'REMOTE_ADDR' ) );
+	$ua = cbaz_server( 'HTTP_USER_AGENT' );
 
 	return substr( hash_hmac( 'sha256', $salt . '|' . $ip . '|' . $ua, cbaz_secret() ), 0, 32 );
 }
@@ -266,7 +287,7 @@ function cbaz_visitor_hash() {
  * aucune adresse n'est écrite, même temporairement.
  */
 function cbaz_flooding() {
-	$reseau = cbaz_narrow_ip( $_SERVER['REMOTE_ADDR'] ?? '' );
+	$reseau = cbaz_narrow_ip( cbaz_server( 'REMOTE_ADDR' ) );
 
 	if ( '' === $reseau ) {
 		return false;
@@ -463,11 +484,13 @@ function cbaz_record_event( $session_id, $name, $object_id = 0, $value = 0, $lab
 
 	if ( 'page_time' === $name ) {
 		$seconds = max( 0, min( 1800, (int) $value ) );
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 		$wpdb->query( $wpdb->prepare(
 			'UPDATE ' . cbaz_table( 'sessions' ) . ' SET engaged_seconds = LEAST(86400, engaged_seconds + %d) WHERE id = %d',
 			$seconds,
 			(int) $session_id
 		) );
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 	}
 }
 
@@ -611,7 +634,7 @@ function cbaz_recall_attribution() {
 		return null;
 	}
 
-	$data = json_decode( wp_unslash( $_COOKIE[ CBAZ_ATTR_COOKIE ] ), true );
+	$data = json_decode( wp_unslash( $_COOKIE[ CBAZ_ATTR_COOKIE ] ), true ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- contenu authentifié par HMAC ci-dessous, chaque champ est ensuite converti en chaîne
 
 	if ( ! is_array( $data ) || empty( $data['c'] ) || empty( $data['h'] ) || ! is_string( $data['h'] ) ) {
 		return null;
@@ -685,7 +708,7 @@ function cbaz_attribution( $referrer, array $query ) {
 	 *
 	 * Un seul paramètre dans le lien diffusé ; le reste (source,
 	 * support, contenu) est lu sur la fiche de campagne. C'est ce qui
-	 * permet d'écrire camibijoux.fr/?utm=rentree-2026 dans une story
+	 * permet d'écrire ma-boutique.fr/?utm=rentree-2026 dans une story
 	 * plutôt qu'une adresse de deux cents caractères.
 	 */
 	if ( ! empty( $query['utm'] ) ) {
@@ -788,7 +811,7 @@ function cbaz_source_map() {
 		[ 'label' => 'Bluesky', 'color' => '#0285FF',    'medium' => 'social',   'domain' => 'bsky.app',      'hosts' => [ 'bsky.app' ], 'alias' => [] ],
 
 		// Moteurs de recherche.
-		[ 'label' => 'Google', 'color' => '#4285F4',     'medium' => 'organic',  'domain' => 'google.com',    'hosts' => [ 'googleadservices.com', 'googlesyndication.com', 'googleusercontent.com' ], 'regex' => '#(^|\.)google\.[a-z.]{2,}$#', 'alias' => [ 'google-ads', 'googleads', 'adwords', 'gads' ] ],
+		[ 'label' => 'Google', 'color' => '#4285F4',     'medium' => 'organic',  'domain' => 'google.com',    'hosts' => [ 'googleadservices.com', 'googlesyndication.com', 'googleusercontent.com' ], 'regex' => '#(^|\.)google\.[a-z.]{2,}$#', 'alias' => [ 'google-ads', 'googleads', 'adwords', 'gads' ] ], // phpcs:ignore PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- noms d'hôtes référents pour l'attribution, aucun contenu chargé
 		[ 'label' => 'Bing', 'color' => '#008373',       'medium' => 'organic',  'domain' => 'bing.com',      'hosts' => [ 'bing.com' ], 'alias' => [] ],
 		[ 'label' => 'DuckDuckGo', 'color' => '#DE5833', 'medium' => 'organic',  'domain' => 'duckduckgo.com','hosts' => [ 'duckduckgo.com' ], 'alias' => [ 'ddg' ] ],
 		[ 'label' => 'Ecosia', 'color' => '#0F8A4C',     'medium' => 'organic',  'domain' => 'ecosia.org',    'hosts' => [ 'ecosia.org' ], 'alias' => [] ],
@@ -878,7 +901,7 @@ function cbaz_country() {
 	// 1. L'en-tête d'un proxy ou d'un CDN, quand il y en a un.
 	foreach ( [ 'HTTP_CF_IPCOUNTRY', 'HTTP_X_COUNTRY_CODE', 'GEOIP_COUNTRY_CODE', 'HTTP_CLOUDFRONT_VIEWER_COUNTRY' ] as $key ) {
 		if ( ! empty( $_SERVER[ $key ] ) ) {
-			$code = strtoupper( substr( sanitize_text_field( $_SERVER[ $key ] ), 0, 2 ) );
+			$code = strtoupper( substr( cbaz_server( $key ), 0, 2 ) );
 
 			if ( preg_match( '/^[A-Z]{2}$/', $code ) && 'XX' !== $code ) {
 				return $code;
@@ -926,7 +949,7 @@ function cbaz_country() {
  * pas si l'on est en France, en Belgique ou au Québec.
  */
 function cbaz_country_from_language() {
-	$header = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
+	$header = cbaz_server( 'HTTP_ACCEPT_LANGUAGE' );
 
 	if ( ! $header ) {
 		return '';
@@ -941,7 +964,7 @@ function cbaz_country_from_language() {
 }
 
 function cbaz_parse_agent() {
-	$ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+	$ua = cbaz_server( 'HTTP_USER_AGENT' );
 
 	$device = 'desktop';
 
@@ -993,7 +1016,7 @@ function cbaz_parse_agent() {
  * contenu, sondes de supervision, générateurs d'aperçus de lien.
  */
 function cbaz_is_bot() {
-	$ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+	$ua = cbaz_server( 'HTTP_USER_AGENT' );
 
 	if ( '' === $ua ) {
 		return true;
@@ -1149,10 +1172,12 @@ function cbaz_mark_order_paid( $order ) {
 
 	$wpdb->update( cbaz_table( 'sessions' ), [ 'order_id' => $order->get_id(), 'revenue' => (float) $order->get_total() ], [ 'id' => $session_id ] );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$already = (int) $wpdb->get_var( $wpdb->prepare(
 		"SELECT id FROM " . cbaz_table( 'events' ) . " WHERE session_id = %d AND name = 'purchase' AND object_id = %d LIMIT 1",
 		$session_id, $order->get_id()
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 	if ( ! $already ) {
 		cbaz_record_event( $session_id, 'purchase', $order->get_id(), (float) $order->get_total() );
 	}
@@ -1181,7 +1206,7 @@ function cbaz_sync_order_refunds( $order_id ) {
 add_filter( 'manage_edit-shop_order_columns', 'cbaz_order_column', 20 );
 add_filter( 'woocommerce_shop_order_list_table_columns', 'cbaz_order_column', 20 );
 function cbaz_order_column( $columns ) {
-	$columns['cbaz_origin'] = __( 'Provenance', 'shop-analytics-for-woocommerce' );
+	$columns['cbaz_origin'] = __( 'Origin', 'pluginect-analytics-for-woocommerce' );
 
 	return $columns;
 }

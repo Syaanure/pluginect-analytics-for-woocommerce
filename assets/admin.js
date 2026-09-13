@@ -1,5 +1,5 @@
 /**
- * CamiBijoux – Analytics : interface d'administration.
+ * Pluginect Analytics for WooCommerce : interface d'administration.
  *
  * Quatre choses seulement : le globe, l'infobulle du graphique, la
  * copie des liens de campagne et le rafraîchissement du temps réel.
@@ -8,8 +8,22 @@
 (function () {
     'use strict';
 
-    var __ = wp.i18n.__;
-    var sprintf = wp.i18n.sprintf;
+    /*
+     * wp-i18n est une dépendance déclarée, mais un cache qui combine ou
+     * réordonne les scripts peut la faire arriver après nous. Sans ce
+     * repli, la première ligne lèverait une exception et TOUT le fichier
+     * cesserait de s'exécuter : ni infobulles, ni globe, ni temps réel.
+     */
+    var i18n = (window.wp && wp.i18n) ? wp.i18n : null;
+    var __ = i18n ? i18n.__ : function (text) { return text; };
+    var sprintf = i18n && i18n.sprintf ? i18n.sprintf : function (format) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        var i = 0;
+
+        return String(format).replace(/%(\d+\$)?[sd]/g, function (match, position) {
+            return position ? args[parseInt(position, 10) - 1] : args[i++];
+        });
+    };
     var locale = document.documentElement.lang || undefined;
 
     function html(value) {
@@ -578,10 +592,10 @@
                     '<p class="cbaz-readout__flag">' + html(p.flag) + '</p>' +
                     '<p class="cbaz-readout__name">' + html(p.name) + '</p>' +
                     '<dl class="cbaz-stats">' +
-					'<div><dt>' + html(__('Visites', 'shop-analytics-for-woocommerce')) + '</dt><dd>' + p.sessions.toLocaleString(locale) + '</dd></div>' +
-					'<div><dt>' + html(__('Commandes', 'shop-analytics-for-woocommerce')) + '</dt><dd>' + p.orders.toLocaleString(locale) + '</dd></div>' +
-                    '<div><dt>' + html(__('Chiffre d’affaires', 'shop-analytics-for-woocommerce')) + '</dt><dd>' + html(p.money) + '</dd></div>' +
-                    '<div><dt>' + html(__('Conversion', 'shop-analytics-for-woocommerce')) + '</dt><dd>' +
+					'<div><dt>' + html(__('Visits', 'pluginect-analytics-for-woocommerce')) + '</dt><dd>' + p.sessions.toLocaleString(locale) + '</dd></div>' +
+					'<div><dt>' + html(__('Orders', 'pluginect-analytics-for-woocommerce')) + '</dt><dd>' + p.orders.toLocaleString(locale) + '</dd></div>' +
+                    '<div><dt>' + html(__('Revenue', 'pluginect-analytics-for-woocommerce')) + '</dt><dd>' + html(p.money) + '</dd></div>' +
+                    '<div><dt>' + html(__('Conversion', 'pluginect-analytics-for-woocommerce')) + '</dt><dd>' +
                         (p.sessions ? ((p.orders / p.sessions) * 100).toFixed(2).replace('.', ',') : '0,00') + ' %</dd></div>' +
                     '</dl>';
             }
@@ -704,8 +718,8 @@
             spinBtn.addEventListener('click', function () {
                 spinning = !spinning;
                 spinBtn.textContent = spinning
-                    ? __('Pause rotation', 'shop-analytics-for-woocommerce')
-                    : __('Reprendre la rotation', 'shop-analytics-for-woocommerce');
+                    ? __('Pause rotation', 'pluginect-analytics-for-woocommerce')
+                    : __('Resume rotation', 'pluginect-analytics-for-woocommerce');
             });
         }
 
@@ -764,7 +778,7 @@
         if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
             spinning = false;
             intro = 1;
-            if (spinBtn) spinBtn.textContent = __('Reprendre la rotation', 'shop-analytics-for-woocommerce');
+            if (spinBtn) spinBtn.textContent = __('Resume rotation', 'pluginect-analytics-for-woocommerce');
         }
 
         draw();
@@ -816,10 +830,10 @@
         root.appendChild(tip);
 
         var labels = {
-            sessions: __('Visites', 'shop-analytics-for-woocommerce'),
-            pageviews: __('Pages vues', 'shop-analytics-for-woocommerce'),
-            revenue: __('Chiffre d’affaires', 'shop-analytics-for-woocommerce'),
-            orders: __('Commandes', 'shop-analytics-for-woocommerce'),
+            sessions: __('Visits', 'pluginect-analytics-for-woocommerce'),
+            pageviews: __('Page views', 'pluginect-analytics-for-woocommerce'),
+            revenue: __('Revenue', 'pluginect-analytics-for-woocommerce'),
+            orders: __('Orders', 'pluginect-analytics-for-woocommerce'),
         };
 
         root.addEventListener('mousemove', function (e) {
@@ -870,8 +884,8 @@
         input.select();
 
         var done = function () {
-            btn.textContent = __('Copié', 'shop-analytics-for-woocommerce');
-            setTimeout(function () { btn.textContent = __('Copier', 'shop-analytics-for-woocommerce'); }, 1600);
+            btn.textContent = __('Copied', 'pluginect-analytics-for-woocommerce');
+            setTimeout(function () { btn.textContent = __('Copy', 'pluginect-analytics-for-woocommerce'); }, 1600);
         };
 
         if (navigator.clipboard) {
@@ -1018,10 +1032,10 @@
             /* translators: 1: displayed range, 2: total result count, 3: result type. */
         if (shown === total) {
             /* translators: 1: displayed row count, 2: total row count, 3: row type. */
-            count.textContent = sprintf(__('1–%1$d sur %2$d %3$s', 'shop-analytics-for-woocommerce'), total, total, count.dataset.unit);
+            count.textContent = sprintf(__('1–%1$d on %2$d %3$s', 'pluginect-analytics-for-woocommerce'), total, total, count.dataset.unit);
         } else {
             /* translators: 1: displayed row count, 2: total row count, 3: row type. */
-            count.textContent = sprintf(__('%1$d sur %2$d %3$s', 'shop-analytics-for-woocommerce'), shown, total, count.dataset.unit);
+            count.textContent = sprintf(__('%1$d on %2$d %3$s', 'pluginect-analytics-for-woocommerce'), shown, total, count.dataset.unit);
         }
         }
     });
@@ -1082,7 +1096,118 @@
         document.querySelectorAll('.cbaz-drop__menu').forEach(function (m) { m.hidden = true; });
     });
 
+    // ══════════════════════════════════════════════════════
+    //  INFOBULLES
+    // ══════════════════════════════════════════════════════
+
+    /**
+     * Une seule bulle pour toute la page. Elle s'ouvre au survol, au
+     * clavier (focus, Entrée, Espace) et au clic — indispensable au
+     * doigt, où le survol n'existe pas. Échap et un clic ailleurs la
+     * ferment. Le texte vient des attributs du bouton, jamais du HTML.
+     */
+    function initTips() {
+        var box = document.createElement('div');
+        var current = null;
+        var timer = null;
+
+        box.className = 'cbaz-helpbox';
+        box.id = 'cbaz-helpbox';
+        box.setAttribute('role', 'tooltip');
+        document.body.appendChild(box);
+
+        function place(btn) {
+            var r = btn.getBoundingClientRect();
+            var w = box.offsetWidth;
+            var h = box.offsetHeight;
+            var left = Math.max(8, Math.min(window.innerWidth - w - 8, r.left + r.width / 2 - w / 2));
+            var top = r.top - h - 8;
+
+            if (top < 8) top = r.bottom + 8;
+
+            box.style.left = left + 'px';
+            box.style.top = top + 'px';
+        }
+
+        function show(btn) {
+            clearTimeout(timer);
+
+            if (current && current !== btn) hide();
+
+            // Le `title` natif servait de repli tant que ce script ne
+            // tournait pas ; maintenant qu'il tourne, il ferait doublon.
+            if (btn.hasAttribute('title')) btn.removeAttribute('title');
+
+            var title = document.createElement('strong');
+            title.textContent = btn.getAttribute('data-cbaz-help-title') || '';
+            box.textContent = '';
+            if (title.textContent) box.appendChild(title);
+            box.appendChild(document.createTextNode(btn.getAttribute('data-cbaz-help') || ''));
+
+            btn.setAttribute('aria-expanded', 'true');
+            btn.setAttribute('aria-describedby', box.id);
+            current = btn;
+
+            box.classList.add('is-on');
+            place(btn);
+        }
+
+        function hide() {
+            clearTimeout(timer);
+
+            if (current) {
+                current.setAttribute('aria-expanded', 'false');
+                current.removeAttribute('aria-describedby');
+            }
+
+            current = null;
+            box.classList.remove('is-on');
+        }
+
+        document.addEventListener('mouseover', function (e) {
+            var btn = e.target.closest('.cbaz-help');
+            if (btn) { clearTimeout(timer); timer = setTimeout(function () { show(btn); }, 120); }
+        });
+
+        document.addEventListener('mouseout', function (e) {
+            var btn = e.target.closest('.cbaz-help');
+            if (btn && !btn.matches(':focus')) { clearTimeout(timer); timer = setTimeout(hide, 160); }
+        });
+
+        box.addEventListener('mouseenter', function () { clearTimeout(timer); });
+        box.addEventListener('mouseleave', function () { timer = setTimeout(hide, 160); });
+
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('.cbaz-help');
+
+            if (btn) {
+                e.preventDefault();
+                if (current === btn) hide(); else show(btn);
+            } else if (!e.target.closest('.cbaz-helpbox')) {
+                hide();
+            }
+        });
+
+        document.addEventListener('focusin', function (e) {
+            var btn = e.target.closest('.cbaz-help');
+            if (btn) show(btn);
+        });
+
+        document.addEventListener('focusout', function (e) {
+            if (e.target.closest && e.target.closest('.cbaz-help')) timer = setTimeout(hide, 100);
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && current) { var b = current; hide(); b.focus(); }
+        });
+
+        window.addEventListener('scroll', function () { if (current) place(current); }, true);
+        window.addEventListener('resize', function () { if (current) place(current); });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
+        if (document.querySelector('.cbaz-help')) initTips();
+
         var globe = document.querySelector('[data-cbaz-globe]');
         if (globe) initGlobe(globe);
 

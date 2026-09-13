@@ -8,17 +8,19 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- ce fichier interroge les tables propres au plugin ({prefix}cbaz_*), pour lesquelles WordPress n'offre aucune API : les noms de tables viennent de cbaz_table(), les valeurs passent par $wpdb->prepare(), et les lectures lourdes sont consolidées par jour (history.php) plutôt que mises en cache objet.
+
 // ══════════════════════════════════════════════════════════════
 //  PÉRIODE
 // ══════════════════════════════════════════════════════════════
 
 function cbaz_presets() {
 	return [
-		'today' => __( "Aujourd'hui", 'shop-analytics-for-woocommerce' ),
-		'7d'    => __( '7 derniers jours', 'shop-analytics-for-woocommerce' ),
-		'30d'   => __( '30 derniers jours', 'shop-analytics-for-woocommerce' ),
-		'90d'   => __( '90 derniers jours', 'shop-analytics-for-woocommerce' ),
-		'12m'   => __( '12 derniers mois', 'shop-analytics-for-woocommerce' ),
+		'today' => __( 'Today', 'pluginect-analytics-for-woocommerce' ),
+		'7d'    => __( 'last 7 days', 'pluginect-analytics-for-woocommerce' ),
+		'30d'   => __( 'Last 30 days', 'pluginect-analytics-for-woocommerce' ),
+		'90d'   => __( 'last 90 days', 'pluginect-analytics-for-woocommerce' ),
+		'12m'   => __( 'last 12 months', 'pluginect-analytics-for-woocommerce' ),
 	];
 }
 
@@ -29,7 +31,7 @@ function cbaz_presets() {
  * variation en pourcentage ne voudrait rien dire.
  */
 function cbaz_range( $preset = null ) {
-	$preset = $preset ? $preset : ( sanitize_key( $_GET['periode'] ?? '' ) ?: '30d' );
+	$preset = $preset ? $preset : ( sanitize_key( $_GET['periode'] ?? '' ) ?: '30d' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- lecture seule, paramètres d'affichage
 	$perso  = 'perso' === $preset ? cbaz_custom_dates() : null;
 
 	if ( $perso ) {
@@ -71,8 +73,10 @@ function cbaz_range( $preset = null ) {
  * maladresse de saisie, pas une erreur qui mérite un message.
  */
 function cbaz_custom_dates() {
-	$du = sanitize_text_field( wp_unslash( $_GET['du'] ?? '' ) );
-	$au = sanitize_text_field( wp_unslash( $_GET['au'] ?? '' ) );
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- lecture seule, bornes de période
+	$du = isset( $_GET['du'] ) ? sanitize_text_field( wp_unslash( $_GET['du'] ) ) : '';
+	$au = isset( $_GET['au'] ) ? sanitize_text_field( wp_unslash( $_GET['au'] ) ) : '';
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 	foreach ( [ $du, $au ] as $date ) {
 		if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) || ! strtotime( $date ) ) {
@@ -102,7 +106,7 @@ function cbaz_custom_dates() {
 /** Intitulé lisible de la période en cours. */
 function cbaz_range_label( array $range ) {
 	if ( 'perso' !== $range['preset'] ) {
-		return cbaz_presets()[ $range['preset'] ] ?? __( '30 derniers jours', 'shop-analytics-for-woocommerce' );
+		return cbaz_presets()[ $range['preset'] ] ?? __( 'Last 30 days', 'pluginect-analytics-for-woocommerce' );
 	}
 
 	$du = strtotime( $range['du'] );
@@ -145,6 +149,7 @@ function cbaz_totals( $from, $to ) {
 
 	$s = cbaz_table( 'sessions' );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$row = $wpdb->get_row( $wpdb->prepare(
 		"SELECT
 			COUNT(*) AS sessions,
@@ -158,6 +163,7 @@ function cbaz_totals( $from, $to ) {
 		$from,
 		$to
 	), ARRAY_A );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 	$row = $row ? array_map( 'floatval', $row ) : [];
 
@@ -207,12 +213,12 @@ function cbaz_kpis( array $range ) {
 	$then = cbaz_totals( $range['prev_from'], $range['prev_to'] );
 
 	$defs = [
-		[ 'visitors', __( 'Visiteurs', 'shop-analytics-for-woocommerce' ), 'int' ],
-		[ 'sessions', __( 'Visites', 'shop-analytics-for-woocommerce' ), 'int' ],
-		[ 'pageviews', __( 'Pages vues', 'shop-analytics-for-woocommerce' ), 'int' ],
-		[ 'revenue', __( "Chiffre d'affaires", 'shop-analytics-for-woocommerce' ), 'money' ],
-		[ 'cr', __( 'Taux de conversion', 'shop-analytics-for-woocommerce' ), 'pct' ],
-		[ 'aov', __( 'Panier moyen', 'shop-analytics-for-woocommerce' ), 'money' ],
+		[ 'visitors', __( 'Visitors', 'pluginect-analytics-for-woocommerce' ), 'int' ],
+		[ 'sessions', __( 'Visits', 'pluginect-analytics-for-woocommerce' ), 'int' ],
+		[ 'pageviews', __( 'Page views', 'pluginect-analytics-for-woocommerce' ), 'int' ],
+		[ 'revenue', __( 'Revenue', 'pluginect-analytics-for-woocommerce' ), 'money' ],
+		[ 'cr', __( 'Conversion rate', 'pluginect-analytics-for-woocommerce' ), 'pct' ],
+		[ 'aov', __( 'Average basket', 'pluginect-analytics-for-woocommerce' ), 'money' ],
 	];
 
 	$out = [];
@@ -239,6 +245,7 @@ function cbaz_series( array $range ) {
 	global $wpdb;
 
 	$s    = cbaz_table( 'sessions' );
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$rows = $wpdb->get_results( $wpdb->prepare(
 		"SELECT DATE(started_at) AS d,
 			COUNT(*) AS sessions,
@@ -250,6 +257,7 @@ function cbaz_series( array $range ) {
 		$range['from'],
 		$range['to']
 	), OBJECT_K );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 	// Les ventes du jour, prises chez WooCommerce : sans elles, la
 	// courbe du chiffre d'affaires resterait plate sur tout
@@ -291,6 +299,7 @@ function cbaz_shop_series( array $range ) {
 	$refund   = cbaz_refund_expr( 'r' );
 	$order_range = cbaz_order_range( $range );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$rows = $wpdb->get_results( $wpdb->prepare(
 		"SELECT DATE_FORMAT(o.{$schema['date']}, '%%Y-%%m-%%d %%H:00:00') AS created,
 			SUM({$total['select']}) AS revenue,
@@ -303,6 +312,7 @@ function cbaz_shop_series( array $range ) {
 		$order_range['from'],
 		$order_range['to']
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 	$out = [];
 	foreach ( $rows as $row ) {
@@ -312,6 +322,7 @@ function cbaz_shop_series( array $range ) {
 		$out[ $day ]->orders += (int) $row->orders;
 	}
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$refunds = $wpdb->get_results( $wpdb->prepare(
 		"SELECT DATE_FORMAT(r.{$schema['date']}, '%%Y-%%m-%%d %%H:00:00') AS created,
 			SUM({$refund['select']}) AS refunded
@@ -324,6 +335,7 @@ function cbaz_shop_series( array $range ) {
 		$order_range['from'],
 		$order_range['to']
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 	foreach ( $refunds as $row ) {
 		$day = wp_date( 'Y-m-d', cbaz_order_ts( $row->created ) );
@@ -345,6 +357,7 @@ function cbaz_shop_months( array $range, $apply_filters = true ) {
 	$all    = cbaz_status_list( cbaz_revenue_statuses() );
 	$dates  = cbaz_order_range( $range );
 	$filter = $apply_filters ? cbaz_filter_order_where( 'o' ) : '';
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$rows   = $wpdb->get_results( $wpdb->prepare(
 		"SELECT DATE_FORMAT(o.{$schema['date']}, '%%Y-%%m-%%d %%H:00:00') AS created,
 			SUM({$total['select']}) AS revenue,
@@ -355,6 +368,8 @@ function cbaz_shop_months( array $range, $apply_filters = true ) {
 		GROUP BY DATE_FORMAT(o.{$schema['date']}, '%%Y-%%m-%%d %%H')",
 		$dates['from'], $dates['to']
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$refunds = $wpdb->get_results( $wpdb->prepare(
 		"SELECT DATE_FORMAT(r.{$schema['date']}, '%%Y-%%m-%%d %%H:00:00') AS created,
 			SUM({$refund['select']}) AS refunded
@@ -365,6 +380,7 @@ function cbaz_shop_months( array $range, $apply_filters = true ) {
 		GROUP BY DATE_FORMAT(r.{$schema['date']}, '%%Y-%%m-%%d %%H')",
 		$dates['from'], $dates['to']
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 	$out = [];
 	foreach ( $rows as $row ) {
 		$month = wp_date( 'Y-m', cbaz_order_ts( $row->created ) );
@@ -391,6 +407,7 @@ function cbaz_group( $column, array $range, $limit = 10, $where = '' ) {
 	$s      = cbaz_table( 'sessions' );
 	$column = preg_replace( '/[^a-z_]/', '', $column );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	return $wpdb->get_results( $wpdb->prepare(
 		"SELECT {$column} AS label,
 			COUNT(*) AS sessions,
@@ -403,6 +420,7 @@ function cbaz_group( $column, array $range, $limit = 10, $where = '' ) {
 		$range['to'],
 		$limit
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 }
 
 /**
@@ -441,6 +459,7 @@ function cbaz_group_previous( $column, array $range, $where = '' ) {
 	$s      = cbaz_table( 'sessions' );
 	$column = preg_replace( '/[^a-z_]/', '', $column );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$rows = $wpdb->get_results( $wpdb->prepare(
 		"SELECT {$column} AS label,
 			COUNT(*) AS sessions,
@@ -452,6 +471,7 @@ function cbaz_group_previous( $column, array $range, $where = '' ) {
 		$range['prev_from'],
 		$range['prev_to']
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 	$map = [];
 
@@ -479,6 +499,7 @@ function cbaz_sources( array $range, $limit = 10 ) {
 
 	$s = cbaz_table( 'sessions' );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	return $wpdb->get_results( $wpdb->prepare(
 		"SELECT source, medium,
 			COUNT(*) AS sessions,
@@ -490,6 +511,7 @@ function cbaz_sources( array $range, $limit = 10 ) {
 		$range['to'],
 		$limit
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 }
 
 function cbaz_pages( array $range, $limit = 12 ) {
@@ -498,6 +520,7 @@ function cbaz_pages( array $range, $limit = 12 ) {
 	$v = cbaz_table( 'views' );
 	$s = cbaz_table( 'sessions' );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	return $wpdb->get_results( $wpdb->prepare(
 		"SELECT v.path AS label, MAX(v.title) AS title, COUNT(*) AS views, COUNT(DISTINCT v.session_id) AS sessions
 		FROM {$v} v INNER JOIN {$s} s ON s.id = v.session_id
@@ -507,6 +530,7 @@ function cbaz_pages( array $range, $limit = 12 ) {
 		$range['to'],
 		$limit
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 }
 
 function cbaz_countries( array $range, $limit = 40 ) {
@@ -523,13 +547,16 @@ function cbaz_funnel( array $range ) {
 	$s = cbaz_table( 'sessions' );
 	$e = cbaz_table( 'events' );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$sessions = (int) $wpdb->get_var( $wpdb->prepare(
 		"SELECT COUNT(*) FROM {$s} WHERE started_at BETWEEN %s AND %s" . cbaz_filter_where(),
 		$range['from'],
 		$range['to']
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 	$step = function ( $name ) use ( $wpdb, $e, $s, $range ) {
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 		return (int) $wpdb->get_var( $wpdb->prepare(
 			"SELECT COUNT(DISTINCT e.session_id) FROM {$e} e
 			INNER JOIN {$s} s ON s.id = e.session_id
@@ -538,13 +565,14 @@ function cbaz_funnel( array $range ) {
 			$range['from'],
 			$range['to']
 		) );
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 	};
 
 	$steps = [
-		[ 'label' => __( 'Visites', 'shop-analytics-for-woocommerce' ), 'value' => $sessions ],
-		[ 'label' => __( 'Ajout au panier', 'shop-analytics-for-woocommerce' ), 'value' => $step( 'add_to_cart' ) ],
-		[ 'label' => __( 'Commande entamée', 'shop-analytics-for-woocommerce' ), 'value' => $step( 'begin_checkout' ) ],
-		[ 'label' => __( 'Achat', 'shop-analytics-for-woocommerce' ), 'value' => $step( 'purchase' ) ],
+		[ 'label' => __( 'Visits', 'pluginect-analytics-for-woocommerce' ), 'value' => $sessions ],
+		[ 'label' => __( 'Add to cart', 'pluginect-analytics-for-woocommerce' ), 'value' => $step( 'add_to_cart' ) ],
+		[ 'label' => __( 'Order started', 'pluginect-analytics-for-woocommerce' ), 'value' => $step( 'begin_checkout' ) ],
+		[ 'label' => __( 'Purchase', 'pluginect-analytics-for-woocommerce' ), 'value' => $step( 'purchase' ) ],
 	];
 
 	// Le pourcentage se lit par rapport au départ, et la perte par
@@ -580,6 +608,7 @@ function cbaz_top_products( array $range, $limit = 10 ) {
 	$statuses = cbaz_status_list( cbaz_revenue_statuses() );
 	$order_range = cbaz_order_range( $range );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$rows = $wpdb->get_results( $wpdb->prepare(
 		"SELECT MAX(activity.label) AS label, activity.product_id,
 			SUM(activity.qty) AS qty, SUM(activity.revenue) AS revenue,
@@ -630,6 +659,7 @@ function cbaz_top_products( array $range, $limit = 10 ) {
 		$order_range['to'],
 		$limit
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 	return $rows ? $rows : [];
 }
@@ -645,6 +675,7 @@ function cbaz_shop_totals( array $range ) {
 	$refund   = cbaz_refund_expr( 'r' );
 	$order_range = cbaz_order_range( $range );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$row = $wpdb->get_row( $wpdb->prepare(
 		"SELECT SUM(CASE WHEN o.{$schema['status']} IN ({$paid_statuses}) THEN 1 ELSE 0 END) AS orders,
 			COALESCE(SUM({$total['select']}), 0) AS revenue
@@ -656,7 +687,9 @@ function cbaz_shop_totals( array $range ) {
 		$order_range['from'],
 		$order_range['to']
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$refunded = (float) $wpdb->get_var( $wpdb->prepare(
 		"SELECT COALESCE(SUM({$refund['select']}), 0)
 		FROM {$schema['orders']} r
@@ -667,6 +700,7 @@ function cbaz_shop_totals( array $range ) {
 		$order_range['from'],
 		$order_range['to']
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 	return [
 		'orders'  => $row ? (int) $row->orders : 0,
@@ -693,6 +727,7 @@ function cbaz_realtime() {
 	 * les voir séparément obligerait à regarder deux listes pour
 	 * comprendre une seule séquence.
 	 */
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$feed = $wpdb->get_results( $wpdb->prepare(
 		"SELECT * FROM (
 			SELECT 'view' AS kind, v.path AS path, v.title AS title, 0 AS value, 0 AS object_id,
@@ -709,6 +744,7 @@ function cbaz_realtime() {
 		$since,
 		$since
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 	return [
 		'online' => (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$s} WHERE last_seen >= %s", $since ) ),
@@ -738,13 +774,13 @@ function cbaz_realtime() {
  */
 function cbaz_event_label( $kind, $object_id = 0, $value = 0, $stored = '' ) {
 	$map = [
-		'view'           => [ __( 'Page vue', 'shop-analytics-for-woocommerce' ), 'view' ],
-		'view_item'      => [ __( 'Consultation produit', 'shop-analytics-for-woocommerce' ), 'view' ],
-		'add_to_cart'    => [ __( 'Ajout au panier', 'shop-analytics-for-woocommerce' ), 'cart' ],
-		'view_cart'      => [ __( 'Panier consulté', 'shop-analytics-for-woocommerce' ), 'cart' ],
-		'begin_checkout' => [ __( 'Début de commande', 'shop-analytics-for-woocommerce' ), 'checkout' ],
-		'purchase'       => [ __( 'Commande', 'shop-analytics-for-woocommerce' ), 'order' ],
-		'search'         => [ __( 'Recherche', 'shop-analytics-for-woocommerce' ), 'view' ],
+		'view'           => [ __( 'Page view', 'pluginect-analytics-for-woocommerce' ), 'view' ],
+		'view_item'      => [ __( 'Product consultation', 'pluginect-analytics-for-woocommerce' ), 'view' ],
+		'add_to_cart'    => [ __( 'Add to cart', 'pluginect-analytics-for-woocommerce' ), 'cart' ],
+		'view_cart'      => [ __( 'Shopping cart viewed', 'pluginect-analytics-for-woocommerce' ), 'cart' ],
+		'begin_checkout' => [ __( 'Start of order', 'pluginect-analytics-for-woocommerce' ), 'checkout' ],
+		'purchase'       => [ __( 'Order', 'pluginect-analytics-for-woocommerce' ), 'order' ],
+		'search'         => [ __( 'Search', 'pluginect-analytics-for-woocommerce' ), 'view' ],
 	];
 
 	$meta = $map[ $kind ] ?? [ ucfirst( str_replace( '_', ' ', $kind ) ), 'view' ];
@@ -811,7 +847,7 @@ function cbaz_duration( $seconds ) {
 	$seconds = max( 0, (int) $seconds );
 
 	/* translators: 1: number of minutes, 2: number of seconds. */
-	return sprintf( __( '%1$d min %2$02d s', 'shop-analytics-for-woocommerce' ), intdiv( $seconds, 60 ), $seconds % 60 );
+	return sprintf( __( '%1$d min %2$02d s', 'pluginect-analytics-for-woocommerce' ), intdiv( $seconds, 60 ), $seconds % 60 );
 }
 
 function cbaz_format( $value, $format ) {
@@ -886,6 +922,7 @@ function cbaz_product_funnel( array $range ) {
 	$e = cbaz_table( 'events' );
 	$s = cbaz_table( 'sessions' );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$rows = $wpdb->get_results( $wpdb->prepare(
 		"SELECT e.object_id AS product_id,
 			SUM(CASE WHEN e.name = 'view_item' THEN 1 ELSE 0 END) AS views,
@@ -899,6 +936,7 @@ function cbaz_product_funnel( array $range ) {
 		$range['from'],
 		$range['to']
 	), OBJECT_K );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 	return $rows ? $rows : [];
 }
@@ -910,6 +948,7 @@ function cbaz_page_times( array $range ) {
 	$e = cbaz_table( 'events' );
 	$s = cbaz_table( 'sessions' );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$rows = $wpdb->get_results( $wpdb->prepare(
 		"SELECT e.label AS path, AVG(e.value) AS seconds, COUNT(*) AS samples
 		FROM {$e} e
@@ -920,6 +959,7 @@ function cbaz_page_times( array $range ) {
 		$range['from'],
 		$range['to']
 	), OBJECT_K );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 	return $rows ? $rows : [];
 }
@@ -936,6 +976,7 @@ function cbaz_page_bounces( array $range ) {
 
 	$s = cbaz_table( 'sessions' );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$rows = $wpdb->get_results( $wpdb->prepare(
 		"SELECT entry_path AS path,
 			COUNT(*) AS entries,
@@ -946,6 +987,7 @@ function cbaz_page_bounces( array $range ) {
 		$range['from'],
 		$range['to']
 	), OBJECT_K );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 	return $rows ? $rows : [];
 }
@@ -957,6 +999,7 @@ function cbaz_searches( array $range, $limit = 20 ) {
 	$e = cbaz_table( 'events' );
 	$s = cbaz_table( 'sessions' );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	return $wpdb->get_results( $wpdb->prepare(
 		"SELECT e.label AS label, COUNT(*) AS sessions, 0 AS revenue, 0 AS orders
 		FROM {$e} e
@@ -968,6 +1011,7 @@ function cbaz_searches( array $range, $limit = 20 ) {
 		$range['to'],
 		$limit
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 }
 
 /** Résolutions d'écran et langues, telles que déclarées par le navigateur. */
@@ -1002,12 +1046,15 @@ function cbaz_journey_flow( array $range, $start = '', $depth = 3, $top = 6 ) {
 	$v = cbaz_table( 'views' );
 	$s = cbaz_table( 'sessions' );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$total_rows = (int) $wpdb->get_var( $wpdb->prepare(
 		"SELECT COUNT(*) FROM {$v} v INNER JOIN {$s} s ON s.id = v.session_id
 		WHERE v.viewed_at BETWEEN %s AND %s" . cbaz_filter_where( 's' ),
 		$range['from'],
 		$range['to']
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$rows = $wpdb->get_results( $wpdb->prepare(
 		"SELECT sample.session_id, sample.path FROM (
 			SELECT v.session_id, v.path, v.viewed_at, v.id
@@ -1020,11 +1067,12 @@ function cbaz_journey_flow( array $range, $start = '', $depth = 3, $top = 6 ) {
 		$range['from'],
 		$range['to']
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 	$sequences = [];
 
 	foreach ( $rows as $row ) {
-		$last = $sequences[ $row->session_id ] ? end( $sequences[ $row->session_id ] ) : null;
+		$last = isset( $sequences[ $row->session_id ] ) ? end( $sequences[ $row->session_id ] ) : null;
 
 		// Une page rechargée ou revisitée d'affilée n'est pas une étape.
 		if ( $last !== $row->path ) {
@@ -1163,6 +1211,7 @@ function cbaz_sessions_list( array $range, $limit = 60, $only = '', $offset = 0,
 
 	$offset = max( 0, (int) $offset );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	return $wpdb->get_results( $wpdb->prepare(
 		"SELECT id, started_at, last_seen, pageviews, engaged_seconds, entry_path, exit_path,
 			source, medium, campaign, country, device, browser, is_new, order_id, revenue,
@@ -1175,6 +1224,7 @@ function cbaz_sessions_list( array $range, $limit = 60, $only = '', $offset = 0,
 		$limit,
 		$offset
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 }
 
 /** Nombre total de parcours Pro correspondant au segment courant. */
@@ -1199,11 +1249,13 @@ function cbaz_sessions_count( array $range, $only = '', $search = '' ) {
 		$where .= $wpdb->prepare( ' AND (entry_path LIKE %s OR exit_path LIKE %s OR source LIKE %s OR campaign LIKE %s OR country LIKE %s OR device LIKE %s)', $like, $like, $like, $like, $like, $like );
 	}
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	return (int) $wpdb->get_var( $wpdb->prepare(
 		"SELECT COUNT(*) FROM {$s} WHERE started_at BETWEEN %s AND %s{$where}" . cbaz_filter_where(),
 		$range['from'],
 		$range['to']
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 }
 
 /** Vérifie la barrière backend des dix parcours Free. */
@@ -1237,7 +1289,7 @@ function cbaz_pretty_path( $path ) {
 		return '';
 	}
 
-	return '/' === $path ? __( 'Accueil', 'shop-analytics-for-woocommerce' ) : trim( $path, '/' );
+	return '/' === $path ? __( 'Welcome', 'pluginect-analytics-for-woocommerce' ) : trim( $path, '/' );
 }
 
 /** Une étape de parcours : son intitulé, sa nature et sa couleur. */
@@ -1282,6 +1334,7 @@ function cbaz_sessions_trails( array $ids ) {
 	 */
 	$places = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$rows = $wpdb->get_results( $wpdb->prepare(
 		"SELECT * FROM (
 			SELECT session_id, 'view' AS kind, path, title, 0 AS value, 0 AS object_id, viewed_at AS at
@@ -1292,6 +1345,7 @@ function cbaz_sessions_trails( array $ids ) {
 		) AS flux ORDER BY at ASC",
 		array_merge( array_values( $ids ), array_values( $ids ) )
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 	$out = [];
 

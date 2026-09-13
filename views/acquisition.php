@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- vue incluse depuis cbaz_render_page() : variables locales à cette fonction, jamais globales
 /** Acquisition : d'où viennent les visites. */
 
 defined( 'ABSPATH' ) || exit;
@@ -21,40 +22,42 @@ $prev   = cbaz_totals( $range['prev_from'], $range['prev_to'] );
 $series = cbaz_series( $range );
 
 $cards = [
-	[ __( 'Visiteurs', 'shop-analytics-for-woocommerce' ), cbaz_int( $totals['visitors'] ), cbaz_delta( $totals['visitors'], $prev['visitors'] ), wp_list_pluck( $series, 'sessions' ) ],
-	[ __( 'Visites', 'shop-analytics-for-woocommerce' ), cbaz_int( $totals['sessions'] ), cbaz_delta( $totals['sessions'], $prev['sessions'] ), wp_list_pluck( $series, 'sessions' ) ],
-	[ __( 'Commandes', 'shop-analytics-for-woocommerce' ), cbaz_int( $totals['orders'] ), cbaz_delta( $totals['orders'], $prev['orders'] ), wp_list_pluck( $series, 'orders' ) ],
-	[ __( "Chiffre d'affaires", 'shop-analytics-for-woocommerce' ), cbaz_money( $totals['revenue'] ), cbaz_delta( $totals['revenue'], $prev['revenue'] ), wp_list_pluck( $series, 'revenue' ) ],
-	[ __( 'Taux de conversion', 'shop-analytics-for-woocommerce' ), cbaz_pct( $totals['cr'] ), cbaz_delta( $totals['cr'], $prev['cr'] ), wp_list_pluck( $series, 'orders' ) ],
-	[ __( 'Panier moyen', 'shop-analytics-for-woocommerce' ), cbaz_money( $totals['aov'] ), cbaz_delta( $totals['aov'], $prev['aov'] ), wp_list_pluck( $series, 'revenue' ) ],
+	[ __( 'Visitors', 'pluginect-analytics-for-woocommerce' ), cbaz_int( $totals['visitors'] ), cbaz_delta( $totals['visitors'], $prev['visitors'] ), wp_list_pluck( $series, 'sessions' ), 'visitors' ],
+	[ __( 'Visits', 'pluginect-analytics-for-woocommerce' ), cbaz_int( $totals['sessions'] ), cbaz_delta( $totals['sessions'], $prev['sessions'] ), wp_list_pluck( $series, 'sessions' ), 'sessions' ],
+	[ __( 'Orders', 'pluginect-analytics-for-woocommerce' ), cbaz_int( $totals['orders'] ), cbaz_delta( $totals['orders'], $prev['orders'] ), wp_list_pluck( $series, 'orders' ), 'orders' ],
+	[ __( 'Revenue', 'pluginect-analytics-for-woocommerce' ), cbaz_money( $totals['revenue'] ), cbaz_delta( $totals['revenue'], $prev['revenue'] ), wp_list_pluck( $series, 'revenue' ), 'revenue' ],
+	[ __( 'Conversion rate', 'pluginect-analytics-for-woocommerce' ), cbaz_pct( $totals['cr'] ), cbaz_delta( $totals['cr'], $prev['cr'] ), wp_list_pluck( $series, 'orders' ), 'cr' ],
+	[ __( 'Average basket', 'pluginect-analytics-for-woocommerce' ), cbaz_money( $totals['aov'] ), cbaz_delta( $totals['aov'], $prev['aov'] ), wp_list_pluck( $series, 'revenue' ), 'aov' ],
 ];
 ?>
 
 <div class="cbaz-kpis">
-	<?php foreach ( $cards as list( $label, $value, $delta, $spark ) ) : ?>
+	<?php foreach ( $cards as list( $label, $value, $delta, $spark, $help ) ) : ?>
 		<div class="cbaz-kpi">
-			<?php echo cbaz_kpi_icon( $label ); // phpcs:ignore ?><p class="cbaz-kpi__label"><?php echo esc_html( $label ); ?></p>
+			<?php echo cbaz_kpi_icon( $label ); // phpcs:ignore ?><p class="cbaz-kpi__label"><?php echo esc_html( $label ); ?><?php echo cbaz_tip( $help ); // phpcs:ignore ?></p>
 			<p class="cbaz-kpi__value"><?php echo esc_html( $value ); ?></p>
-			<p class="cbaz-kpi__delta"><?php echo cbaz_delta_badge( $delta ); // phpcs:ignore ?><span class="cbaz-kpi__vs"><?php echo esc_html__( 'vs période préc.', 'shop-analytics-for-woocommerce' ); ?></span></p>
+			<p class="cbaz-kpi__delta"><?php echo cbaz_delta_badge( $delta ); // phpcs:ignore ?><span class="cbaz-kpi__vs"><?php echo esc_html__( 'vs previous period', 'pluginect-analytics-for-woocommerce' ); ?></span></p>
 			<?php echo cbaz_sparkline( $spark ); // phpcs:ignore ?>
 		</div>
 	<?php endforeach; ?>
 </div>
 
+<?php cbaz_insights_box( $range, 'acquisition' ); ?>
+
 <section class="cbaz-card">
 	<header class="cbaz-card__head">
 		<?php echo cbaz_icon( 'globe', 6 ); // phpcs:ignore ?>
-			<div><h2><?php echo esc_html__( 'Sources de trafic', 'shop-analytics-for-woocommerce' ); ?></h2><p><?php echo esc_html__( 'Cherchez, filtrez et exportez la performance de chaque source.', 'shop-analytics-for-woocommerce' ); ?></p></div>
+			<div><h2><?php echo esc_html__( 'Traffic Sources', 'pluginect-analytics-for-woocommerce' ); ?><?php echo cbaz_tip( 'sources' ); // phpcs:ignore ?></h2><p><?php echo esc_html__( 'Search, filter and export the performance of each source.', 'pluginect-analytics-for-woocommerce' ); ?></p></div>
 	</header>
 
-	<?php echo cbaz_table_tools( __( 'Rechercher une source…', 'shop-analytics-for-woocommerce' ), 'sources' ); // phpcs:ignore ?>
+	<?php echo cbaz_table_tools( __( 'Find a source…', 'pluginect-analytics-for-woocommerce' ), 'sources' ); // phpcs:ignore ?>
 
 	<table class="cbaz-table">
 		<thead>
 			<tr>
-				<th><?php echo esc_html__( 'Source', 'shop-analytics-for-woocommerce' ); ?></th><th><?php echo esc_html_x( 'Support', 'traffic medium', 'shop-analytics-for-woocommerce' ); ?></th>
-				<th class="num"><?php echo esc_html__( 'Visites', 'shop-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html__( 'Évolution', 'shop-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html__( 'Commandes', 'shop-analytics-for-woocommerce' ); ?></th>
-				<th class="num"><?php echo esc_html__( 'Conversion', 'shop-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html_x( 'CA', 'revenue abbreviation', 'shop-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html__( 'Panier moyen', 'shop-analytics-for-woocommerce' ); ?></th>
+				<th><?php echo esc_html__( 'Source', 'pluginect-analytics-for-woocommerce' ); ?></th><th><?php echo esc_html_x( 'Medium', 'traffic medium', 'pluginect-analytics-for-woocommerce' ); ?></th>
+				<th class="num"><?php echo esc_html__( 'Visits', 'pluginect-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html__( 'Evolution', 'pluginect-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html__( 'Orders', 'pluginect-analytics-for-woocommerce' ); ?></th>
+				<th class="num"><?php echo esc_html__( 'Conversion', 'pluginect-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html_x( 'Revenue', 'revenue abbreviation', 'pluginect-analytics-for-woocommerce' ); ?></th><th class="num"><?php echo esc_html__( 'Average basket', 'pluginect-analytics-for-woocommerce' ); ?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -74,19 +77,19 @@ $cards = [
 				<td class="num"><?php echo esc_html( cbaz_money( $s->orders ? $s->revenue / $s->orders : 0 ) ); ?></td>
 			</tr>
 		<?php endforeach; ?>
-		<?php if ( ! $sources ) : ?><tr><td colspan="8" class="cbaz-empty"><?php echo esc_html__( 'Aucune visite sur la période.', 'shop-analytics-for-woocommerce' ); ?></td></tr><?php endif; ?>
+		<?php if ( ! $sources ) : ?><tr><td colspan="8" class="cbaz-empty"><?php echo esc_html__( 'No visits during the period.', 'pluginect-analytics-for-woocommerce' ); ?></td></tr><?php endif; ?>
 		</tbody>
 	</table>
 
-	<?php echo cbaz_table_count( count( $sources ), count( $sources ), __( 'sources', 'shop-analytics-for-woocommerce' ) ); // phpcs:ignore ?>
+	<?php echo cbaz_table_count( count( $sources ), count( $sources ), __( 'sources', 'pluginect-analytics-for-woocommerce' ) ); // phpcs:ignore ?>
 </section>
 
 <div class="cbaz-grid cbaz-grid--2">
 	<section class="cbaz-card">
 		<header class="cbaz-card__head"><?php echo cbaz_icon( 'money', 2 ); // phpcs:ignore ?>
-			<div><h2><?php echo esc_html__( 'Chiffre d’affaires par canal', 'shop-analytics-for-woocommerce' ); ?></h2></div></header>
+			<div><h2><?php echo esc_html__( 'Revenue by channel', 'pluginect-analytics-for-woocommerce' ); ?><?php echo cbaz_tip( 'channel_revenue' ); // phpcs:ignore ?></h2></div></header>
 		<?php
-		echo cbaz_bars_chart( array_map(
+		echo cbaz_bars_chart( array_map( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG construit et échappé par cbaz_bars_chart()
 			fn( $m ) => [ 'label' => $m->label ? $m->label : '(direct)', 'value' => (float) $m->revenue ],
 			array_slice( $mediums, 0, 6 )
 		) ); // phpcs:ignore
@@ -95,9 +98,9 @@ $cards = [
 
 	<section class="cbaz-card">
 		<header class="cbaz-card__head"><?php echo cbaz_icon( 'chart', 1 ); // phpcs:ignore ?>
-			<div><h2><?php echo esc_html__( 'Conversion par canal', 'shop-analytics-for-woocommerce' ); ?></h2></div></header>
+			<div><h2><?php echo esc_html__( 'Conversion by channel', 'pluginect-analytics-for-woocommerce' ); ?><?php echo cbaz_tip( 'channel_cr' ); // phpcs:ignore ?></h2></div></header>
 		<?php
-		echo cbaz_hbars( array_map(
+		echo cbaz_hbars( array_map( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML construit et échappé par cbaz_hbars()
 			fn( $m ) => [
 				'label' => $m->label ? $m->label : '(direct)',
 				'value' => $m->sessions ? ( $m->orders / $m->sessions ) * 100 : 0,
@@ -108,7 +111,7 @@ $cards = [
 	</section>
 	<section class="cbaz-card">
 		<header class="cbaz-card__head"><?php echo cbaz_icon( 'path', 4 ); // phpcs:ignore ?>
-			<div><h2><?php echo esc_html__( 'Sites référents', 'shop-analytics-for-woocommerce' ); ?></h2><p><?php echo esc_html__( 'Les sites qui envoient du monde chez toi.', 'shop-analytics-for-woocommerce' ); ?></p></div></header>
+			<div><h2><?php echo esc_html__( 'Referring sites', 'pluginect-analytics-for-woocommerce' ); ?><?php echo cbaz_tip( 'referrers' ); // phpcs:ignore ?></h2><p><?php echo esc_html__( 'Sites that send people to your home.', 'pluginect-analytics-for-woocommerce' ); ?></p></div></header>
 		<ul class="cbaz-list">
 			<?php $maxr = $referrers ? max( array_map( fn( $r ) => (int) $r->sessions, $referrers ) ) : 1; ?>
 			<?php foreach ( $referrers as $i => $r ) : ?>
@@ -124,14 +127,14 @@ $cards = [
 				</li>
 			<?php endforeach; ?>
 			<?php if ( ! $referrers ) : ?>
-				<li class="cbaz-empty"><?php echo esc_html__( 'Aucun site référent : les visites arrivent en direct ou par des liens sans référent.', 'shop-analytics-for-woocommerce' ); ?></li>
+				<li class="cbaz-empty"><?php echo esc_html__( 'No referring site: visits arrive directly or via links without a referrer.', 'pluginect-analytics-for-woocommerce' ); ?></li>
 			<?php endif; ?>
 		</ul>
 	</section>
 
 	<section class="cbaz-card">
 		<header class="cbaz-card__head"><?php echo cbaz_icon( 'users', 4 ); // phpcs:ignore ?>
-			<div><h2><?php echo esc_html__( 'Répartition des visites', 'shop-analytics-for-woocommerce' ); ?></h2></div></header>
+			<div><h2><?php echo esc_html__( 'Distribution of visits', 'pluginect-analytics-for-woocommerce' ); ?></h2></div></header>
 		<?php echo cbaz_donut( array_slice( $mediums, 0, 5 ), max( 1, (int) $totals['sessions'] ) ); // phpcs:ignore ?>
 	</section>
 </div>

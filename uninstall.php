@@ -19,17 +19,21 @@
 
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- ce fichier interroge les tables propres au plugin ({prefix}cbaz_*), pour lesquelles WordPress n'offre aucune API : les noms de tables viennent de cbaz_table(), les valeurs passent par $wpdb->prepare(), et les lectures lourdes sont consolidées par jour (history.php) plutôt que mises en cache objet.
+
 global $wpdb;
 
-$settings = get_option( 'cbaz_settings', [] );
+$cbaz_settings = get_option( 'cbaz_settings', [] );
 
-if ( empty( $settings['delete_on_uninstall'] ) ) {
+if ( empty( $cbaz_settings['delete_on_uninstall'] ) ) {
 	return;
 }
 
 // ── Tables ──────────────────────────────────────────────────────
-foreach ( [ 'daily_dim', 'daily', 'events', 'views', 'sessions', 'campaigns' ] as $table ) {
-	$wpdb->query( 'DROP TABLE IF EXISTS ' . $wpdb->prefix . 'cbaz_' . $table );
+foreach ( [ 'daily_dim', 'daily', 'events', 'views', 'sessions', 'campaigns' ] as $cbaz_table ) {
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange -- suppression des tables de l'extension à la désinstallation, noms construits sur le préfixe
+	$wpdb->query( 'DROP TABLE IF EXISTS ' . $wpdb->prefix . 'cbaz_' . $cbaz_table );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange
 }
 
 // ── Réglages et mémoire interne ─────────────────────────────────
@@ -41,8 +45,8 @@ foreach ( [
 	'cbaz_sources_canon',
 	'cbaz_rollup_upto',
 	'cbaz_favoris',
-] as $option ) {
-	delete_option( $option );
+] as $cbaz_option ) {
+	delete_option( $cbaz_option );
 }
 
 // ── Tâche de nuit ───────────────────────────────────────────────
@@ -64,8 +68,8 @@ $wpdb->query(
 $wpdb->query( "DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE '\_cbaz\_%'" );
 
 // Stockage moderne des commandes WooCommerce, s'il est en place.
-$hpos = $wpdb->prefix . 'wc_orders_meta';
+$cbaz_hpos = $wpdb->prefix . 'wc_orders_meta';
 
-if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $hpos ) ) === $hpos ) {
-	$wpdb->query( "DELETE FROM {$hpos} WHERE meta_key LIKE '\_cbaz\_%'" );
+if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $cbaz_hpos ) ) === $cbaz_hpos ) {
+	$wpdb->query( "DELETE FROM {$cbaz_hpos} WHERE meta_key LIKE '\_cbaz\_%'" );
 }

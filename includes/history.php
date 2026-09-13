@@ -22,6 +22,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- ce fichier interroge les tables propres au plugin ({prefix}cbaz_*), pour lesquelles WordPress n'offre aucune API : les noms de tables viennent de cbaz_table(), les valeurs passent par $wpdb->prepare(), et les lectures lourdes sont consolidées par jour (history.php) plutôt que mises en cache objet.
+
 /** Les répartitions conservées : ce qu'on voudra encore comparer dans dix ans. */
 function cbaz_history_dims() {
 	return [
@@ -114,6 +116,7 @@ function cbaz_rollup_commerce_dims( $day, $from, $to ) {
 	];
 	$key_sql = cbaz_status_list( array_keys( $keys ) );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$gross = $wpdb->get_results( $wpdb->prepare(
 		"SELECT am.meta_key, am.meta_value AS label,
 			SUM(CASE WHEN o.{$schema['status']} IN ({$paid}) THEN 1 ELSE 0 END) AS orders,
@@ -125,6 +128,8 @@ function cbaz_rollup_commerce_dims( $day, $from, $to ) {
 		GROUP BY am.meta_key, am.meta_value",
 		$range['from'], $range['to']
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- noms de tables issus de la fonction de préfixe, colonnes issues d'une liste fermée, fragments déjà passés par \$wpdb->prepare()
 	$refunds = $wpdb->get_results( $wpdb->prepare(
 		"SELECT am.meta_key, am.meta_value AS label, SUM({$refund['select']}) AS revenue
 		FROM {$schema['orders']} r
@@ -135,15 +140,16 @@ function cbaz_rollup_commerce_dims( $day, $from, $to ) {
 		GROUP BY am.meta_key, am.meta_value",
 		$range['from'], $range['to']
 	) );
+	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 	$commerce = [];
 
 	foreach ( $gross as $row ) {
 		$id = $row->meta_key . "\0" . $row->label;
-		$commerce[ $id ] = [ 'meta_key' => $row->meta_key, 'label' => $row->label, 'orders' => (int) $row->orders, 'revenue' => (float) $row->revenue ];
+		$commerce[ $id ] = [ 'meta_key' => $row->meta_key, 'label' => $row->label, 'orders' => (int) $row->orders, 'revenue' => (float) $row->revenue ]; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- simple clé de tableau, pas un argument de requête
 	}
 	foreach ( $refunds as $row ) {
 		$id = $row->meta_key . "\0" . $row->label;
-		if ( ! isset( $commerce[ $id ] ) ) { $commerce[ $id ] = [ 'meta_key' => $row->meta_key, 'label' => $row->label, 'orders' => 0, 'revenue' => 0.0 ]; }
+		if ( ! isset( $commerce[ $id ] ) ) { $commerce[ $id ] = [ 'meta_key' => $row->meta_key, 'label' => $row->label, 'orders' => 0, 'revenue' => 0.0 ]; } // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- simple clé de tableau, pas un argument de requête
 		$commerce[ $id ]['revenue'] -= (float) $row->revenue;
 	}
 

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
-   CamiBijoux – Analytics
+   Pluginect Analytics for WooCommerce
 
    Blanc, gris, anthracite. Aucun bleu : les accents sont portés
    par le contraste et non par la couleur, ce qui laisse le vert
@@ -640,6 +640,9 @@
 .cbaz-ctrl--primary { background: var(--ink); border-color: var(--ink); color: #fff; }
 .cbaz-ctrl--primary:hover { background: #000; color: #fff; }
 .cbaz-ctrl--mini { height: 28px; padding: 0 10px; font-size: 11.5px; }
+.cbaz-ctrl--pro { border-style: dashed; color: var(--ink-soft, #3d434e); }
+.cbaz-ctrl--pro:hover, .cbaz-ctrl--pro:focus-visible { border-style: solid; }
+.cbaz-ctrl--pro .cbaz-badge-pro { margin-left: 2px; }
 
 .cbaz-livepill {
     display: inline-flex;
@@ -2323,3 +2326,83 @@ a.cbaz-flow__page:hover { border-color: var(--ink); }
     .cbaz-pro { align-items: stretch; }
     .cbaz-pro__cta { justify-content: center; width: 100%; }
 }
+
+/* ── Infobulles ──────────────────────────────────────────
+   Un « i » discret à côté d'un intitulé. La bulle est unique, créée par
+   le script, et positionnée au-dessus ou au-dessous selon la place. */
+.cbaz-help {
+    /* `inline-flex` place la baseline du bouton sur le BAS de son SVG :
+       le bouton remontait alors d'une hauteur de ligne au-dessus du
+       libellé, et aucune valeur de `vertical-align` en pixels ne pouvait
+       le rattraper à toutes les tailles de police. `middle` aligne le
+       centre du bouton sur le centre de la hauteur d'x — stable partout. */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 16px; height: 16px;
+    margin: 0 0 0 5px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--faint);
+    cursor: help;
+    vertical-align: middle;
+    line-height: 1;
+    box-shadow: none;
+    transition: color .12s ease, background .12s ease;
+}
+.cbaz-help svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; }
+.cbaz-help:hover, .cbaz-help:focus-visible, .cbaz-help[aria-expanded="true"] { color: var(--ink); background: var(--line-soft); outline: none; }
+.cbaz-help:focus-visible { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--d1); }
+
+/* La bulle est attachée à <body>, donc HORS du conteneur .cbaz où vivent
+   les variables de couleur : `var(--surface)` n'y résout rien et la
+   déclaration entière est ignorée — d'où un fond transparent et un texte
+   illisible par-dessus la page. Chaque couleur porte donc sa valeur en
+   repli, et le fond est opaque quoi qu'il arrive. */
+.cbaz-helpbox {
+    position: fixed;
+    z-index: 100000;
+    max-width: 320px;
+    padding: 10px 12px 11px;
+    border: 1px solid var(--line, #e5e7eb);
+    border-radius: 10px;
+    background: var(--surface, #ffffff);
+    background-color: #ffffff;
+    box-shadow: 0 6px 24px rgba(16, 24, 40, .12), 0 1px 3px rgba(16, 24, 40, .08);
+    color: var(--ink-soft, #3d434e);
+    font-size: 12.5px;
+    line-height: 1.55;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity .12s ease, transform .12s ease;
+    pointer-events: none;
+}
+.cbaz-helpbox.is-on { opacity: 1; transform: none; pointer-events: auto; }
+.cbaz-helpbox strong { display: block; margin-bottom: 3px; color: var(--ink, #16181d); font-size: 12.5px; font-weight: 600; }
+
+/* ── Pistes à explorer ───────────────────────────────── */
+.cbaz-insights__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.cbaz-insight {
+    display: grid;
+    grid-template-columns: 10px 1fr;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--canvas);
+}
+.cbaz-insight h3 { margin: 0 0 2px; font-size: 13px; font-weight: 600; color: var(--ink); }
+.cbaz-insight p { margin: 4px 0 0; font-size: 12.5px; color: var(--ink-soft); }
+.cbaz-insight__evidence { font-variant-numeric: tabular-nums; color: var(--muted) !important; font-size: 12px !important; }
+.cbaz-insight__action strong { color: var(--ink); font-weight: 600; }
+.cbaz-insight__dot { width: 10px; height: 10px; margin-top: 4px; border-radius: 50%; background: var(--muted); }
+.cbaz-insight--warn .cbaz-insight__dot { background: var(--warn); }
+.cbaz-insight--good .cbaz-insight__dot { background: var(--up); }
+.cbaz-insight--info .cbaz-insight__dot { background: var(--d1); }
+.cbaz-insights__caveat { margin: 12px 0 0; font-size: 11.5px; color: var(--faint); }
+.cbaz-insights__wait p { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); }
+.cbaz-insights__progress { height: 6px; border-radius: 3px; background: var(--line-soft); overflow: hidden; }
+.cbaz-insights__progress span { display: block; height: 100%; border-radius: 3px; background: var(--d1); }

@@ -16,6 +16,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- ce fichier interroge les tables propres au plugin ({prefix}cbaz_*), pour lesquelles WordPress n'offre aucune API : les noms de tables viennent de cbaz_table(), les valeurs passent par $wpdb->prepare(), et les lectures lourdes sont consolidées par jour (history.php) plutôt que mises en cache objet.
+
 // ══════════════════════════════════════════════════════════════
 //  FICHES
 // ══════════════════════════════════════════════════════════════
@@ -47,9 +49,9 @@ function cbaz_campaign_by_slug( $slug ) {
 
 function cbaz_statuses() {
 	return [
-		'active'  => __( 'En cours', 'shop-analytics-for-woocommerce' ),
-		'planned' => __( 'Planifiée', 'shop-analytics-for-woocommerce' ),
-		'ended'   => __( 'Terminée', 'shop-analytics-for-woocommerce' ),
+		'active'  => __( 'In progress', 'pluginect-analytics-for-woocommerce' ),
+		'planned' => __( 'Planned', 'pluginect-analytics-for-woocommerce' ),
+		'ended'   => __( 'Completed', 'pluginect-analytics-for-woocommerce' ),
 	];
 }
 
@@ -88,7 +90,7 @@ function cbaz_save_campaign( array $data, $id = 0 ) {
 	];
 
 	if ( '' === $row['campaign'] || '' === $row['source'] ) {
-		return new WP_Error( 'cbaz_incomplete', __( 'Une campagne a besoin au minimum d’une source et d’un nom de campagne.', 'shop-analytics-for-woocommerce' ) );
+		return new WP_Error( 'cbaz_incomplete', __( 'A campaign needs at least a source and a campaign name.', 'pluginect-analytics-for-woocommerce' ) );
 	}
 
 	$t = cbaz_table( 'campaigns' );
@@ -271,7 +273,7 @@ function cbaz_short_link_redirect() {
 	// 302 et non 301 : une redirection permanente serait mise en cache
 	// par le navigateur, et les visites suivantes ne repasseraient plus
 	// par ici — la campagne cesserait d'être comptée.
-	wp_redirect( cbaz_campaign_url( $campaign ), 302 );
+	wp_redirect( cbaz_campaign_url( $campaign ), 302 ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- destination saisie par l'administrateur, éventuellement hors site
 	exit;
 }
 
@@ -281,7 +283,6 @@ add_action( 'cbaz_flush_rules', 'flush_rewrite_rules' );
 // ══════════════════════════════════════════════════════════════
 //  RÉSULTATS
 // ══════════════════════════════════════════════════════════════
-
 
 /**
  * Fiches en double, héritées d'avant le garde-fou.

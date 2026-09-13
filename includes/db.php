@@ -83,15 +83,21 @@ function cbaz_install_tables() {
 		KEY path (path)
 	) {$charset};" );
 
+	/*
+	 * `label` sert au terme d'une recherche interne comme au chemin d'une
+	 * page dont on mesure le temps de lecture : deux usages, une seule
+	 * colonne, plutôt qu'une table par type d'évènement.
+	 *
+	 * Le commentaire vit ici et non dans le SQL : dbDelta lit chaque ligne
+	 * du CREATE TABLE comme une colonne, et prendrait un commentaire pour
+	 * un champ à ajouter.
+	 */
 	dbDelta( "CREATE TABLE {$events} (
 		id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 		session_id BIGINT UNSIGNED NOT NULL,
 		name VARCHAR(40) NOT NULL DEFAULT '',
 		object_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
 		value DECIMAL(12,2) NOT NULL DEFAULT 0,
-		/* Sert au terme d'une recherche interne comme au chemin d'une
-		   page dont on mesure le temps de lecture : deux usages, une
-		   seule colonne, plutôt qu'une table par type d'évènement. */
 		label VARCHAR(190) NOT NULL DEFAULT '',
 		created_at DATETIME NOT NULL,
 		PRIMARY KEY (id),

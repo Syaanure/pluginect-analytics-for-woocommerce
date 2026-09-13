@@ -1,21 +1,26 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- vue incluse depuis cbaz_render_page() : variables locales à cette fonction, jamais globales
 /** Paramètres, en quatre volets. */
 
 defined( 'ABSPATH' ) || exit;
+
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- ce fichier interroge les tables propres au plugin ({prefix}cbaz_*), pour lesquelles WordPress n'offre aucune API : les noms de tables viennent de cbaz_table(), les valeurs passent par $wpdb->prepare(), et les lectures lourdes sont consolidées par jour (history.php) plutôt que mises en cache objet.
 
 global $wpdb;
 
 $opts  = cbaz_opt();
 $roles = get_editable_roles();
-$rows  = (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . cbaz_table( 'sessions' ) );
-$views = (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . cbaz_table( 'views' ) );
+$t_sessions = cbaz_table( 'sessions' );
+$t_views    = cbaz_table( 'views' );
+$rows  = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$t_sessions}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table préfixée par l'extension
+$views = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$t_views}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table préfixée par l'extension
 $saved = get_option( 'cbaz_saved_at' );
 
 $volets_coeur = [
-	'general' => __( 'Général', 'shop-analytics-for-woocommerce' ),
-	'rgpd'    => __( 'RGPD & confidentialité', 'shop-analytics-for-woocommerce' ),
-	'exclus'  => __( 'Exclusions', 'shop-analytics-for-woocommerce' ),
-	'donnees' => __( 'Données', 'shop-analytics-for-woocommerce' ),
+	'general' => __( 'General', 'pluginect-analytics-for-woocommerce' ),
+	'rgpd'    => __( 'GDPR & privacy', 'pluginect-analytics-for-woocommerce' ),
+	'exclus'  => __( 'Exclusions', 'pluginect-analytics-for-woocommerce' ),
+	'donnees' => __( 'Data', 'pluginect-analytics-for-woocommerce' ),
 ];
 
 /**
@@ -49,8 +54,8 @@ $volet_externe = ! isset( $volets_coeur[ $volet ] );
 
 <?php else : ?>
 
-<?php if ( ! empty( $_GET['ok'] ) ) : ?>
-	<div class="cbaz-notice cbaz-notice--ok"><?php echo esc_html__( 'Réglages enregistrés.', 'shop-analytics-for-woocommerce' ); ?></div>
+<?php if ( ! empty( $_GET['ok'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- simple drapeau d'affichage après redirection ?>
+	<div class="cbaz-notice cbaz-notice--ok"><?php echo esc_html__( 'Saved settings.', 'pluginect-analytics-for-woocommerce' ); ?></div>
 <?php endif; ?>
 
 <section class="cbaz-card">
@@ -62,24 +67,32 @@ $volet_externe = ! isset( $volets_coeur[ $volet ] );
 		<?php if ( 'general' === $volet ) : ?>
 			<div class="cbaz-setting">
 				<div class="cbaz-setting__text">
-					<strong><?php echo esc_html__( 'Activer le suivi', 'shop-analytics-for-woocommerce' ); ?></strong>
-					<p><?php echo esc_html__( 'Enregistre les visites et les étapes d’achat sur la boutique.', 'shop-analytics-for-woocommerce' ); ?></p>
+					<strong><?php echo esc_html__( 'Enable tracking', 'pluginect-analytics-for-woocommerce' ); ?></strong>
+					<p><?php echo esc_html__( 'Records visits and purchase steps on the store.', 'pluginect-analytics-for-woocommerce' ); ?></p>
 				</div>
 				<div class="cbaz-setting__field"><?php echo cbaz_toggle( 'enabled', $opts['enabled'] ); // phpcs:ignore ?></div>
 			</div>
 
 			<div class="cbaz-setting">
 				<div class="cbaz-setting__text">
-					<strong><?php echo esc_html__( 'Suivre les étapes d’achat', 'shop-analytics-for-woocommerce' ); ?></strong>
-					<p><?php echo esc_html__( 'Ajout au panier et commande entamée — nécessaire à l’entonnoir de conversion.', 'shop-analytics-for-woocommerce' ); ?></p>
+					<strong><?php echo esc_html__( 'Follow the purchasing steps', 'pluginect-analytics-for-woocommerce' ); ?></strong>
+					<p><?php echo esc_html__( 'Added to cart and started order — necessary for the conversion funnel.', 'pluginect-analytics-for-woocommerce' ); ?></p>
 				</div>
 				<div class="cbaz-setting__field"><?php echo cbaz_toggle( 'track_events', $opts['track_events'] ); // phpcs:ignore ?></div>
 			</div>
 
 			<div class="cbaz-setting">
 				<div class="cbaz-setting__text">
-					<strong><?php echo esc_html__( 'Devise des rapports', 'shop-analytics-for-woocommerce' ); ?></strong>
-					<p><?php echo esc_html__( 'Reprise de WooCommerce : tous les montants viennent de la boutique.', 'shop-analytics-for-woocommerce' ); ?></p>
+					<strong><?php echo esc_html__( 'Show leads worth checking', 'pluginect-analytics-for-woocommerce' ); ?></strong>
+					<p><?php echo esc_html__( 'Simple rules that point at what deserves a look once there are enough visits. They never replace an analysis of your store.', 'pluginect-analytics-for-woocommerce' ); ?></p>
+				</div>
+				<div class="cbaz-setting__field"><?php echo cbaz_toggle( 'insights', ! empty( $opts['insights'] ) ); // phpcs:ignore ?></div>
+			</div>
+
+			<div class="cbaz-setting">
+				<div class="cbaz-setting__text">
+					<strong><?php echo esc_html__( 'Reporting currency', 'pluginect-analytics-for-woocommerce' ); ?></strong>
+					<p><?php echo esc_html__( 'WooCommerce takeover: all amounts come from the store.', 'pluginect-analytics-for-woocommerce' ); ?></p>
 				</div>
 				<div class="cbaz-setting__field">
 					<input type="text" value="<?php echo esc_attr( function_exists( 'get_woocommerce_currency' ) ? get_woocommerce_currency() : 'EUR' ); ?>" disabled>
@@ -88,8 +101,8 @@ $volet_externe = ! isset( $volets_coeur[ $volet ] );
 
 			<div class="cbaz-setting">
 				<div class="cbaz-setting__text">
-					<strong><?php echo esc_html__( 'Fuseau horaire', 'shop-analytics-for-woocommerce' ); ?></strong>
-					<p><?php echo esc_html__( 'Détermine les bornes journalières des rapports. Réglé dans WordPress.', 'shop-analytics-for-woocommerce' ); ?></p>
+					<strong><?php echo esc_html__( 'Time zone', 'pluginect-analytics-for-woocommerce' ); ?></strong>
+					<p><?php echo esc_html__( 'Determines the daily limits of the reports. Set in WordPress.', 'pluginect-analytics-for-woocommerce' ); ?></p>
 				</div>
 				<div class="cbaz-setting__field">
 					<input type="text" value="<?php echo esc_attr( wp_timezone_string() ); ?>" disabled>
@@ -98,26 +111,26 @@ $volet_externe = ! isset( $volets_coeur[ $volet ] );
 
 			<div class="cbaz-setting">
 				<div class="cbaz-setting__text">
-					<strong><?php echo esc_html__( 'Durée d’une visite', 'shop-analytics-for-woocommerce' ); ?></strong>
-					<p><?php echo esc_html__( 'Délai d’inactivité au-delà duquel une nouvelle visite commence.', 'shop-analytics-for-woocommerce' ); ?></p>
+					<strong><?php echo esc_html__( 'Duration of a visit', 'pluginect-analytics-for-woocommerce' ); ?></strong>
+					<p><?php echo esc_html__( 'Timeout of inactivity after which a new visit begins.', 'pluginect-analytics-for-woocommerce' ); ?></p>
 				</div>
 				<div class="cbaz-setting__field">
 					<input type="text" value="30" disabled>
-					<span class="cbaz-setting__unit"><?php echo esc_html__( 'minutes', 'shop-analytics-for-woocommerce' ); ?></span>
+					<span class="cbaz-setting__unit"><?php echo esc_html__( 'minutes', 'pluginect-analytics-for-woocommerce' ); ?></span>
 				</div>
 			</div>
 
 		<?php elseif ( 'rgpd' === $volet ) : ?>
 			<div class="cbaz-setting">
 				<div class="cbaz-setting__text">
-					<strong><?php echo esc_html__( 'Fenêtre d’attribution', 'shop-analytics-for-woocommerce' ); ?></strong>
-					<p><?php echo esc_html__( 'Période pendant laquelle une campagne reste créditée d’une vente. C’est le réglage qui décide si tes campagnes paraissent rentables ou stériles.', 'shop-analytics-for-woocommerce' ); ?></p>
+					<strong><?php echo esc_html__( 'Attribution window', 'pluginect-analytics-for-woocommerce' ); ?></strong>
+					<p><?php echo esc_html__( 'Period during which a campaign remains credited with a sale. It’s the setting that decides whether your campaigns appear profitable or sterile.', 'pluginect-analytics-for-woocommerce' ); ?></p>
 				</div>
 				<div class="cbaz-setting__field">
 					<select name="attribution_days">
-						<option value="0" <?php selected( (int) $opts['attribution_days'], 0 ); ?>><?php echo esc_html__( 'Aucune', 'shop-analytics-for-woocommerce' ); ?></option>
+						<option value="0" <?php selected( (int) $opts['attribution_days'], 0 ); ?>><?php echo esc_html__( 'None', 'pluginect-analytics-for-woocommerce' ); ?></option>
 						<?php foreach ( [ 7, 30, 60, 90 ] as $d ) : ?>
-							<option value="<?php echo $d; ?>" <?php selected( (int) $opts['attribution_days'], $d ); ?>><?php /* translators: %1$d: attribution duration in days. */ printf( esc_html__( '%1$d jours', 'shop-analytics-for-woocommerce' ), $d ); ?></option>
+							<option value="<?php echo (int) $d; ?>" <?php selected( (int) $opts['attribution_days'], $d ); ?>><?php /* translators: %1$d: attribution duration in days. */ printf( esc_html__( '%1$d days', 'pluginect-analytics-for-woocommerce' ), (int) $d ); ?></option>
 						<?php endforeach; ?>
 					</select>
 				</div>
@@ -125,16 +138,14 @@ $volet_externe = ! isset( $volets_coeur[ $volet ] );
 
 			<div class="cbaz-setting">
 				<div class="cbaz-setting__text">
-					<strong><?php echo esc_html__( 'Conservation du détail', 'shop-analytics-for-woocommerce' ); ?></strong>
+					<strong><?php echo esc_html__( 'Preservation of detail', 'pluginect-analytics-for-woocommerce' ); ?></strong>
 					<p>
-						<?php echo esc_html__( 'Les visites une à une, leurs pages, leurs évènements. Treize mois est la durée retenue par
-						la CNIL pour une mesure d’audience dispensée de consentement ; au-delà, l’exemption ne
-						tient plus et il faut un consentement.', 'shop-analytics-for-woocommerce' ); ?>
+						<?php echo esc_html__( "The visits one by one, their pages, their events. Thirteen months is the duration retained by\n\t\t\t\t\t\tthe CNIL for an audience measurement exempt from consent; beyond that, the exemption does not\n\t\t\t\t\t\tholds no longer and consent is required.", 'pluginect-analytics-for-woocommerce' ); ?>
 					</p>
 				</div>
 				<div class="cbaz-setting__field">
 					<select name="retention_months">
-						<?php foreach ( [ 3 => __( '3 mois', 'shop-analytics-for-woocommerce' ), 6 => __( '6 mois', 'shop-analytics-for-woocommerce' ), 13 => __( '13 mois', 'shop-analytics-for-woocommerce' ), 24 => __( '2 ans', 'shop-analytics-for-woocommerce' ), 36 => __( '3 ans', 'shop-analytics-for-woocommerce' ), 60 => __( '5 ans', 'shop-analytics-for-woocommerce' ), 120 => __( '10 ans', 'shop-analytics-for-woocommerce' ) ] as $m => $texte ) : ?>
+						<?php foreach ( [ 3 => __( '3 months', 'pluginect-analytics-for-woocommerce' ), 6 => __( '6 months', 'pluginect-analytics-for-woocommerce' ), 13 => __( '13 months', 'pluginect-analytics-for-woocommerce' ), 24 => __( '2 years', 'pluginect-analytics-for-woocommerce' ), 36 => __( '3 years', 'pluginect-analytics-for-woocommerce' ), 60 => __( '5 years', 'pluginect-analytics-for-woocommerce' ), 120 => __( '10 years', 'pluginect-analytics-for-woocommerce' ) ] as $m => $texte ) : ?>
 							<option value="<?php echo (int) $m; ?>" <?php selected( (int) $opts['retention_months'], $m ); ?>><?php echo esc_html( $texte ); ?></option>
 						<?php endforeach; ?>
 					</select>
@@ -143,17 +154,15 @@ $volet_externe = ! isset( $volets_coeur[ $volet ] );
 
 			<div class="cbaz-setting">
 				<div class="cbaz-setting__text">
-					<strong><?php echo esc_html__( 'Historique consolidé', 'shop-analytics-for-woocommerce' ); ?></strong>
+					<strong><?php echo esc_html__( 'Consolidated history', 'pluginect-analytics-for-woocommerce' ); ?></strong>
 					<p>
-						<?php echo esc_html__( 'Un résumé par jour — visites, visiteurs, pages, commandes, chiffre d’affaires, et leur
-						répartition par source, pays et appareil. Aucune visite individuelle, donc aucune donnée
-						personnelle : il survit à la purge du détail et se compare d’une année sur l’autre.', 'shop-analytics-for-woocommerce' ); ?>
+						<?php echo esc_html__( "A summary per day — visits, visitors, pages, orders, revenue, and their\n\t\t\t\t\t\tbreakdown by source, country and device. No individual visit, therefore no data\n\t\t\t\t\t\tpersonal: it survives the purge of details and compares itself from one year to the next.", 'pluginect-analytics-for-woocommerce' ); ?>
 					</p>
 				</div>
 				<div class="cbaz-setting__field">
 					<select name="history_years">
 						<?php foreach ( [ 3, 5, 10, 15, 20 ] as $a ) : ?>
-							<option value="<?php echo (int) $a; ?>" <?php selected( (int) $opts['history_years'], $a ); ?>><?php /* translators: %1$d: history retention in years. */ printf( esc_html__( '%1$d ans', 'shop-analytics-for-woocommerce' ), (int) $a ); ?></option>
+							<option value="<?php echo (int) $a; ?>" <?php selected( (int) $opts['history_years'], $a ); ?>><?php /* translators: %1$d: history retention in years. */ printf( esc_html__( '%1$d years', 'pluginect-analytics-for-woocommerce' ), (int) $a ); ?></option>
 						<?php endforeach; ?>
 					</select>
 				</div>
@@ -163,71 +172,53 @@ $volet_externe = ! isset( $volets_coeur[ $volet ] );
 			<p class="cbaz-note">
 				<?php if ( $poids['days'] ) : ?>
 					<?php if ( $poids['oldest'] ) : ?>
-						<?php /* translators: 1: consolidated days, 2: oldest date, 3: total rows. */ printf( esc_html__( '%1$s journées déjà consolidées depuis le %2$s, soit %3$s lignes en tout. À ce rythme, dix ans d’historique pèsent moins qu’une semaine de détail.', 'shop-analytics-for-woocommerce' ), esc_html( cbaz_int( $poids['days'] ) ), esc_html( wp_date( 'j F Y', strtotime( $poids['oldest'] ) ) ), esc_html( cbaz_int( $poids['days'] + $poids['rows'] ) ) ); ?>
+						<?php /* translators: 1: consolidated days, 2: oldest date, 3: total rows. */ printf( esc_html__( '%1$s days already consolidated from %2$s, or %3$s lines in total. At this rate, ten years of history weighs less than a week of detail.', 'pluginect-analytics-for-woocommerce' ), esc_html( cbaz_int( $poids['days'] ) ), esc_html( wp_date( 'j F Y', strtotime( $poids['oldest'] ) ) ), esc_html( cbaz_int( $poids['days'] + $poids['rows'] ) ) ); ?>
 					<?php else : ?>
-						<?php /* translators: 1: consolidated days, 2: total rows. */ printf( esc_html__( '%1$s journées déjà consolidées, soit %2$s lignes en tout. À ce rythme, dix ans d’historique pèsent moins qu’une semaine de détail.', 'shop-analytics-for-woocommerce' ), esc_html( cbaz_int( $poids['days'] ) ), esc_html( cbaz_int( $poids['days'] + $poids['rows'] ) ) ); ?>
+						<?php /* translators: 1: consolidated days, 2: total rows. */ printf( esc_html__( '%1$s days already consolidated, or %2$s lines in total. At this rate, ten years of history weighs less than a week of detail.', 'pluginect-analytics-for-woocommerce' ), esc_html( cbaz_int( $poids['days'] ) ), esc_html( cbaz_int( $poids['days'] + $poids['rows'] ) ) ); ?>
 					<?php endif; ?>
 				<?php else : ?>
-					<?php echo esc_html__( 'La consolidation démarre cette nuit, puis rattrape l’existant par tranches à chaque ouverture de l’administration. Rien n’est effacé tant qu’il n’a pas été résumé.', 'shop-analytics-for-woocommerce' ); ?>
+					<?php echo esc_html__( 'The consolidation starts tonight, then catches up with the existing one in installments each time the administration opens. Nothing is erased until it has been summarized.', 'pluginect-analytics-for-woocommerce' ); ?>
 				<?php endif; ?>
 			</p>
 
 			<p class="cbaz-cookiestate cbaz-cookiestate--<?php echo (int) $opts['attribution_days'] ? 'on' : 'off'; ?>">
 				<?php if ( (int) $opts['attribution_days'] ) : ?>
-					<?php /* translators: %1$d: attribution duration in days. */ printf( wp_kses_post( __( '<strong>Un cookie est déposé</strong> — la mémoire d’attribution, réglée sur %1$d jours. Il ne contient que la provenance, jamais d’identifiant. Règle-la sur « aucune » pour n’en déposer aucun.', 'shop-analytics-for-woocommerce' ) ), (int) $opts['attribution_days'] ); ?>
+					<?php /* translators: %1$d: attribution duration in days. */ printf( wp_kses_post( __( '<strong>An attribution cookie is set</strong> for %1$d days. It stores only the referral source, never an identifier. Select “none” to disable it.', 'pluginect-analytics-for-woocommerce' ) ), (int) $opts['attribution_days'] ); ?>
 				<?php else : ?>
-					<?php echo wp_kses_post( __( '<strong>Aucun cookie n’est déposé.</strong> Le plugin n’écrit rien dans le navigateur des visiteurs : ni cookie, ni stockage local, ni stockage de session.', 'shop-analytics-for-woocommerce' ) ); ?>
+					<?php echo wp_kses_post( __( '<strong>No cookies are placed.</strong> The plugin does not write anything in visitors\' browsers: neither cookies, nor local storage, nor session storage.', 'pluginect-analytics-for-woocommerce' ) ); ?>
 				<?php endif; ?>
 			</p>
 
 			<ul class="cbaz-facts">
-				<li><?php echo wp_kses_post( __( '<strong>L’adresse IP n’est jamais enregistrée.</strong> Elle sert à calculer une empreinte, puis elle est oubliée.', 'shop-analytics-for-woocommerce' ) ); ?></li>
-				<li><?php echo wp_kses_post( __( '<strong>Elle est même tronquée avant ce calcul</strong> — seul le réseau est retenu, jamais l’adresse
-					complète. Une empreinte ne peut donc plus être recalculée pour retrouver les visites de quelqu’un
-					dont on connaîtrait l’adresse : elle désigne un réseau entier, pas une personne.', 'shop-analytics-for-woocommerce' ) ); ?></li>
-				<li><?php echo wp_kses_post( __( '<strong>L’empreinte change chaque jour</strong> : impossible de suivre quelqu’un dans le temps.', 'shop-analytics-for-woocommerce' ) ); ?></li>
-				<li><?php echo wp_kses_post( __( '<strong>Rien ne sort de ton serveur.</strong> Pas de service tiers, pas de transfert hors Union européenne.', 'shop-analytics-for-woocommerce' ) ); ?></li>
-				<li><?php echo wp_kses_post( __( '<strong>Aucun profilage</strong>, aucun recoupement entre sites.', 'shop-analytics-for-woocommerce' ) ); ?></li>
+				<li><?php echo wp_kses_post( __( '<strong>The IP address is never recorded.</strong> It is used to calculate a fingerprint, then it is forgotten.', 'pluginect-analytics-for-woocommerce' ) ); ?></li>
+				<li><?php echo wp_kses_post( __( "<strong>It is even truncated before this calculation</strong> — only the network is retained, never the address\n\t\t\t\t\tcomplete. A fingerprint can therefore no longer be recalculated to find someone's visits\n\t\t\t\t\twhose address we would know: it designates an entire network, not a person.", 'pluginect-analytics-for-woocommerce' ) ); ?></li>
+				<li><?php echo wp_kses_post( __( '<strong>The fingerprint changes every day</strong>: impossible to follow someone over time.', 'pluginect-analytics-for-woocommerce' ) ); ?></li>
+				<li><?php echo wp_kses_post( __( '<strong>Nothing comes out of your server.</strong> No third-party service, no transfer outside the European Union.', 'pluginect-analytics-for-woocommerce' ) ); ?></li>
+				<li><?php echo wp_kses_post( __( '<strong>No profiling</strong>, no cross-checking between sites.', 'pluginect-analytics-for-woocommerce' ) ); ?></li>
 			</ul>
 
 			<p class="cbaz-note">
-				<?php echo esc_html__( 'Ces points sont les conditions posées par la CNIL pour qu’une mesure d’audience soit dispensée de consentement.
-				Pas de bandeau à afficher pour cette extension — ce qui ne dispense ni d’en avoir un pour les autres traceurs,
-				ni de mentionner la mesure dans ta politique de confidentialité.', 'shop-analytics-for-woocommerce' ); ?>
+				<?php echo esc_html__( "These points are the conditions set by the CNIL so that an audience measurement is exempt from consent.\n\t\t\t\tNo banner to display for this extension - which does not exempt you from having one for other trackers,\n\t\t\t\tnor mention the measure in your privacy policy.", 'pluginect-analytics-for-woocommerce' ); ?>
 			</p>
 
 			<div class="cbaz-legal">
-				<h3 class="cbaz-legal__title"><?php echo esc_html__( 'Ce qui reste à ta charge', 'shop-analytics-for-woocommerce' ); ?></h3>
+				<h3 class="cbaz-legal__title"><?php echo esc_html__( 'What remains your responsibility', 'pluginect-analytics-for-woocommerce' ); ?></h3>
 
-				<p><?php echo wp_kses_post( __( 'L’extension mesure ; elle ne met personne en conformité à sa place. En installant ce plugin,
-					tu es le <strong>responsable de traitement</strong> au sens du RGPD, et les obligations
-					suivantes t’incombent.', 'shop-analytics-for-woocommerce' ) ); ?></p>
+				<p><?php echo wp_kses_post( __( "The extension measures; it does not put anyone in their place. By installing this plugin,\n\t\t\t\t\tyou are the <strong>data controller</strong> within the meaning of the GDPR, and the obligations\n\t\t\t\t\tfollowing are your responsibility.", 'pluginect-analytics-for-woocommerce' ) ); ?></p>
 
 				<ol class="cbaz-legal__list">
-					<li><?php echo wp_kses_post( __( '<strong>Informer.</strong> Mentionner la mesure d’audience dans ta politique de
-						confidentialité : ce qui est collecté, pourquoi, combien de temps, et à qui s’adresser.
-						L’obligation d’information ne dépend pas des cookies — elle s’applique dès qu’il y a
-						traitement.', 'shop-analytics-for-woocommerce' ) ); ?></li>
-					<li><?php echo wp_kses_post( __( '<strong>Justifier d’une base légale.</strong> L’intérêt légitime convient à une mesure
-						d’audience interne. Si tu actives la mémoire d’attribution, un cookie est déposé et la
-						question du consentement se pose à nouveau.', 'shop-analytics-for-woocommerce' ) ); ?></li>
-					<li><?php echo wp_kses_post( __( '<strong>Tenir un registre.</strong> Une ligne dans ton registre des traitements suffit
-						pour une boutique de cette taille, mais elle doit exister.', 'shop-analytics-for-woocommerce' ) ); ?></li>
-					<li><?php echo wp_kses_post( __( '<strong>Répondre aux demandes.</strong> Droit d’accès, de rectification, d’effacement,
-						d’opposition. Les visites anonymes n’y sont pas soumises ; celles rattachées à une
-						commande, si.', 'shop-analytics-for-woocommerce' ) ); ?></li>
-					<li><?php echo wp_kses_post( __( '<strong>Sécuriser ton hébergement.</strong> Les données vivent dans ta base WordPress :
-						sauvegardes, mots de passe, mises à jour, accès à la base et au serveur relèvent de toi
-						seul.', 'shop-analytics-for-woocommerce' ) ); ?></li>
-					<li><?php echo wp_kses_post( __( '<strong>Notifier une violation.</strong> Toute fuite de données doit être signalée à la
-						CNIL sous 72 heures, et aux personnes concernées si le risque est élevé.', 'shop-analytics-for-woocommerce' ) ); ?></li>
+					<li><?php echo wp_kses_post( __( "<strong>Informer.</strong> Mention audience measurement in your policy\n\t\t\t\t\t\tconfidentiality: what is collected, why, for how long, and who to contact.\n\t\t\t\t\t\tThe information obligation does not depend on cookies — it applies as soon as there is\n\t\t\t\t\t\ttreatment.", 'pluginect-analytics-for-woocommerce' ) ); ?></li>
+					<li><?php echo wp_kses_post( __( "<strong>Supporting a legal basis.</strong> Legitimate interest is appropriate for a measure\n\t\t\t\t\t\tinternal audience. If you activate the attribution memory, a cookie is placed and the\n\t\t\t\t\t\tquestion of consent arises again.", 'pluginect-analytics-for-woocommerce' ) ); ?></li>
+					<li><?php echo wp_kses_post( __( "<strong>Keep a register.</strong> One line in your treatment register is enough\n\t\t\t\t\t\tfor a store of this size, but it must exist.", 'pluginect-analytics-for-woocommerce' ) ); ?></li>
+					<li><?php echo wp_kses_post( __( "<strong>Respond to requests.</strong> Right of access, rectification, erasure,\n\t\t\t\t\t\topposition. Anonymous visits are not subject to it; those attached to a\n\t\t\t\t\t\torder, yes.", 'pluginect-analytics-for-woocommerce' ) ); ?></li>
+					<li><?php echo wp_kses_post( __( "<strong>Secure your hosting.</strong> The data lives in your WordPress database:\n\t\t\t\t\t\tbackups, passwords, updates, access to the database and the server are your responsibility\n\t\t\t\t\t\talone.", 'pluginect-analytics-for-woocommerce' ) ); ?></li>
+					<li><?php echo wp_kses_post( __( "<strong>Notify a violation.</strong> Any data leak must be reported to the\n\t\t\t\t\t\tCNIL within 72 hours, and to the people concerned if the risk is high.", 'pluginect-analytics-for-woocommerce' ) ); ?></li>
 				</ol>
 
-				<h3 class="cbaz-legal__title"><?php echo esc_html__( 'Texte à reprendre dans ta politique de confidentialité', 'shop-analytics-for-woocommerce' ); ?></h3>
+				<h3 class="cbaz-legal__title"><?php echo esc_html__( 'Text to include in your privacy policy', 'pluginect-analytics-for-woocommerce' ); ?></h3>
 
 				<p>
-					<?php echo esc_html__( 'Le strict minimum, rédigé d’après la configuration réelle de cette installation.
-					À coller tel quel, en remplaçant l’adresse de contact.', 'shop-analytics-for-woocommerce' ); ?>
+					<?php echo esc_html__( "The bare minimum, written according to the actual configuration of this installation.\n\t\t\t\t\tPaste as is, replacing the contact address.", 'pluginect-analytics-for-woocommerce' ); ?>
 				</p>
 
 				<?php
@@ -235,53 +226,45 @@ $volet_externe = ! isset( $volets_coeur[ $volet ] );
 				if ( $mois >= 24 && 0 === $mois % 12 ) {
 					$annees = (int) ( $mois / 12 );
 					/* translators: %1$d: retention duration in years. */
-					$duree = sprintf( _n( '%1$d an', '%1$d ans', $annees, 'shop-analytics-for-woocommerce' ), $annees );
+					$duree = sprintf( _n( '%1$d year', '%1$d years', $annees, 'pluginect-analytics-for-woocommerce' ), $annees );
 				} else {
 					/* translators: %1$d: retention duration in months. */
-					$duree = sprintf( _n( '%1$d mois', '%1$d mois', $mois, 'shop-analytics-for-woocommerce' ), $mois );
+					$duree = sprintf( _n( '%1$d month', '%1$d months', $mois, 'pluginect-analytics-for-woocommerce' ), $mois );
 				}
 				if ( (int) $opts['attribution_days'] ) {
 					/* translators: %1$d: attribution duration in days. */
-					$cookie = sprintf( __( 'Un cookie de provenance est déposé pendant %1$d jours ; il ne contient aucun identifiant et sert uniquement à rattacher une commande à la campagne qui l’a précédée.', 'shop-analytics-for-woocommerce' ), (int) $opts['attribution_days'] );
+					$cookie = sprintf( __( 'An attribution cookie is set for %1$d days. It contains no identifier and is used only to link an order to the preceding campaign.', 'pluginect-analytics-for-woocommerce' ), (int) $opts['attribution_days'] );
 				} else {
-					$cookie = __( 'Aucun cookie n’est déposé, et aucune information n’est stockée dans votre navigateur.', 'shop-analytics-for-woocommerce' );
+					$cookie = __( 'No cookies are placed, and no information is stored in your browser.', 'pluginect-analytics-for-woocommerce' );
 				}
 				/* translators: 1: cookie policy according to settings, 2: data retention duration. */
-				$texte = sprintf( __( "Mesure d’audience\n\nCe site mesure sa fréquentation à l’aide d’une solution hébergée sur son propre serveur. Sont enregistrés : les pages consultées, la provenance de la visite, le type d’appareil, le navigateur, la langue et le pays. Aucune de ces informations n’est transmise à un tiers.\n\n%1\$s\n\nVotre adresse IP n’est jamais conservée. Elle est tronquée puis transformée en un identifiant technique non réversible, renouvelé chaque nuit, qui ne permet ni de vous identifier, ni de vous reconnaître d’un jour à l’autre.\n\nLorsqu’une visite aboutit à une commande, elle est rattachée à celle-ci afin de mesurer l’efficacité des opérations commerciales.\n\nLes données détaillées sont conservées %2\$s, puis remplacées par des statistiques agrégées qui ne se rapportent à aucune personne en particulier.\n\nBase légale : intérêt légitime (mesure d’audience et amélioration du site).\n\nVous pouvez exercer vos droits d’accès, de rectification, d’effacement et d’opposition en écrivant à : [votre adresse e-mail].", 'shop-analytics-for-woocommerce' ), $cookie, $duree );
+				$texte = sprintf( __( "Audience measurement\n\nThis site measures its traffic using a solution hosted on its own server. The following are recorded: the pages viewed, the origin of the visit, the type of device, the browser, the language and the country. None of this information is transmitted to a third party.\n\n%1\$s\n\nYour IP address is never stored. It is truncated then transformed into a non-reversible technical identifier, renewed every night, which does not allow you to be identified or recognized from one day to the next.\n\nWhen a visit results in an order, it is linked to it in order to measure the effectiveness of commercial operations.\n\nDetailed data is kept %2\$s and then replaced with aggregated statistics that do not relate to any specific person.\n\nLegal basis: legitimate interest (audience measurement and site improvement).\n\nYou can exercise your rights of access, rectification, erasure and opposition by writing to: [your email address].", 'pluginect-analytics-for-woocommerce' ), $cookie, $duree );
 				?>
 
 				<div class="cbaz-copyblock">
 					<textarea readonly rows="12"><?php echo esc_textarea( $texte ); ?></textarea>
-					<button type="button" class="cbaz-btn cbaz-btn--mini" data-cbaz-copy><?php echo esc_html__( 'Copier', 'shop-analytics-for-woocommerce' ); ?></button>
+					<button type="button" class="cbaz-btn cbaz-btn--mini" data-cbaz-copy><?php echo esc_html__( 'Copy', 'pluginect-analytics-for-woocommerce' ); ?></button>
 				</div>
 
 				<p class="cbaz-legal__hint">
-					<?php echo esc_html__( 'Ce texte suit tes réglages : la durée de conservation et la mention du cookie s’ajustent
-					toutes seules. Si tu les modifies, reviens le copier.', 'shop-analytics-for-woocommerce' ); ?>
+					<?php echo esc_html__( "This text follows your settings: the storage period and the mention of the cookie are adjusted\n\t\t\t\t\tall alone. If you change them, come back and copy it.", 'pluginect-analytics-for-woocommerce' ); ?>
 				</p>
 
-				<h3 class="cbaz-legal__title"><?php echo esc_html__( 'Limite de responsabilité de l’éditeur', 'shop-analytics-for-woocommerce' ); ?></h3>
+				<h3 class="cbaz-legal__title"><?php echo esc_html__( 'Limit of liability of the publisher', 'pluginect-analytics-for-woocommerce' ); ?></h3>
 
-				<p><?php echo wp_kses_post( __( 'Cette extension fonctionne <strong>entièrement sur ton serveur</strong>. Aucune donnée n’est
-					transmise à son éditeur, qui n’y a aucun accès et n’agit donc ni comme sous-traitant ni comme
-					destinataire au sens du RGPD.', 'shop-analytics-for-woocommerce' ) ); ?></p>
+				<p><?php echo wp_kses_post( __( "This extension works <strong>entirely on your server</strong>. No data is\n\t\t\t\t\ttransmitted to its publisher, who has no access to it and therefore acts neither as a subcontractor nor as\n\t\t\t\t\trecipient within the meaning of the GDPR.", 'pluginect-analytics-for-woocommerce' ) ); ?></p>
 
 				<p class="cbaz-legal__foot">
-					<?php echo esc_html__( 'Ce texte décrit le fonctionnement du logiciel et rappelle des obligations courantes.
-					Il ne constitue pas un avis juridique. En cas de doute, notamment si tu traites des données
-					sensibles ou si tu exportes des données hors Union européenne, consulte un professionnel du
-					droit.', 'shop-analytics-for-woocommerce' ); ?>
+					<?php echo esc_html__( "This text describes how the software works and reminds you of common obligations.\n\t\t\t\t\tIt does not constitute legal advice. When in doubt, especially if you are processing data\n\t\t\t\t\tsensitive or if you export data outside the European Union, consult a professional\n\t\t\t\t\tright.", 'pluginect-analytics-for-woocommerce' ); ?>
 				</p>
 			</div>
 
 		<?php elseif ( 'exclus' === $volet ) : ?>
 			<div class="cbaz-setting">
 				<div class="cbaz-setting__text">
-					<strong><?php echo esc_html__( 'Ignorer les robots', 'shop-analytics-for-woocommerce' ); ?></strong>
+					<strong><?php echo esc_html__( 'Ignore bots', 'pluginect-analytics-for-woocommerce' ); ?></strong>
 					<p>
-						<?php echo esc_html__( 'Aspirateurs de contenu, sondes de supervision, générateurs d’aperçus de lien :
-						ils passent, ils ne commandent jamais, et ils font baisser le taux de conversion.
-						Leurs visites ne sont ni mesurées ni affichées.', 'shop-analytics-for-woocommerce' ); ?>
+						<?php echo esc_html__( "Content vacuums, monitoring probes, link preview generators:\n\t\t\t\t\t\tthey pass, they never order, and they lower the conversion rate.\n\t\t\t\t\t\tTheir visits are neither measured nor displayed.", 'pluginect-analytics-for-woocommerce' ); ?>
 					</p>
 				</div>
 				<div class="cbaz-setting__field"><?php echo cbaz_toggle( 'exclude_bots', $opts['exclude_bots'] ); // phpcs:ignore ?></div>
@@ -289,8 +272,8 @@ $volet_externe = ! isset( $volets_coeur[ $volet ] );
 
 			<div class="cbaz-setting">
 				<div class="cbaz-setting__text">
-					<strong><?php echo esc_html__( 'Rôles exclus', 'shop-analytics-for-woocommerce' ); ?></strong>
-					<p><?php echo esc_html__( 'Une journée de mise au point sur la boutique gonflerait les pages produits sans la moindre vente.', 'shop-analytics-for-woocommerce' ); ?></p>
+					<strong><?php echo esc_html__( 'Excluded roles', 'pluginect-analytics-for-woocommerce' ); ?></strong>
+					<p><?php echo esc_html__( 'A day of development on the store would swell the product pages without the slightest sale.', 'pluginect-analytics-for-woocommerce' ); ?></p>
 				</div>
 			</div>
 
@@ -303,35 +286,38 @@ $volet_externe = ! isset( $volets_coeur[ $volet ] );
 				<?php endforeach; ?>
 			</fieldset>
 
-			<label class="cbaz-label"><?php echo esc_html__( 'Chemins exclus — un par ligne, début d’adresse', 'shop-analytics-for-woocommerce' ); ?></label>
+			<label class="cbaz-label"><?php echo esc_html__( 'Excluded paths — one per line, start of address', 'pluginect-analytics-for-woocommerce' ); ?></label>
 			<textarea name="exclude_paths" rows="5" class="cbaz-textarea"><?php echo esc_textarea( $opts['exclude_paths'] ); ?></textarea>
 
 		<?php else : ?>
 			<div class="cbaz-setting">
 				<?php cbaz_toggle( 'delete_on_uninstall', ! empty( $opts['delete_on_uninstall'] ) ); ?>
 				<div class="cbaz-setting__text">
-					<strong><?php echo esc_html__( 'Effacer définitivement les données à la désinstallation', 'shop-analytics-for-woocommerce' ); ?></strong>
-					<p><?php echo esc_html__( 'Désactivé par défaut. Activez ce choix avant de supprimer l’extension si vous souhaitez supprimer ses tables, réglages et métadonnées d’attribution.', 'shop-analytics-for-woocommerce' ); ?></p>
+					<strong><?php echo esc_html__( 'Permanently erase data on uninstallation', 'pluginect-analytics-for-woocommerce' ); ?></strong>
+					<p><?php echo esc_html__( 'Disabled by default. Enable this choice before removing the extension if you want to delete its attribution tables, settings, and metadata.', 'pluginect-analytics-for-woocommerce' ); ?></p>
 				</div>
 			</div>
 
 			<dl class="cbaz-stats">
-				<div><dt><?php echo esc_html__( 'Visites enregistrées', 'shop-analytics-for-woocommerce' ); ?></dt><dd><?php echo esc_html( cbaz_int( $rows ) ); ?></dd></div>
-				<div><dt><?php echo esc_html__( 'Pages vues', 'shop-analytics-for-woocommerce' ); ?></dt><dd><?php echo esc_html( cbaz_int( $views ) ); ?></dd></div>
-				<div><dt><?php echo esc_html__( 'Stockage des commandes', 'shop-analytics-for-woocommerce' ); ?></dt><dd><?php echo esc_html( cbaz_hpos() ? __( 'Tables WooCommerce', 'shop-analytics-for-woocommerce' ) : __( 'Articles WordPress', 'shop-analytics-for-woocommerce' ) ); ?></dd></div>
-				<div><dt><?php echo esc_html__( 'Purge automatique', 'shop-analytics-for-woocommerce' ); ?></dt><dd><?php echo esc_html( wp_next_scheduled( 'cbaz_daily_purge' ) ? __( 'Programmée', 'shop-analytics-for-woocommerce' ) : __( 'Non programmée', 'shop-analytics-for-woocommerce' ) ); ?></dd></div>
+				<div><dt><?php echo esc_html__( 'Recorded visits', 'pluginect-analytics-for-woocommerce' ); ?></dt><dd><?php echo esc_html( cbaz_int( $rows ) ); ?></dd></div>
+				<div><dt><?php echo esc_html__( 'Page views', 'pluginect-analytics-for-woocommerce' ); ?></dt><dd><?php echo esc_html( cbaz_int( $views ) ); ?></dd></div>
+				<div><dt><?php echo esc_html__( 'Order storage', 'pluginect-analytics-for-woocommerce' ); ?></dt><dd><?php echo esc_html( cbaz_hpos() ? __( 'WooCommerce Tables', 'pluginect-analytics-for-woocommerce' ) : __( 'WordPress Posts', 'pluginect-analytics-for-woocommerce' ) ); ?></dd></div>
+				<div><dt><?php echo esc_html__( 'Automatic purge', 'pluginect-analytics-for-woocommerce' ); ?></dt><dd><?php echo esc_html( wp_next_scheduled( 'cbaz_daily_purge' ) ? __( 'Scheduled', 'pluginect-analytics-for-woocommerce' ) : __( 'Not scheduled', 'pluginect-analytics-for-woocommerce' ) ); ?></dd></div>
 			</dl>
 
 			<p class="cbaz-note">
-				<?php echo esc_html__( 'La purge tourne une fois par nuit et efface les visites au-delà de la durée de conservation.
-				Si les tâches planifiées de WordPress sont désactivées, elle ne s’exécutera pas.', 'shop-analytics-for-woocommerce' ); ?>
+				<?php echo esc_html__( "The purge runs once a night and clears visits beyond the retention period.\n\t\t\t\tIf WordPress scheduled tasks are disabled, it will not run.", 'pluginect-analytics-for-woocommerce' ); ?>
 			</p>
 		<?php endif; ?>
 
 		<p class="cbaz-form__actions">
-			<button type="submit" class="cbaz-btn"><?php echo esc_html__( 'Enregistrer les modifications', 'shop-analytics-for-woocommerce' ); ?></button>
+			<button type="submit" class="cbaz-btn"><?php echo esc_html__( 'Save changes', 'pluginect-analytics-for-woocommerce' ); ?></button>
 			<?php if ( $saved ) : ?>
-				<span class="cbaz-saved"><?php /* translators: %1$s: last settings save date. */ printf( esc_html__( 'Dernière sauvegarde : %1$s', 'shop-analytics-for-woocommerce' ), esc_html( wp_date( "j M Y 'à' H:i", (int) $saved ) ) ); ?></span>
+				<span class="cbaz-saved"><?php /* translators: %1$s: last settings save date. */ printf( esc_html__( 'Last save: %1$s', 'pluginect-analytics-for-woocommerce' ), esc_html( wp_date(
+					/* translators: date and time format of the last save, see https://www.php.net/manual/datetime.format.php — escape any literal letter with a backslash. */
+					__( 'j M Y \\a\\t H:i', 'pluginect-analytics-for-woocommerce' ),
+					(int) $saved
+				) ) ); ?></span>
 			<?php endif; ?>
 		</p>
 	</form>

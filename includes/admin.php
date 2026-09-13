@@ -17,9 +17,9 @@ function cbaz_privacy_policy_content() {
 		return;
 	}
 
-	$content = sprintf( '<p>%1$s</p>', esc_html__( 'Pluginect Analytics conserve localement des visites pseudonymes quotidiennes, les pages consultées, des événements de navigation et des informations techniques (préfixe réseau utilisé sans être stocké, navigateur, appareil, langue, résolution et pays estimé). Une visite convertie est reliée à la commande WooCommerce. Aucun cookie n’est déposé par défaut ; la mémoire d’attribution facultative dépose un cookie de provenance signé. Les durées de conservation sont configurables dans Analytics → Paramètres.', 'shop-analytics-for-woocommerce' ) );
+	$content = sprintf( '<p>%1$s</p>', esc_html__( 'Pluginect Analytics locally stores daily pseudonymous visits, pages viewed, browsing events and technical information (network prefix used without being stored, browser, device, language, resolution and estimated country). A converted visit is linked to the WooCommerce order. No cookie is set by default; the optional attribution memory sets a signed origin cookie. Retention periods are configurable in Analytics → Settings.', 'pluginect-analytics-for-woocommerce' ) );
 
-	wp_add_privacy_policy_content( __( 'Pluginect Analytics', 'shop-analytics-for-woocommerce' ), wp_kses_post( $content ) );
+	wp_add_privacy_policy_content( __( 'Pluginect Analytics', 'pluginect-analytics-for-woocommerce' ), wp_kses_post( $content ) );
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -28,17 +28,17 @@ function cbaz_privacy_policy_content() {
 
 function cbaz_tabs() {
 	$tabs = [
-		'overview'     => [ __( "Vue d'ensemble", 'shop-analytics-for-woocommerce' ), __( 'Analysez les performances de votre boutique.', 'shop-analytics-for-woocommerce' ) ],
-		'temps-reel'   => [ __( 'Temps réel', 'shop-analytics-for-woocommerce' ), __( 'Ce qui se passe sur votre boutique en ce moment.', 'shop-analytics-for-woocommerce' ) ],
-		'acquisition'  => [ __( 'Acquisition', 'shop-analytics-for-woocommerce' ), __( "Comprenez d'où viennent vos visiteurs et quelles sources convertissent.", 'shop-analytics-for-woocommerce' ) ],
-		'comportement' => [ __( 'Comportement', 'shop-analytics-for-woocommerce' ), __( 'Ce que vos visiteurs consultent et comment ils naviguent.', 'shop-analytics-for-woocommerce' ) ],
-		'ecommerce'    => [ __( 'E-commerce', 'shop-analytics-for-woocommerce' ), __( 'Du visiteur à la commande : où se perdent vos conversions.', 'shop-analytics-for-woocommerce' ) ],
-		'produits'     => [ __( 'Produits', 'shop-analytics-for-woocommerce' ), __( 'Performance de chaque produit du catalogue WooCommerce.', 'shop-analytics-for-woocommerce' ) ],
-		'campagnes'    => [ __( 'Campagnes', 'shop-analytics-for-woocommerce' ), __( 'Suivez les performances de vos campagnes UTM.', 'shop-analytics-for-woocommerce' ) ],
-		'geographie'   => [ __( 'Géographie', 'shop-analytics-for-woocommerce' ), __( 'Localisation des visiteurs et performance commerciale par pays.', 'shop-analytics-for-woocommerce' ) ],
-		'visiteurs'    => [ __( 'Visiteurs', 'shop-analytics-for-woocommerce' ), __( 'Appareils, technologies et fidélité de votre audience.', 'shop-analytics-for-woocommerce' ) ],
-		'visites'      => [ __( 'Parcours', 'shop-analytics-for-woocommerce' ), __( 'Le parcours de chaque visite, page par page.', 'shop-analytics-for-woocommerce' ) ],
-		'parametres'   => [ __( 'Paramètres', 'shop-analytics-for-woocommerce' ), __( 'Configuration du suivi, de la confidentialité et de la synchronisation.', 'shop-analytics-for-woocommerce' ) ],
+		'overview'     => [ __( 'Overview', 'pluginect-analytics-for-woocommerce' ), __( 'Analyze your store’s performance.', 'pluginect-analytics-for-woocommerce' ) ],
+		'temps-reel'   => [ __( 'Real time', 'pluginect-analytics-for-woocommerce' ), __( 'What\'s happening on your store right now.', 'pluginect-analytics-for-woocommerce' ) ],
+		'acquisition'  => [ __( 'Acquisition', 'pluginect-analytics-for-woocommerce' ), __( 'Understand where your visitors are coming from and which sources are converting.', 'pluginect-analytics-for-woocommerce' ) ],
+		'comportement' => [ __( 'Behavior', 'pluginect-analytics-for-woocommerce' ), __( 'What your visitors view and how they navigate.', 'pluginect-analytics-for-woocommerce' ) ],
+		'ecommerce'    => [ __( 'E-commerce', 'pluginect-analytics-for-woocommerce' ), __( 'From visitor to order: where your conversions are lost.', 'pluginect-analytics-for-woocommerce' ) ],
+		'produits'     => [ __( 'Products', 'pluginect-analytics-for-woocommerce' ), __( 'Performance of each product in the WooCommerce catalog.', 'pluginect-analytics-for-woocommerce' ) ],
+		'campagnes'    => [ __( 'Campaigns', 'pluginect-analytics-for-woocommerce' ), __( 'Track the performance of your UTM campaigns.', 'pluginect-analytics-for-woocommerce' ) ],
+		'geographie'   => [ __( 'Geography', 'pluginect-analytics-for-woocommerce' ), __( 'Location of visitors and commercial performance by country.', 'pluginect-analytics-for-woocommerce' ) ],
+		'visiteurs'    => [ __( 'Visitors', 'pluginect-analytics-for-woocommerce' ), __( 'Devices, technologies and audience loyalty.', 'pluginect-analytics-for-woocommerce' ) ],
+		'visites'      => [ __( 'Journeys', 'pluginect-analytics-for-woocommerce' ), __( 'The journey of each visit, page by page.', 'pluginect-analytics-for-woocommerce' ) ],
+		'parametres'   => [ __( 'Settings', 'pluginect-analytics-for-woocommerce' ), __( 'Configuring tracking, privacy and sync.', 'pluginect-analytics-for-woocommerce' ) ],
 	];
 
 	/**
@@ -74,13 +74,13 @@ function cbaz_menu() {
 	$tabs  = cbaz_tabs();
 	$first = array_key_first( $tabs );
 
-	add_menu_page( __( 'Analytics', 'shop-analytics-for-woocommerce' ), __( 'Analytics', 'shop-analytics-for-woocommerce' ), 'manage_woocommerce', 'cbaz', 'cbaz_render_page', 'dashicons-chart-area', 56 );
+	add_menu_page( __( 'Pluginect Analytics', 'pluginect-analytics-for-woocommerce' ), __( 'Pluginect Analytics', 'pluginect-analytics-for-woocommerce' ), 'manage_woocommerce', 'cbaz', 'cbaz_render_page', 'dashicons-chart-area', 56 );
 
 	foreach ( $tabs as $slug => $meta ) {
 		add_submenu_page(
 			'cbaz',
 			/* translators: %1$s: analytics screen title. */
-			sprintf( __( '%1$s — Analytics', 'shop-analytics-for-woocommerce' ), $meta[0] ),
+			sprintf( __( '%1$s — Pluginect Analytics', 'pluginect-analytics-for-woocommerce' ), $meta[0] ),
 			$meta[0],
 			'manage_woocommerce',
 			$slug === $first ? 'cbaz' : 'cbaz-' . $slug,
@@ -91,7 +91,7 @@ function cbaz_menu() {
 
 /** Écran demandé, déduit du sous-menu en cours. */
 function cbaz_current_tab() {
-	$page = sanitize_key( $_GET['page'] ?? 'cbaz' );
+	$page = sanitize_key( $_GET['page'] ?? 'cbaz' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- lecture seule, navigation
 	$slug = 'cbaz' === $page ? 'overview' : substr( $page, 5 );
 
 	return isset( cbaz_tabs()[ $slug ] ) ? $slug : 'overview';
@@ -110,14 +110,14 @@ function cbaz_admin_assets( $hook ) {
 	wp_enqueue_style( 'cbaz-admin', CBAZ_URL . 'assets/admin.css', [], CBAZ_VERSION . '.' . filemtime( CBAZ_DIR . 'assets/admin.css' ) );
 	$dependencies = [ 'wp-i18n' ];
 
-	if ( 'cbaz-geographie' === sanitize_key( $_GET['page'] ?? '' ) ) {
+	if ( 'cbaz-geographie' === sanitize_key( $_GET['page'] ?? '' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- lecture seule, navigation
 		// Le maillage du monde est volumineux et ne sert qu'au globe.
 		wp_enqueue_script( 'cbaz-world', CBAZ_URL . 'assets/world.js', [], CBAZ_VERSION, true );
 		$dependencies[] = 'cbaz-world';
 	}
 
 	wp_enqueue_script( 'cbaz-admin', CBAZ_URL . 'assets/admin.js', $dependencies, CBAZ_VERSION . '.' . filemtime( CBAZ_DIR . 'assets/admin.js' ), true );
-	wp_set_script_translations( 'cbaz-admin', 'shop-analytics-for-woocommerce', CBAZ_DIR . 'languages' );
+	wp_set_script_translations( 'cbaz-admin', 'pluginect-analytics-for-woocommerce', CBAZ_DIR . 'languages' );
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -275,15 +275,15 @@ function cbaz_hidden_notice_hint() {
 		esc_html( sprintf(
 			/* translators: %d : nombre de bandeaux masqués */
 			_n(
-				'%d message d’une autre extension a été masqué sur cet écran.',
-				'%d messages d’autres extensions ont été masqués sur cet écran.',
+				'%d notice from another plugin has been hidden on this screen.',
+				'%d notices from other plugins have been hidden on this screen.',
 				$n,
-				'shop-analytics-for-woocommerce'
+				'pluginect-analytics-for-woocommerce'
 			),
 			$n
 		) ),
 		esc_url( admin_url() ),
-		esc_html__( 'Les consulter', 'shop-analytics-for-woocommerce' )
+		esc_html__( 'View them', 'pluginect-analytics-for-woocommerce' )
 	);
 }
 
@@ -302,13 +302,13 @@ function cbaz_hidden_notice_hint() {
  */
 function cbaz_delta_badge( $value, $invert = false ) {
 	if ( null === $value ) {
-		return sprintf( '<span class="cbaz-delta cbaz-delta--none" title="%1$s">%2$s</span>', esc_attr__( 'Aucune donnée sur la période précédente', 'shop-analytics-for-woocommerce' ), esc_html__( 'nouveau', 'shop-analytics-for-woocommerce' ) );
+		return sprintf( '<span class="cbaz-delta cbaz-delta--none" title="%1$s">%2$s</span>', esc_attr__( 'No data for the previous period', 'pluginect-analytics-for-woocommerce' ), esc_html__( 'new', 'pluginect-analytics-for-woocommerce' ) );
 	}
 
 	$value = (float) $value;
 
 	if ( 0.0 === $value ) {
-		return sprintf( '<span class="cbaz-delta cbaz-delta--flat">%1$s <span class="cbaz-delta__arrow" aria-hidden="true">→</span></span>', esc_html__( 'stable', 'shop-analytics-for-woocommerce' ) );
+		return sprintf( '<span class="cbaz-delta cbaz-delta--flat">%1$s <span class="cbaz-delta__arrow" aria-hidden="true">→</span></span>', esc_html__( 'stable', 'pluginect-analytics-for-woocommerce' ) );
 	}
 
 	$up = $value > 0;
@@ -453,7 +453,7 @@ function cbaz_donut( array $rows, $total ) {
 	}
 
 	if ( ! $rows ) {
-		return sprintf( '<p class="cbaz-empty">%1$s</p>', esc_html__( 'Aucune visite sur la période.', 'shop-analytics-for-woocommerce' ) );
+		return sprintf( '<p class="cbaz-empty">%1$s</p>', esc_html__( 'No visits during the period.', 'pluginect-analytics-for-woocommerce' ) );
 	}
 
 	return '<div class="cbaz-donut">'
@@ -479,13 +479,13 @@ function cbaz_meter_list( array $rows, $total, array $previous = [] ) {
 
 		echo '<li>'
 			. '<div class="cbaz-list__row"><span>' . esc_html( $row->label ) . '</span>'
-			. '<span class="cbaz-num">' . $delta . esc_html( cbaz_int( $row->sessions ) ) . ' · ' . esc_html( cbaz_pct( $share, 1 ) ) . '</span></div>'
-			. '<span class="cbaz-bar cbaz-bar--' . ( $i % 5 ) . '"><span style="width:' . round( $share, 2 ) . '%"></span></span>'
+			. '<span class="cbaz-num">' . $delta . esc_html( cbaz_int( $row->sessions ) ) . ' · ' . esc_html( cbaz_pct( $share, 1 ) ) . '</span></div>' // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $delta est échappé par cbaz_delta_badge()
+			. '<span class="cbaz-bar cbaz-bar--' . (int) ( $i % 5 ) . '"><span style="width:' . (float) round( $share, 2 ) . '%"></span></span>'
 			. '</li>';
 	}
 
 	if ( ! $rows ) {
-		printf( '<li class="cbaz-empty">%1$s</li>', esc_html__( 'Rien à afficher.', 'shop-analytics-for-woocommerce' ) );
+		printf( '<li class="cbaz-empty">%1$s</li>', esc_html__( 'Nothing to display.', 'pluginect-analytics-for-woocommerce' ) );
 	}
 
 	echo '</ul>';
@@ -525,18 +525,31 @@ function cbaz_smooth_path( array $points ) {
 }
 
 /** Échelle lisible : on arrondit le maximum au cran supérieur. */
-function cbaz_nice_max( $value ) {
+function cbaz_nice_max( $value, $steps = 4 ) {
 	$value = max( 1, (float) $value );
-	$pow   = pow( 10, floor( log10( $value ) ) );
-	$head  = $value / $pow;
+	$brut  = $value / $steps;
 
-	foreach ( [ 1, 1.5, 2, 2.5, 3, 4, 5, 7.5, 10 ] as $step ) {
-		if ( $head <= $step ) {
-			return $step * $pow;
+	/*
+	 * Le graphique divise ce maximum en quatre. Si le palier n'est pas un
+	 * nombre entier, les graduations se répètent une fois arrondies pour
+	 * l'affichage : un maximum de 3 donnait « 3 2 2 1 0 ». Sous la dizaine,
+	 * on impose donc un palier entier.
+	 */
+	if ( $brut <= 10 ) {
+		return max( 1, (int) ceil( $brut ) ) * $steps;
+	}
+
+	$pow  = pow( 10, floor( log10( $brut ) ) );
+	$head = $brut / $pow;
+
+	// Au-delà, $pow vaut au moins 10 : tous ces paliers restent entiers.
+	foreach ( [ 1, 1.5, 2, 2.5, 3, 4, 5, 6, 7.5, 8, 10 ] as $pas ) {
+		if ( $head <= $pas + 1e-9 ) {
+			return $pas * $pow * $steps;
 		}
 	}
 
-	return 10 * $pow;
+	return 10 * $pow * $steps;
 }
 
 /**
@@ -551,14 +564,14 @@ function cbaz_nice_max( $value ) {
  */
 function cbaz_chart( array $series, array $show = [ 'sessions', 'revenue' ] ) {
 	if ( ! $series ) {
-		return sprintf( '<p class="cbaz-empty">%1$s</p>', esc_html__( 'Pas encore de données sur cette période.', 'shop-analytics-for-woocommerce' ) );
+		return sprintf( '<p class="cbaz-empty">%1$s</p>', esc_html__( 'No data yet for this period.', 'pluginect-analytics-for-woocommerce' ) );
 	}
 
 	$defs = [
-		'sessions'  => __( 'Visites', 'shop-analytics-for-woocommerce' ),
-		'pageviews' => __( 'Pages vues', 'shop-analytics-for-woocommerce' ),
-		'revenue'   => __( "Chiffre d'affaires", 'shop-analytics-for-woocommerce' ),
-		'orders'    => __( 'Commandes', 'shop-analytics-for-woocommerce' ),
+		'sessions'  => __( 'Visits', 'pluginect-analytics-for-woocommerce' ),
+		'pageviews' => __( 'Page views', 'pluginect-analytics-for-woocommerce' ),
+		'revenue'   => __( 'Revenue', 'pluginect-analytics-for-woocommerce' ),
+		'orders'    => __( 'Orders', 'pluginect-analytics-for-woocommerce' ),
 	];
 
 	$w  = 1000;
@@ -658,7 +671,7 @@ function cbaz_chart( array $series, array $show = [ 'sessions', 'revenue' ] ) {
 	</div>
 
 	<div class="cbaz-chart" data-cbaz-chart>
-		<svg viewBox="0 0 <?php echo $w; ?> <?php echo $h; ?>" role="img" aria-label="<?php echo esc_attr__( 'Évolution sur la période', 'shop-analytics-for-woocommerce' ); ?>">
+		<svg viewBox="0 0 <?php echo (int) $w; ?> <?php echo (int) $h; ?>" role="img" aria-label="<?php echo esc_attr__( 'Evolution over the period', 'pluginect-analytics-for-woocommerce' ); ?>">
 			<?php echo $grid; // phpcs:ignore ?>
 			<g data-serie="revenue"<?php echo in_array( 'revenue', $show, true ) ? '' : ' hidden'; ?>><?php echo $bars; // phpcs:ignore ?></g>
 			<?php echo $lines; // phpcs:ignore ?>
@@ -679,7 +692,7 @@ function cbaz_chart( array $series, array $show = [ 'sessions', 'revenue' ] ) {
  */
 function cbaz_grouped_bars( array $rows, array $legend ) {
 	if ( ! $rows ) {
-		return sprintf( '<p class="cbaz-empty">%1$s</p>', esc_html__( 'Aucune donnée sur la période.', 'shop-analytics-for-woocommerce' ) );
+		return sprintf( '<p class="cbaz-empty">%1$s</p>', esc_html__( 'No data on the period.', 'pluginect-analytics-for-woocommerce' ) );
 	}
 
 	$w = 1000;
@@ -723,7 +736,7 @@ function cbaz_grouped_bars( array $rows, array $legend ) {
 		'<div class="cbaz-chart"><svg viewBox="0 0 %1$d %2$d" role="img" aria-label="%3$s">%4$s</svg></div><div class="cbaz-chart__legend"><span class="cbaz-key cbaz-key--first">%5$s</span><span class="cbaz-key cbaz-key--last">%6$s</span></div>',
 		$w,
 		$h,
-		esc_attr__( 'Comparaison par canal', 'shop-analytics-for-woocommerce' ),
+		esc_attr__( 'Comparison by channel', 'pluginect-analytics-for-woocommerce' ),
 		$svg,
 		esc_html( $legend[0] ),
 		esc_html( $legend[1] )
@@ -754,7 +767,7 @@ function cbaz_funnel_block( array $steps, array $previous = [] ) {
 					: null;
 				?>
 				<p class="cbaz-loss">
-					<?php /* translators: 1: abandoned visitor count, 2: abandonment rate. */ printf( wp_kses_post( __( '<strong>− %1$s</strong> abandons (%2$s %%)', 'shop-analytics-for-woocommerce' ) ), esc_html( cbaz_int( $lost ) ), esc_html( number_format_i18n( $step['drop'], 1 ) ) ); ?>
+					<?php /* translators: 1: abandoned visitor count, 2: abandonment rate. */ printf( wp_kses_post( __( '<strong>− %1$s</strong> abandonments (%2$s %%)', 'pluginect-analytics-for-woocommerce' ) ), esc_html( cbaz_int( $lost ) ), esc_html( number_format_i18n( $step['drop'], 1 ) ) ); ?>
 					<?php if ( $previous ) : ?>
 						<?php echo cbaz_delta_badge( $drop_delta, true ); // phpcs:ignore ?>
 					<?php endif; ?>
@@ -765,7 +778,7 @@ function cbaz_funnel_block( array $steps, array $previous = [] ) {
 				<span class="cbaz-step__n"><?php echo (int) ( $i + 1 ); ?></span>
 				<span class="cbaz-step__label"><?php echo esc_html( $step['label'] ); ?></span>
 				<span class="cbaz-step__share">
-					<?php if ( 0 === $i ) { echo esc_html__( "Point d'entrée", 'shop-analytics-for-woocommerce' ); } else { /* translators: %1$s: share of visits. */ printf( esc_html__( '%1$s %% des visites', 'shop-analytics-for-woocommerce' ), esc_html( number_format_i18n( $step['pct'], 1 ) ) ); } ?>
+					<?php if ( 0 === $i ) { echo esc_html__( 'Entry point', 'pluginect-analytics-for-woocommerce' ); } else { /* translators: %1$s: share of visits. */ printf( esc_html__( '%1$s %% of visits', 'pluginect-analytics-for-woocommerce' ), esc_html( number_format_i18n( $step['pct'], 1 ) ) ); } ?>
 				</span>
 				<span class="cbaz-step__value"><?php echo esc_html( cbaz_int( $step['value'] ) ); ?></span>
 			</div>
@@ -806,10 +819,10 @@ function cbaz_leaks_block( array $steps, array $previous = [] ) {
 					</span>
 				</div>
 				<div class="cbaz-leaks__bar"><span style="width:<?php echo esc_attr( min( 100, max( 1, $leak['pct'] ) ) ); ?>%"></span></div>
-				<p class="cbaz-leaks__note"><?php /* translators: %1$s: visitors lost at this step. */ printf( esc_html__( '%1$s personnes perdues à cette étape', 'shop-analytics-for-woocommerce' ), esc_html( cbaz_int( $leak['lost'] ) ) ); ?></p>
+				<p class="cbaz-leaks__note"><?php /* translators: %1$s: visitors lost at this step. */ printf( esc_html__( '%1$s people lost at this stage', 'pluginect-analytics-for-woocommerce' ), esc_html( cbaz_int( $leak['lost'] ) ) ); ?></p>
 			</li>
 		<?php endforeach; ?>
-		<?php if ( ! $leaks ) : ?><li class="cbaz-empty"><?php echo esc_html__( 'Pas encore de parcours mesuré.', 'shop-analytics-for-woocommerce' ); ?></li><?php endif; ?>
+		<?php if ( ! $leaks ) : ?><li class="cbaz-empty"><?php echo esc_html__( 'No journey measured yet.', 'pluginect-analytics-for-woocommerce' ); ?></li><?php endif; ?>
 	</ul>
 	<?php
 	return ob_get_clean();
@@ -825,7 +838,7 @@ function cbaz_leaks_block( array $steps, array $previous = [] ) {
  */
 function cbaz_bars_chart( array $rows, $format = 'money' ) {
 	if ( ! $rows ) {
-		return sprintf( '<p class="cbaz-empty">%1$s</p>', esc_html__( 'Aucune donnée sur la période.', 'shop-analytics-for-woocommerce' ) );
+		return sprintf( '<p class="cbaz-empty">%1$s</p>', esc_html__( 'No data on the period.', 'pluginect-analytics-for-woocommerce' ) );
 	}
 
 	$max = max( 1, max( array_map( fn( $r ) => (float) $r['value'], $rows ) ) );
@@ -861,7 +874,7 @@ function cbaz_bars_chart( array $rows, $format = 'money' ) {
 /** Barres horizontales étiquetées, quand les catégories sont nombreuses. */
 function cbaz_hbars( array $rows, $format = 'money' ) {
 	if ( ! $rows ) {
-		return sprintf( '<p class="cbaz-empty">%1$s</p>', esc_html__( 'Aucune donnée sur la période.', 'shop-analytics-for-woocommerce' ) );
+		return sprintf( '<p class="cbaz-empty">%1$s</p>', esc_html__( 'No data on the period.', 'pluginect-analytics-for-woocommerce' ) );
 	}
 
 	$max = max( 1, max( array_map( fn( $r ) => (float) $r['value'], $rows ) ) );
@@ -1010,6 +1023,30 @@ function cbaz_avatar( $name, $couleur = '' ) {
  * pas de rechargement, et le tri comme la pagination ne bougent pas
  * sous les doigts.
  */
+/**
+ * Le bouton d'export, quand l'export n'est pas disponible.
+ *
+ * Un bouton qui disparaît laisse croire que la fonction n'existe pas ; un
+ * bouton grisé sans explication frustre. Celui-ci dit ce qu'il est — un
+ * export réservé à Pro — et mène à la page qui l'explique. Il s'ouvre dans
+ * un nouvel onglet : le tableau consulté reste sous les yeux.
+ *
+ * @param string $context Contexte transmis à cbaz_pro_url().
+ * @param bool   $mini    Variante compacte, pour la barre d'outils d'un tableau.
+ * @return string HTML échappé.
+ */
+function cbaz_export_pro_link( $context, $mini = false ) {
+	return sprintf(
+		'<a class="cbaz-ctrl cbaz-ctrl--pro%1$s" href="%2$s" target="_blank" rel="noopener" title="%3$s"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 11l5 5 5-5M4 21h16"/></svg>%4$s <span class="cbaz-badge-pro">%5$s</span><span class="screen-reader-text">%6$s</span></a>',
+		$mini ? ' cbaz-ctrl--mini' : '',
+		esc_url( cbaz_pro_url( $context ) ),
+		esc_attr__( 'CSV exports are part of the Pro module. See what it does.', 'pluginect-analytics-for-woocommerce' ),
+		esc_html( $mini ? __( 'CSV', 'pluginect-analytics-for-woocommerce' ) : __( 'Export', 'pluginect-analytics-for-woocommerce' ) ),
+		esc_html__( 'Pro', 'pluginect-analytics-for-woocommerce' ),
+		esc_html__( '(opens a new tab)', 'pluginect-analytics-for-woocommerce' )
+	);
+}
+
 function cbaz_table_tools( $placeholder, $export = '' ) {
 	ob_start();
 	?>
@@ -1022,8 +1059,10 @@ function cbaz_table_tools( $placeholder, $export = '' ) {
 		<?php if ( $export && cbaz_can( 'exports' ) ) : ?>
 			<a class="cbaz-ctrl cbaz-ctrl--mini" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array_filter( [ 'action' => 'cbaz_export', 'quoi' => $export, 'periode' => cbaz_range()['preset'], 'du' => cbaz_range()['du'], 'au' => cbaz_range()['au'] ] ), admin_url( 'admin-post.php' ) ), 'cbaz_export' ) ); ?>">
 				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 11l5 5 5-5M4 21h16"/></svg>
-				<?php echo esc_html__( 'CSV', 'shop-analytics-for-woocommerce' ); ?>
+				<?php echo esc_html__( 'CSV', 'pluginect-analytics-for-woocommerce' ); ?>
 			</a>
+		<?php elseif ( $export ) : ?>
+			<?php echo cbaz_export_pro_link( 'table-' . $export, true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- échappé dans la fonction ?>
 		<?php endif; ?>
 	</div>
 	<?php
@@ -1032,12 +1071,12 @@ function cbaz_table_tools( $placeholder, $export = '' ) {
 
 /** Pied de tableau : nombre de lignes affichées. */
 function cbaz_table_count( $shown, $total, $unit = '' ) {
-	$unit = $unit ?: __( 'lignes', 'shop-analytics-for-woocommerce' );
+	$unit = $unit ?: __( 'lines', 'pluginect-analytics-for-woocommerce' );
 	return sprintf(
 		'<p class="cbaz-count" data-cbaz-count data-unit="%1$s">%2$s</p>',
 		esc_attr( $unit ),
 		/* translators: 1: displayed row count, 2: total row count, 3: row type. */
-		esc_html( sprintf( __( '1–%1$d sur %2$d %3$s', 'shop-analytics-for-woocommerce' ), $shown, $total, $unit ) )
+		esc_html( sprintf( __( '1–%1$d on %2$d %3$s', 'pluginect-analytics-for-woocommerce' ), $shown, $total, $unit ) )
 	);
 }
 
@@ -1056,7 +1095,7 @@ function cbaz_toggle( $name, $checked, $label = '' ) {
 
 /** Sous-onglets à l'intérieur d'une carte. */
 function cbaz_subtabs( $param, array $items, $default ) {
-	$current = sanitize_key( $_GET[ $param ] ?? $default );
+	$current = sanitize_key( $_GET[ $param ] ?? $default ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- lecture seule, navigation
 	$current = isset( $items[ $current ] ) ? $current : $default;
 
 	echo '<div class="cbaz-subtabs">';
@@ -1086,7 +1125,7 @@ function cbaz_hint( $text ) {
 
 function cbaz_render_page() {
 	if ( ! current_user_can( 'manage_woocommerce' ) ) {
-		wp_die( esc_html__( 'Accès refusé.', 'shop-analytics-for-woocommerce' ) );
+		wp_die( esc_html__( 'Access denied.', 'pluginect-analytics-for-woocommerce' ) );
 	}
 
 	$tab   = cbaz_current_tab();
@@ -1115,7 +1154,7 @@ function cbaz_render_page() {
 							<?php endforeach; ?>
 
 							<form class="cbaz-daterange" method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>">
-								<input type="hidden" name="page" value="<?php echo esc_attr( sanitize_key( $_GET['page'] ?? 'cbaz' ) ); ?>">
+								<input type="hidden" name="page" value="<?php echo esc_attr( sanitize_key( $_GET['page'] ?? 'cbaz' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- lecture seule, navigation ?>">
 								<input type="hidden" name="periode" value="perso">
 								<?php foreach ( cbaz_filters() as $key => $value ) : ?>
 									<input type="hidden" name="f_<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>">
@@ -1124,44 +1163,46 @@ function cbaz_render_page() {
 									<input type="hidden" name="compare" value="1">
 								<?php endif; ?>
 
-								<p class="cbaz-daterange__title"><?php echo esc_html__( 'Plage précise', 'shop-analytics-for-woocommerce' ); ?></p>
+								<p class="cbaz-daterange__title"><?php echo esc_html__( 'Accurate range', 'pluginect-analytics-for-woocommerce' ); ?></p>
 
-								<label><?php echo esc_html__( 'Du', 'shop-analytics-for-woocommerce' ); ?>
+								<label><?php echo esc_html__( 'From', 'pluginect-analytics-for-woocommerce' ); ?>
 									<input type="date" name="du" max="<?php echo esc_attr( gmdate( 'Y-m-d', current_time( 'timestamp' ) ) ); ?>"
 									       value="<?php echo esc_attr( $range['du'] ? $range['du'] : gmdate( 'Y-m-d', strtotime( $range['from'] ) ) ); ?>">
 								</label>
-								<label><?php echo esc_html__( 'Au', 'shop-analytics-for-woocommerce' ); ?>
+								<label><?php echo esc_html__( 'To', 'pluginect-analytics-for-woocommerce' ); ?>
 									<input type="date" name="au" max="<?php echo esc_attr( gmdate( 'Y-m-d', current_time( 'timestamp' ) ) ); ?>"
 									       value="<?php echo esc_attr( $range['au'] ? $range['au'] : gmdate( 'Y-m-d', strtotime( $range['to'] ) ) ); ?>">
 								</label>
 
-								<button type="submit" class="cbaz-btn cbaz-btn--mini"><?php echo esc_html__( 'Appliquer', 'shop-analytics-for-woocommerce' ); ?></button>
+								<button type="submit" class="cbaz-btn cbaz-btn--mini"><?php echo esc_html__( 'Apply', 'pluginect-analytics-for-woocommerce' ); ?></button>
 							</form>
 						</div>
 					</div>
 
 					<a class="cbaz-ctrl<?php echo cbaz_comparing() ? ' is-on' : ''; ?>"
 					   href="<?php echo esc_url( cbaz_comparing() ? cbaz_url( [], [ 'compare' ] ) : cbaz_url( [ 'compare' => 1 ] ) ); ?>">
-						<?php echo esc_html( cbaz_comparing() ? __( 'Courbe comparée', 'shop-analytics-for-woocommerce' ) : __( 'Superposer la période précédente', 'shop-analytics-for-woocommerce' ) ); ?>
+						<?php echo esc_html( cbaz_comparing() ? __( 'Comparative curve', 'pluginect-analytics-for-woocommerce' ) : __( 'Overlap previous period', 'pluginect-analytics-for-woocommerce' ) ); ?>
 					</a>
 
 					<a class="cbaz-ctrl" href="<?php echo esc_url( cbaz_url() ); ?>">
 						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
-						<?php echo esc_html__( 'Actualiser', 'shop-analytics-for-woocommerce' ); ?>
+						<?php echo esc_html__( 'Refresh', 'pluginect-analytics-for-woocommerce' ); ?>
 					</a>
 
 					<?php if ( cbaz_can( 'exports' ) ) : ?>
 						<a class="cbaz-ctrl cbaz-ctrl--primary" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array_filter( [ 'action' => 'cbaz_export', 'quoi' => $tab, 'periode' => $range['preset'], 'du' => $range['du'], 'au' => $range['au'] ] ), admin_url( 'admin-post.php' ) ), 'cbaz_export' ) ); ?>">
 							<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 11l5 5 5-5M4 21h16"/></svg>
-							<?php echo esc_html__( 'Exporter', 'shop-analytics-for-woocommerce' ); ?>
+							<?php echo esc_html__( 'Export', 'pluginect-analytics-for-woocommerce' ); ?>
 						</a>
+					<?php else : ?>
+						<?php echo cbaz_export_pro_link( 'export-' . $tab ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- échappé dans la fonction ?>
 					<?php endif; ?>
 				</div>
 			<?php elseif ( 'temps-reel' === $tab ) : ?>
 				<div class="cbaz-livepill">
 					<span class="cbaz-live__pulse"></span>
 					<strong data-cbaz-online><?php echo esc_html( cbaz_int( cbaz_realtime()['online'] ) ); ?></strong>
-					<?php echo esc_html__( 'visiteurs actifs maintenant', 'shop-analytics-for-woocommerce' ); ?>
+					<?php echo esc_html__( 'active visitors now', 'pluginect-analytics-for-woocommerce' ); ?>
 				</div>
 			<?php endif; ?>
 		</header>
@@ -1191,9 +1232,9 @@ function cbaz_render_page() {
 
 		<footer class="cbaz-footer">
 			<?php if ( cbaz_hpos() ) : ?>
-				<?php /* translators: %1$s: plugin version. */ printf( esc_html__( 'Pluginect Analytics %1$s · données hébergées sur ton serveur · stockage WooCommerce moderne', 'shop-analytics-for-woocommerce' ), esc_html( CBAZ_VERSION ) ); ?>
+				<?php /* translators: %1$s: plugin version. */ printf( esc_html__( 'Pluginect Analytics %1$s · data hosted on your server · modern WooCommerce order storage', 'pluginect-analytics-for-woocommerce' ), esc_html( CBAZ_VERSION ) ); ?>
 			<?php else : ?>
-				<?php /* translators: %1$s: plugin version. */ printf( esc_html__( 'Pluginect Analytics %1$s · données hébergées sur ton serveur', 'shop-analytics-for-woocommerce' ), esc_html( CBAZ_VERSION ) ); ?>
+				<?php /* translators: %1$s: plugin version. */ printf( esc_html__( 'Pluginect Analytics %1$s · data hosted on your server', 'pluginect-analytics-for-woocommerce' ), esc_html( CBAZ_VERSION ) ); ?>
 			<?php endif; ?>
 		</footer>
 	</div>
@@ -1202,7 +1243,7 @@ function cbaz_render_page() {
 
 /** La comparaison à la période précédente est-elle demandée ? */
 function cbaz_comparing() {
-	return ! empty( $_GET['compare'] );
+	return ! empty( $_GET['compare'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- lecture seule, affichage
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1212,7 +1253,7 @@ function cbaz_comparing() {
 add_action( 'admin_post_cbaz_settings', 'cbaz_save_settings' );
 function cbaz_save_settings() {
 	if ( ! current_user_can( 'manage_options' ) ) {
-		wp_die( esc_html__( 'Accès refusé.', 'shop-analytics-for-woocommerce' ) );
+		wp_die( esc_html__( 'Access denied.', 'pluginect-analytics-for-woocommerce' ) );
 	}
 
 	check_admin_referer( 'cbaz_settings' );
@@ -1228,17 +1269,18 @@ function cbaz_save_settings() {
 	$posted = [
 		'enabled'          => empty( $_POST['enabled'] ) ? 0 : 1,
 		'track_events'     => empty( $_POST['track_events'] ) ? 0 : 1,
-		'retention_months' => max( 1, min( 120, (int) ( $_POST['retention_months'] ?? 24 ) ) ),
-		'history_years'    => max( 1, min( 20, (int) ( $_POST['history_years'] ?? 10 ) ) ),
+		'insights'         => empty( $_POST['insights'] ) ? 0 : 1,
+		'retention_months' => max( 1, min( 120, isset( $_POST['retention_months'] ) ? absint( wp_unslash( $_POST['retention_months'] ) ) : 24 ) ),
+		'history_years'    => max( 1, min( 20, isset( $_POST['history_years'] ) ? absint( wp_unslash( $_POST['history_years'] ) ) : 10 ) ),
 		'exclude_roles'    => array_map( 'sanitize_key', (array) ( $_POST['exclude_roles'] ?? [] ) ),
 		'exclude_paths'    => sanitize_textarea_field( wp_unslash( $_POST['exclude_paths'] ?? '' ) ),
 		'exclude_bots'     => empty( $_POST['exclude_bots'] ) ? 0 : 1,
-		'attribution_days' => max( 0, min( 90, (int) ( $_POST['attribution_days'] ?? 30 ) ) ),
+		'attribution_days' => max( 0, min( 90, isset( $_POST['attribution_days'] ) ? absint( wp_unslash( $_POST['attribution_days'] ) ) : 30 ) ),
 		'delete_on_uninstall' => empty( $_POST['delete_on_uninstall'] ) ? 0 : 1,
 	];
 
 	$fields = [
-		'general' => [ 'enabled', 'track_events' ],
+		'general' => [ 'enabled', 'track_events', 'insights' ],
 		'rgpd'    => [ 'attribution_days', 'retention_months', 'history_years' ],
 		'exclus'  => [ 'exclude_roles', 'exclude_paths', 'exclude_bots' ],
 		'donnees' => [ 'delete_on_uninstall' ],
@@ -1262,7 +1304,7 @@ function cbaz_save_settings() {
 add_action( 'admin_post_cbaz_campaign', 'cbaz_handle_campaign' );
 function cbaz_handle_campaign() {
 	if ( ! current_user_can( 'manage_woocommerce' ) ) {
-		wp_die( esc_html__( 'Accès refusé.', 'shop-analytics-for-woocommerce' ) );
+		wp_die( esc_html__( 'Access denied.', 'pluginect-analytics-for-woocommerce' ) );
 	}
 
 	check_admin_referer( 'cbaz_campaign' );
@@ -1273,7 +1315,7 @@ function cbaz_handle_campaign() {
 		cbaz_delete_campaign( (int) $_POST['delete'] );
 		$back['msg'] = 'supprimee';
 	} else {
-		$result = cbaz_save_campaign( wp_unslash( $_POST ), (int) ( $_POST['id'] ?? 0 ) );
+		$result = cbaz_save_campaign( wp_unslash( $_POST ), isset( $_POST['id'] ) ? absint( wp_unslash( $_POST['id'] ) ) : 0 ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- chaque champ est nettoyé dans cbaz_save_campaign()
 
 		if ( is_wp_error( $result ) ) {
 			// On renvoie sur le formulaire, pas sur la liste : sinon la
@@ -1308,7 +1350,7 @@ function cbaz_handle_campaign() {
 add_action( 'admin_post_cbaz_favori', 'cbaz_toggle_favori' );
 function cbaz_toggle_favori() {
 	if ( ! current_user_can( 'manage_woocommerce' ) ) {
-		wp_die( esc_html__( 'Accès refusé.', 'shop-analytics-for-woocommerce' ) );
+		wp_die( esc_html__( 'Access denied.', 'pluginect-analytics-for-woocommerce' ) );
 	}
 
 	check_admin_referer( 'cbaz_favori' );

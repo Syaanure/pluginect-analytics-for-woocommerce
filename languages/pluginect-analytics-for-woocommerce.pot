@@ -1,0 +1,3040 @@
+# Copyright (C) 2026 Pluginect
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Pluginect Analytics – Statistics & Reports for WooCommerce 4.31.4\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pluginect-analytics-for-woocommerce\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-09-13T14:59:49+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: pluginect-analytics-for-woocommerce\n"
+
+#. Plugin Name of the plugin
+#: pluginect-analytics-for-woocommerce.php
+msgid "Pluginect Analytics – Statistics & Reports for WooCommerce"
+msgstr ""
+
+#. Description of the plugin
+#: pluginect-analytics-for-woocommerce.php
+msgid "Local audience and sales measurement for WooCommerce, without third-party services or cookies by default."
+msgstr ""
+
+#. Author of the plugin
+#: pluginect-analytics-for-woocommerce.php
+msgid "Pluginect"
+msgstr ""
+
+#: includes/admin.php:20
+msgid "Pluginect Analytics locally stores daily pseudonymous visits, pages viewed, browsing events and technical information (network prefix used without being stored, browser, device, language, resolution and estimated country). A converted visit is linked to the WooCommerce order. No cookie is set by default; the optional attribution memory sets a signed origin cookie. Retention periods are configurable in Analytics → Settings."
+msgstr ""
+
+#: includes/admin.php:22
+#: includes/admin.php:77
+msgid "Pluginect Analytics"
+msgstr ""
+
+#: includes/admin.php:31
+msgid "Overview"
+msgstr ""
+
+#: includes/admin.php:31
+msgid "Analyze your store’s performance."
+msgstr ""
+
+#: includes/admin.php:32
+#: includes/help.php:61
+msgid "Real time"
+msgstr ""
+
+#: includes/admin.php:32
+msgid "What's happening on your store right now."
+msgstr ""
+
+#: includes/admin.php:33
+msgid "Acquisition"
+msgstr ""
+
+#: includes/admin.php:33
+msgid "Understand where your visitors are coming from and which sources are converting."
+msgstr ""
+
+#: includes/admin.php:34
+msgid "Behavior"
+msgstr ""
+
+#: includes/admin.php:34
+msgid "What your visitors view and how they navigate."
+msgstr ""
+
+#: includes/admin.php:35
+msgid "E-commerce"
+msgstr ""
+
+#: includes/admin.php:35
+msgid "From visitor to order: where your conversions are lost."
+msgstr ""
+
+#: includes/admin.php:36
+msgid "Products"
+msgstr ""
+
+#: includes/admin.php:36
+msgid "Performance of each product in the WooCommerce catalog."
+msgstr ""
+
+#: includes/admin.php:37
+msgid "Campaigns"
+msgstr ""
+
+#: includes/admin.php:37
+msgid "Track the performance of your UTM campaigns."
+msgstr ""
+
+#: includes/admin.php:38
+msgid "Geography"
+msgstr ""
+
+#: includes/admin.php:38
+msgid "Location of visitors and commercial performance by country."
+msgstr ""
+
+#: includes/admin.php:39
+#: includes/help.php:32
+#: includes/query.php:216
+#: views/acquisition.php:25
+#: views/campagnes.php:100
+#: views/comportement.php:175
+#: views/produits.php:110
+msgid "Visitors"
+msgstr ""
+
+#: includes/admin.php:39
+msgid "Devices, technologies and audience loyalty."
+msgstr ""
+
+#: includes/admin.php:40
+msgid "Journeys"
+msgstr ""
+
+#: includes/admin.php:40
+msgid "The journey of each visit, page by page."
+msgstr ""
+
+#: includes/admin.php:41
+#: pluginect-analytics-for-woocommerce.php:217
+#: views/overview.php:44
+msgid "Settings"
+msgstr ""
+
+#: includes/admin.php:41
+msgid "Configuring tracking, privacy and sync."
+msgstr ""
+
+#. translators: %1$s: analytics screen title.
+#: includes/admin.php:83
+#, php-format
+msgid "%1$s — Pluginect Analytics"
+msgstr ""
+
+#. translators: %d : nombre de bandeaux masqués
+#: includes/admin.php:277
+#, php-format
+msgid "%d notice from another plugin has been hidden on this screen."
+msgid_plural "%d notices from other plugins have been hidden on this screen."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin.php:286
+msgid "View them"
+msgstr ""
+
+#: includes/admin.php:305
+msgid "No data for the previous period"
+msgstr ""
+
+#: includes/admin.php:305
+msgid "new"
+msgstr ""
+
+#: includes/admin.php:311
+msgid "stable"
+msgstr ""
+
+#: includes/admin.php:456
+#: views/acquisition.php:80
+#: views/ecommerce.php:89
+#: views/overview.php:137
+#: views/visites.php:356
+#: views/visiteurs.php:83
+msgid "No visits during the period."
+msgstr ""
+
+#: includes/admin.php:488
+#: views/temps-reel.php:101
+msgid "Nothing to display."
+msgstr ""
+
+#: includes/admin.php:567
+msgid "No data yet for this period."
+msgstr ""
+
+#: includes/admin.php:571
+#: includes/help.php:33
+#: includes/query.php:217
+#: includes/query.php:572
+#: views/acquisition.php:26
+#: views/acquisition.php:59
+#: views/campagne.php:89
+#: views/campagnes.php:100
+#: views/campagnes.php:163
+#: views/comportement.php:204
+#: views/comportement.php:209
+#: views/ecommerce.php:73
+#: views/visiteurs.php:94
+#: views/visiteurs.php:125
+#: assets/admin.js:595
+#: assets/admin.js:833
+msgid "Visits"
+msgstr ""
+
+#: includes/admin.php:572
+#: includes/help.php:34
+#: includes/query.php:218
+#: views/comportement.php:11
+#: views/comportement.php:24
+#: views/parametres.php:303
+#: views/visiteurs.php:127
+#: assets/admin.js:834
+msgid "Page views"
+msgstr ""
+
+#: includes/admin.php:573
+#: includes/help.php:35
+#: includes/query.php:219
+#: views/acquisition.php:28
+#: assets/admin.js:597
+#: assets/admin.js:835
+msgid "Revenue"
+msgstr ""
+
+#: includes/admin.php:574
+#: includes/help.php:38
+#: views/acquisition.php:27
+#: views/acquisition.php:59
+#: views/campagne.php:90
+#: views/campagnes.php:81
+#: views/campagnes.php:101
+#: views/campagnes.php:164
+#: views/comportement.php:209
+#: views/ecommerce.php:30
+#: views/ecommerce.php:73
+#: views/overview.php:104
+#: views/produits.php:113
+#: views/visiteurs.php:128
+#: assets/admin.js:596
+#: assets/admin.js:836
+msgid "Orders"
+msgstr ""
+
+#: includes/admin.php:674
+msgid "Evolution over the period"
+msgstr ""
+
+#: includes/admin.php:695
+#: includes/admin.php:841
+#: includes/admin.php:877
+msgid "No data on the period."
+msgstr ""
+
+#: includes/admin.php:739
+msgid "Comparison by channel"
+msgstr ""
+
+#. translators: 1: abandoned visitor count, 2: abandonment rate.
+#: includes/admin.php:770
+#, php-format
+msgid "<strong>− %1$s</strong> abandonments (%2$s %%)"
+msgstr ""
+
+#: includes/admin.php:781
+msgid "Entry point"
+msgstr ""
+
+#. translators: %1$s: share of visits.
+#: includes/admin.php:781
+#, php-format
+msgid "%1$s %% of visits"
+msgstr ""
+
+#. translators: %1$s: visitors lost at this step.
+#: includes/admin.php:822
+#, php-format
+msgid "%1$s people lost at this stage"
+msgstr ""
+
+#: includes/admin.php:825
+msgid "No journey measured yet."
+msgstr ""
+
+#: includes/admin.php:1043
+msgid "CSV exports are part of the Pro module. See what it does."
+msgstr ""
+
+#: includes/admin.php:1044
+#: includes/admin.php:1062
+msgid "CSV"
+msgstr ""
+
+#: includes/admin.php:1044
+#: includes/admin.php:1195
+msgid "Export"
+msgstr ""
+
+#: includes/admin.php:1045
+#: includes/features.php:134
+#: includes/features.php:151
+#: pluginect-analytics-for-woocommerce.php:225
+msgid "Pro"
+msgstr ""
+
+#: includes/admin.php:1046
+#: includes/features.php:143
+msgid "(opens a new tab)"
+msgstr ""
+
+#: includes/admin.php:1074
+msgid "lines"
+msgstr ""
+
+#. translators: 1: displayed row count, 2: total row count, 3: row type.
+#: includes/admin.php:1079
+#: assets/admin.js:1035
+#, php-format,js-format
+msgid "1–%1$d on %2$d %3$s"
+msgstr ""
+
+#: includes/admin.php:1128
+#: includes/admin.php:1256
+#: includes/admin.php:1307
+#: includes/admin.php:1353
+msgid "Access denied."
+msgstr ""
+
+#: includes/admin.php:1166
+msgid "Accurate range"
+msgstr ""
+
+#: includes/admin.php:1168
+msgid "From"
+msgstr ""
+
+#: includes/admin.php:1172
+msgid "To"
+msgstr ""
+
+#: includes/admin.php:1177
+msgid "Apply"
+msgstr ""
+
+#: includes/admin.php:1184
+msgid "Comparative curve"
+msgstr ""
+
+#: includes/admin.php:1184
+msgid "Overlap previous period"
+msgstr ""
+
+#: includes/admin.php:1189
+msgid "Refresh"
+msgstr ""
+
+#: includes/admin.php:1205
+msgid "active visitors now"
+msgstr ""
+
+#. translators: %1$s: plugin version.
+#: includes/admin.php:1235
+#, php-format
+msgid "Pluginect Analytics %1$s · data hosted on your server · modern WooCommerce order storage"
+msgstr ""
+
+#. translators: %1$s: plugin version.
+#: includes/admin.php:1237
+#, php-format
+msgid "Pluginect Analytics %1$s · data hosted on your server"
+msgstr ""
+
+#: includes/campaigns.php:52
+msgid "In progress"
+msgstr ""
+
+#: includes/campaigns.php:53
+msgid "Planned"
+msgstr ""
+
+#: includes/campaigns.php:54
+msgid "Completed"
+msgstr ""
+
+#: includes/campaigns.php:93
+msgid "A campaign needs at least a source and a campaign name."
+msgstr ""
+
+#: includes/features.php:43
+msgid "CSV exports"
+msgstr ""
+
+#: includes/features.php:44
+#: views/visites.php:378
+msgid "Complete journey history"
+msgstr ""
+
+#: includes/features.php:45
+msgid "Journey filters and search"
+msgstr ""
+
+#: includes/features.php:46
+msgid "Journey statistics"
+msgstr ""
+
+#: includes/features.php:47
+#: views/campagnes.php:231
+msgid "Campaign performance"
+msgstr ""
+
+#: includes/features.php:48
+msgid "Detailed real-time"
+msgstr ""
+
+#: includes/features.php:141
+msgid "See what Pro does"
+msgstr ""
+
+#: includes/filters.php:18
+#: views/campagne.php:118
+#: views/temps-reel.php:73
+#: views/visiteurs.php:94
+msgid "Country"
+msgstr ""
+
+#: includes/filters.php:19
+#: views/acquisition.php:58
+#: views/campagnes.php:99
+#: views/ecommerce.php:73
+msgid "Source"
+msgstr ""
+
+#: includes/filters.php:20
+msgid "Medium"
+msgstr ""
+
+#: includes/filters.php:21
+#: views/campagnes.php:99
+msgid "Campaign"
+msgstr ""
+
+#: includes/filters.php:22
+#: views/campagne.php:118
+msgid "Device"
+msgstr ""
+
+#: includes/filters.php:23
+msgid "Customer"
+msgstr ""
+
+#: includes/filters.php:129
+#: views/visiteurs.php:77
+msgid "New visitors"
+msgstr ""
+
+#: includes/filters.php:129
+#: views/visiteurs.php:77
+msgid "Returning visitors"
+msgstr ""
+
+#: includes/filters.php:208
+msgid "Filters"
+msgstr ""
+
+#: includes/filters.php:219
+msgid "No value over the period."
+msgstr ""
+
+#: includes/filters.php:240
+msgid "Clear all"
+msgstr ""
+
+#: includes/geo.php:25
+msgid "France"
+msgstr ""
+
+#: includes/geo.php:26
+msgid "Belgium"
+msgstr ""
+
+#: includes/geo.php:27
+msgid "Switzerland"
+msgstr ""
+
+#: includes/geo.php:28
+msgid "Luxembourg"
+msgstr ""
+
+#: includes/geo.php:29
+msgid "Monaco"
+msgstr ""
+
+#: includes/geo.php:30
+msgid "Spain"
+msgstr ""
+
+#: includes/geo.php:31
+msgid "Portugal"
+msgstr ""
+
+#: includes/geo.php:32
+msgid "Italy"
+msgstr ""
+
+#: includes/geo.php:33
+msgid "Germany"
+msgstr ""
+
+#: includes/geo.php:34
+msgid "Netherlands"
+msgstr ""
+
+#: includes/geo.php:35
+msgid "United Kingdom"
+msgstr ""
+
+#: includes/geo.php:36
+msgid "Ireland"
+msgstr ""
+
+#: includes/geo.php:37
+msgid "Austria"
+msgstr ""
+
+#: includes/geo.php:38
+msgid "Denmark"
+msgstr ""
+
+#: includes/geo.php:39
+msgid "Sweden"
+msgstr ""
+
+#: includes/geo.php:40
+msgid "Norway"
+msgstr ""
+
+#: includes/geo.php:41
+msgid "Finland"
+msgstr ""
+
+#: includes/geo.php:42
+msgid "Poland"
+msgstr ""
+
+#: includes/geo.php:43
+msgid "Czechia"
+msgstr ""
+
+#: includes/geo.php:44
+msgid "Greece"
+msgstr ""
+
+#: includes/geo.php:45
+msgid "Romania"
+msgstr ""
+
+#: includes/geo.php:46
+msgid "Hungary"
+msgstr ""
+
+#: includes/geo.php:47
+msgid "Bulgaria"
+msgstr ""
+
+#: includes/geo.php:48
+msgid "Croatia"
+msgstr ""
+
+#: includes/geo.php:49
+msgid "Slovenia"
+msgstr ""
+
+#: includes/geo.php:50
+msgid "Slovakia"
+msgstr ""
+
+#: includes/geo.php:51
+msgid "Estonia"
+msgstr ""
+
+#: includes/geo.php:52
+msgid "Latvia"
+msgstr ""
+
+#: includes/geo.php:53
+msgid "Lithuania"
+msgstr ""
+
+#: includes/geo.php:54
+msgid "Ukraine"
+msgstr ""
+
+#: includes/geo.php:55
+msgid "Russia"
+msgstr ""
+
+#: includes/geo.php:56
+msgid "Türkiye"
+msgstr ""
+
+#: includes/geo.php:57
+msgid "Morocco"
+msgstr ""
+
+#: includes/geo.php:58
+msgid "Algeria"
+msgstr ""
+
+#: includes/geo.php:59
+msgid "Tunisia"
+msgstr ""
+
+#: includes/geo.php:60
+msgid "Senegal"
+msgstr ""
+
+#: includes/geo.php:61
+msgid "Ivory Coast"
+msgstr ""
+
+#: includes/geo.php:62
+msgid "Cameroon"
+msgstr ""
+
+#: includes/geo.php:63
+msgid "South Africa"
+msgstr ""
+
+#: includes/geo.php:64
+msgid "Egypt"
+msgstr ""
+
+#: includes/geo.php:65
+msgid "Israel"
+msgstr ""
+
+#: includes/geo.php:66
+msgid "United Arab Emirates"
+msgstr ""
+
+#: includes/geo.php:67
+msgid "Saudi Arabia"
+msgstr ""
+
+#: includes/geo.php:68
+msgid "India"
+msgstr ""
+
+#: includes/geo.php:69
+msgid "China"
+msgstr ""
+
+#: includes/geo.php:70
+msgid "Japan"
+msgstr ""
+
+#: includes/geo.php:71
+msgid "South Korea"
+msgstr ""
+
+#: includes/geo.php:72
+msgid "Thailand"
+msgstr ""
+
+#: includes/geo.php:73
+msgid "Vietnam"
+msgstr ""
+
+#: includes/geo.php:74
+msgid "Singapore"
+msgstr ""
+
+#: includes/geo.php:75
+msgid "Indonesia"
+msgstr ""
+
+#: includes/geo.php:76
+msgid "Australia"
+msgstr ""
+
+#: includes/geo.php:77
+msgid "New Zealand"
+msgstr ""
+
+#: includes/geo.php:78
+msgid "United States"
+msgstr ""
+
+#: includes/geo.php:79
+msgid "Canada"
+msgstr ""
+
+#: includes/geo.php:80
+msgid "Mexico"
+msgstr ""
+
+#: includes/geo.php:81
+msgid "Brazil"
+msgstr ""
+
+#: includes/geo.php:82
+msgid "Argentina"
+msgstr ""
+
+#: includes/geo.php:83
+msgid "Chile"
+msgstr ""
+
+#: includes/geo.php:84
+msgid "Colombia"
+msgstr ""
+
+#: includes/geo.php:85
+msgid "Peru"
+msgstr ""
+
+#: includes/geo.php:86
+msgid "Reunion"
+msgstr ""
+
+#: includes/geo.php:87
+msgid "Guadeloupe"
+msgstr ""
+
+#: includes/geo.php:88
+msgid "Martinique"
+msgstr ""
+
+#: includes/geo.php:89
+msgid "Guyana"
+msgstr ""
+
+#: includes/geo.php:90
+msgid "New Caledonia"
+msgstr ""
+
+#: includes/geo.php:91
+msgid "French Polynesia"
+msgstr ""
+
+#: includes/geo.php:101
+msgid "Unknown"
+msgstr ""
+
+#: includes/help.php:32
+msgid "Distinct people over the period, recognised by a pseudonymous fingerprint that resets every night. Someone who comes back tomorrow counts as a new visitor: compare trends rather than absolute numbers."
+msgstr ""
+
+#: includes/help.php:33
+msgid "A sequence of pages viewed by the same visitor with less than 30 minutes of inactivity between them. One person can make several visits in a day."
+msgstr ""
+
+#: includes/help.php:34
+msgid "Every page displayed. A page reloaded, or seen twice during the same visit, counts twice."
+msgstr ""
+
+#: includes/help.php:35
+msgid "Paid WooCommerce orders over the period, refunds deducted. Read from your store whatever the origin of the order — orders created by hand or imported are included."
+msgstr ""
+
+#: includes/help.php:36
+#: includes/query.php:220
+#: views/acquisition.php:29
+#: views/ecommerce.php:32
+#: views/overview.php:100
+msgid "Conversion rate"
+msgstr ""
+
+#: includes/help.php:36
+msgid "Share of measured visits that ended in a paid order. Only orders linked to a measured visit count, which keeps the rate honest: orders placed by hand or before tracking started are left out."
+msgstr ""
+
+#: includes/help.php:37
+#: includes/query.php:221
+#: views/acquisition.php:30
+#: views/acquisition.php:60
+#: views/ecommerce.php:31
+msgid "Average basket"
+msgstr ""
+
+#: includes/help.php:37
+msgid "Revenue divided by the number of orders. A rising basket with fewer orders can hide a drop in volume: read both together."
+msgstr ""
+
+#: includes/help.php:38
+msgid "Paid WooCommerce orders over the period. Cancelled and failed orders are excluded; refunded ones are deducted from revenue."
+msgstr ""
+
+#: includes/help.php:39
+#: views/comportement.php:27
+#: views/overview.php:101
+#: views/visiteurs.php:33
+msgid "Bounce rate"
+msgstr ""
+
+#: includes/help.php:39
+msgid "Share of visits that viewed a single page. Normal on a blog post; on a product or landing page it usually means the page did not match what the visitor expected."
+msgstr ""
+
+#: includes/help.php:40
+#: views/comportement.php:26
+#: views/overview.php:103
+#: views/visites.php:212
+#: views/visiteurs.php:31
+msgid "Average duration"
+msgstr ""
+
+#: includes/help.php:40
+msgid "Average time actually spent on pages, counted only while the tab is active. Time spent in a background tab is ignored."
+msgstr ""
+
+#: includes/help.php:41
+#: views/ecommerce.php:33
+#: views/overview.php:102
+msgid "Value per visit"
+msgstr ""
+
+#: includes/help.php:41
+msgid "Revenue divided by visits: what one visit is worth on average. Handy to compare traffic sources of very different sizes."
+msgstr ""
+
+#: includes/help.php:42
+#: views/ecommerce.php:34
+msgid "Attributed revenue"
+msgstr ""
+
+#: includes/help.php:42
+msgid "Part of the revenue that a measured visit explains. The rest comes from orders placed before tracking started, offline, by hand, or by visitors who block scripts."
+msgstr ""
+
+#: includes/help.php:43
+#: views/comportement.php:25
+#: views/visites.php:208
+#: views/visiteurs.php:32
+msgid "Pages per visit"
+msgstr ""
+
+#: includes/help.php:43
+msgid "Page views divided by visits — the depth of browsing. Below 1.5 on a shop, most visitors leave from the page they landed on."
+msgstr ""
+
+#: includes/help.php:44
+#: views/visiteurs.php:30
+msgid "Visits per visitor"
+msgstr ""
+
+#: includes/help.php:44
+msgid "Visits divided by visitors, within the same day: the fingerprint that recognises a visitor resets every night."
+msgstr ""
+
+#: includes/help.php:45
+#: views/ecommerce.php:50
+#: views/overview.php:89
+msgid "Conversion funnel"
+msgstr ""
+
+#: includes/help.php:45
+msgid "The four steps of a purchase: visit, add to cart, order started, paid order. Each percentage is read from the first step; the loss between two steps shows where visitors give up."
+msgstr ""
+
+#: includes/help.php:46
+#: views/ecommerce.php:60
+msgid "Vanishing points"
+msgstr ""
+
+#: includes/help.php:46
+msgid "Visits lost between two consecutive steps of the funnel. The biggest gap is the first place to look."
+msgstr ""
+
+#: includes/help.php:47
+msgid "Traffic sources"
+msgstr ""
+
+#: includes/help.php:47
+msgid "Where visits come from: the referring site, a UTM tag or a campaign link. “Direct” means no referrer — bookmarks, typed addresses, some apps and e-mail clients."
+msgstr ""
+
+#: includes/help.php:48
+#: views/acquisition.php:114
+msgid "Referring sites"
+msgstr ""
+
+#: includes/help.php:48
+msgid "Third-party sites whose links brought visitors, search engines and social networks aside."
+msgstr ""
+
+#: includes/help.php:49
+#: views/acquisition.php:90
+msgid "Revenue by channel"
+msgstr ""
+
+#: includes/help.php:49
+msgid "Revenue of the orders linked to a visit from each source. Orders without a measured visit do not appear here."
+msgstr ""
+
+#: includes/help.php:50
+#: views/acquisition.php:101
+msgid "Conversion by channel"
+msgstr ""
+
+#: includes/help.php:50
+msgid "Conversion rate of each source. A small source with a high rate is often worth more attention than a large one that never converts."
+msgstr ""
+
+#: includes/help.php:51
+#: views/comportement.php:13
+msgid "Entry pages"
+msgstr ""
+
+#: includes/help.php:51
+msgid "First page of each visit. An entry page that performs poorly loses visitors before they see anything else."
+msgstr ""
+
+#: includes/help.php:52
+#: views/comportement.php:14
+msgid "Exit pages"
+msgstr ""
+
+#: includes/help.php:52
+msgid "Last page of each visit. Every visit ends somewhere: an exit page is only a problem when it is not the natural end of a journey."
+msgstr ""
+
+#: includes/help.php:53
+#: views/comportement.php:15
+msgid "Internal searches"
+msgstr ""
+
+#: includes/help.php:53
+msgid "Terms typed into your store’s search box. What people look for without finding often says more than a ranking of pages."
+msgstr ""
+
+#: includes/help.php:54
+msgid "Visitor paths"
+msgstr ""
+
+#: includes/help.php:54
+msgid "The most frequent sequences of pages, step by step, from a chosen starting page."
+msgstr ""
+
+#: includes/help.php:55
+msgid "Product views"
+msgstr ""
+
+#: includes/help.php:55
+msgid "Product pages displayed, the visitors who saw them, and the share that added the product to the cart."
+msgstr ""
+
+#: includes/help.php:56
+msgid "Add-to-cart rate"
+msgstr ""
+
+#: includes/help.php:56
+msgid "Add-to-cart events divided by product views. Low on a heavily viewed product, it usually points at the price, the photos, the stock or the delivery information."
+msgstr ""
+
+#: includes/help.php:57
+msgid "Countries"
+msgstr ""
+
+#: includes/help.php:57
+msgid "Read from a header sent by your host or CDN, from WooCommerce geolocation when enabled, or from the browser language as a last resort. Never stored together with an address."
+msgstr ""
+
+#: includes/help.php:58
+#: views/comportement.php:17
+#: views/comportement.php:59
+#: views/temps-reel.php:92
+#: views/visiteurs.php:55
+msgid "Devices"
+msgstr ""
+
+#: includes/help.php:58
+msgid "Mobile, tablet or desktop, deduced from the browser signature."
+msgstr ""
+
+#: includes/help.php:59
+msgid "New or returning"
+msgstr ""
+
+#: includes/help.php:59
+msgid "“Returning” means already seen earlier the same day, since the fingerprint resets every night. It is not a customer loyalty metric."
+msgstr ""
+
+#: includes/help.php:60
+#: views/visiteurs.php:111
+msgid "Screen resolutions"
+msgstr ""
+
+#: includes/help.php:60
+msgid "Width × height of the visitors’ screens. Test the store first on the most frequent ones."
+msgstr ""
+
+#: includes/help.php:61
+msgid "Visits active over the last 30 minutes, refreshed every 20 seconds. Useful during a campaign launch or a newsletter send."
+msgstr ""
+
+#: includes/help.php:62
+#: views/campagnes.php:74
+msgid "Campaign revenue"
+msgstr ""
+
+#: includes/help.php:62
+msgid "Net revenue of the orders linked to a tagged visit, refunds deducted, within the attribution window set in Settings."
+msgstr ""
+
+#: includes/help.php:63
+#: views/campagnes.php:75
+msgid "Invested"
+msgstr ""
+
+#: includes/help.php:63
+msgid "Sum of the budgets entered on the campaign sheets. Without a budget, no return can be computed."
+msgstr ""
+
+#: includes/help.php:64
+msgid "Return"
+msgstr ""
+
+#: includes/help.php:64
+msgid "Revenue divided by budget: euros earned per euro spent. Below 1, the campaign cost more than it brought in — and this is before your margin."
+msgstr ""
+
+#. translators: %1$s: conversion rate.
+#: includes/help.php:65
+#: views/campagne.php:91
+msgid "Cost per order"
+msgstr ""
+
+#: includes/help.php:65
+msgid "Budget divided by attributed orders. Compare it with your margin on an average order."
+msgstr ""
+
+#: includes/help.php:66
+#: views/campagne.php:114
+msgid "Attributed orders"
+msgstr ""
+
+#: includes/help.php:66
+msgid "Orders whose visit carried this campaign, within the attribution window."
+msgstr ""
+
+#: includes/help.php:67
+#: views/campagne.php:96
+msgid "Objective"
+msgstr ""
+
+#: includes/help.php:67
+msgid "Revenue target entered on the campaign sheet, compared with the net revenue actually attributed."
+msgstr ""
+
+#: includes/help.php:68
+#: views/produits.php:35
+msgid "References sold"
+msgstr ""
+
+#: includes/help.php:68
+msgid "Distinct products with at least one paid order over the period."
+msgstr ""
+
+#: includes/help.php:69
+#: views/produits.php:36
+msgid "Items sold"
+msgstr ""
+
+#: includes/help.php:69
+msgid "Units sold over the period, refunded units deducted."
+msgstr ""
+
+#: includes/help.php:70
+msgid "Products revenue"
+msgstr ""
+
+#: includes/help.php:70
+msgid "Revenue of the product lines, shipping and taxes aside. It can differ slightly from the store revenue for that reason."
+msgstr ""
+
+#: includes/help.php:71
+#: views/produits.php:38
+msgid "Average price"
+msgstr ""
+
+#: includes/help.php:71
+msgid "Products revenue divided by units sold: the price actually paid per unit, promotions included."
+msgstr ""
+
+#: includes/help.php:72
+#: views/visites.php:203
+msgid "Routes displayed"
+msgstr ""
+
+#: includes/help.php:72
+msgid "The visits listed below, taken among the most recent of the period and of the chosen segment. The statistics on this line describe this group only."
+msgstr ""
+
+#: includes/help.php:73
+#: views/visites.php:216
+msgid "Go as far as purchasing"
+msgstr ""
+
+#: includes/help.php:73
+msgid "Visits of this group that ended in a paid order."
+msgstr ""
+
+#: includes/help.php:74
+#: views/visites.php:228
+msgid "Where these visits stop"
+msgstr ""
+
+#: includes/help.php:74
+msgid "Last page seen by the visits that did not end in an order. A page that appears often here deserves a look."
+msgstr ""
+
+#. translators: %s: name of the indicator.
+#: includes/help.php:122
+#, php-format
+msgid "What does “%s” mean?"
+msgstr ""
+
+#: includes/insights.php:124
+msgid "Conversion fell while traffic held"
+msgstr ""
+
+#: includes/insights.php:125
+msgid "About as many visits as during the previous period, but noticeably fewer of them ended in an order. That points at the store rather than at the traffic: a checkout change, a stock or delivery issue, a price move, a technical error on a device."
+msgstr ""
+
+#. translators: 1: current conversion rate, 2: previous conversion rate, 3: traffic change in percent.
+#: includes/insights.php:127
+#, php-format
+msgid "Conversion %1$s vs %2$s before · visits %3$s"
+msgstr ""
+
+#: includes/insights.php:128
+msgid "Place a test order on mobile and desktop, then check the funnel screen for the step that lost the most."
+msgstr ""
+
+#: includes/insights.php:132
+msgid "Traffic dropped sharply"
+msgstr ""
+
+#: includes/insights.php:133
+msgid "A quarter fewer visits than during the previous period. Before worrying, check whether the previous period included a campaign, a newsletter or a seasonal peak — a drop after a peak is not a decline."
+msgstr ""
+
+#. translators: 1: current visits, 2: previous visits.
+#: includes/insights.php:135
+#, php-format
+msgid "%1$s visits vs %2$s before"
+msgstr ""
+
+#: includes/insights.php:136
+msgid "Compare the sources on the Acquisition screen with the previous period to see which one fell."
+msgstr ""
+
+#: includes/insights.php:147
+msgid "Half of the orders have no measured visit"
+msgstr ""
+
+#: includes/insights.php:148
+msgid "Conversion rates and campaign figures only see orders linked to a visit. Orders created by hand, imported, placed by an excluded role, or by visitors who block scripts stay invisible to them — without being lost for the store."
+msgstr ""
+
+#. translators: 1: orders linked to a visit, 2: total orders.
+#: includes/insights.php:150
+#, php-format
+msgid "%1$s of %2$s orders linked to a visit"
+msgstr ""
+
+#: includes/insights.php:151
+msgid "If most orders come from the site itself, check the excluded roles and paths in Settings, and whether a cache or consent tool blocks the tracking script."
+msgstr ""
+
+#: includes/insights.php:168
+msgid "Mobile converts much less than desktop"
+msgstr ""
+
+#: includes/insights.php:169
+msgid "A gap is normal — people browse on the phone and buy on the computer — but a rate below half of the desktop one often hides a practical obstacle: a form that is hard to fill, a payment method missing on mobile, a slow page, a popup covering the button."
+msgstr ""
+
+#. translators: 1: mobile conversion rate, 2: desktop conversion rate, 3: mobile visits.
+#: includes/insights.php:171
+#, php-format
+msgid "Mobile %1$s vs desktop %2$s, over %3$s mobile visits"
+msgstr ""
+
+#: includes/insights.php:172
+msgid "Go through the whole purchase on a real phone, from the product page to the payment confirmation."
+msgstr ""
+
+#: includes/insights.php:185
+msgid "Most carts are abandoned"
+msgstr ""
+
+#: includes/insights.php:186
+msgid "Fewer than three carts out of ten turn into an order. The usual suspects: delivery costs discovered late, a mandatory account, a long form, a doubt about the return policy. It can also be visitors comparing prices — carts are not commitments."
+msgstr ""
+
+#. translators: 1: add-to-cart count, 2: paid orders.
+#: includes/insights.php:188
+#, php-format
+msgid "%1$s carts · %2$s paid orders"
+msgstr ""
+
+#: includes/insights.php:189
+msgid "Show delivery costs and delays before the cart, and allow ordering without an account."
+msgstr ""
+
+#: includes/insights.php:193
+msgid "Half of the started orders never complete"
+msgstr ""
+
+#: includes/insights.php:194
+msgid "Visitors who reach the checkout have decided to buy; losing one in two there points at the checkout itself: a payment method that fails, an error message, a field that rejects a valid address."
+msgstr ""
+
+#. translators: 1: started checkouts, 2: paid orders.
+#: includes/insights.php:196
+#, php-format
+msgid "%1$s checkouts started · %2$s paid orders"
+msgstr ""
+
+#: includes/insights.php:197
+msgid "Check the failed and pending orders in WooCommerce for a repeated payment error."
+msgstr ""
+
+#: includes/insights.php:217
+msgid "An entry page loses most of its visitors at once"
+msgstr ""
+
+#: includes/insights.php:218
+msgid "Visitors who land on this page leave without viewing anything else, far more often than elsewhere on the store. Either the page does not match what brought them there, or something is wrong with it — loading time, layout on mobile, missing call to action."
+msgstr ""
+
+#. translators: 1: page path, 2: bounce rate, 3: number of entries.
+#: includes/insights.php:220
+#, php-format
+msgid "%1$s · %2$s bounce over %3$s entries"
+msgstr ""
+
+#: includes/insights.php:221
+msgid "Open the page from the source that sends the most visitors to it, and read it as they would."
+msgstr ""
+
+#: includes/insights.php:245
+msgid "A busy source never converts"
+msgstr ""
+
+#: includes/insights.php:246
+msgid "Plenty of visits, not a single order, while the store converts elsewhere. Either the visitors it sends are not looking for what you sell, or they land on a page that does not lead to the catalogue. If you pay for this traffic, this is where the money goes first."
+msgstr ""
+
+#. translators: 1: source label, 2: number of visits.
+#. translators: 1: country name, 2: number of visits.
+#: includes/insights.php:248
+#: includes/insights.php:316
+#, php-format
+msgid "%1$s · %2$s visits · 0 orders"
+msgstr ""
+
+#: includes/insights.php:249
+msgid "Look at the entry pages of this source on the Journeys screen, then at what these visitors do next."
+msgstr ""
+
+#: includes/insights.php:255
+msgid "One source converts far better than the rest"
+msgstr ""
+
+#: includes/insights.php:256
+msgid "Its visitors buy much more often than average. That is usually a sign of a good match between the audience and the offer — and an argument for sending more of them, if the source can scale."
+msgstr ""
+
+#. translators: 1: source label, 2: conversion rate, 3: store conversion rate.
+#: includes/insights.php:258
+#, php-format
+msgid "%1$s · %2$s conversion vs %3$s for the store"
+msgstr ""
+
+#: includes/insights.php:259
+msgid "Check whether the volume can grow before drawing conclusions: a small, well-targeted source rarely stays that efficient when it is scaled up."
+msgstr ""
+
+#: includes/insights.php:286
+msgid "A popular product is almost never added to the cart"
+msgstr ""
+
+#: includes/insights.php:287
+msgid "Many visitors look at it, very few take the next step, far below what your other products achieve. The page itself is the first suspect: price, photos, description, stock message, delivery information, or a variation that cannot be selected."
+msgstr ""
+
+#. translators: 1: product name, 2: views, 3: add-to-cart count.
+#: includes/insights.php:289
+#, php-format
+msgid "%1$s · %2$s views · %3$s added to cart"
+msgstr ""
+
+#: includes/insights.php:290
+msgid "Open the product page on a phone and try to add it to the cart, variation included."
+msgstr ""
+
+#: includes/insights.php:299
+msgid "Visitors keep searching for the same thing"
+msgstr ""
+
+#: includes/insights.php:300
+msgid "A term typed again and again in the search box is a demand expressed in the visitors’ own words. If you sell it, make it easier to find; if you do not, it is a product idea served on a plate."
+msgstr ""
+
+#. translators: 1: search term, 2: number of searches.
+#: includes/insights.php:302
+#, php-format
+msgid "“%1$s” · %2$s searches"
+msgstr ""
+
+#: includes/insights.php:303
+msgid "Type the term in your own search box and look at what comes out."
+msgstr ""
+
+#: includes/insights.php:313
+msgid "A whole country visits without ever buying"
+msgstr ""
+
+#: includes/insights.php:314
+msgid "At least a tenth of the visits come from a country that never orders. Sometimes it is simply that you do not deliver there — then the visits are wasted and the message could say so earlier. Sometimes a payment method, a currency or a language is missing."
+msgstr ""
+
+#: includes/insights.php:317
+msgid "Check the shipping zones and payment methods available for this country in WooCommerce."
+msgstr ""
+
+#: includes/insights.php:334
+msgid "Campaigns run, but nothing remembers them past the visit"
+msgstr ""
+
+#: includes/insights.php:335
+msgid "Without the attribution memory, an order is only credited to a campaign if it happens during the very visit that came from it. Someone who clicks today and buys tomorrow counts as direct — campaign figures end up lower than reality."
+msgstr ""
+
+#. translators: %1$s: number of tagged visits.
+#: includes/insights.php:337
+#, php-format
+msgid "%1$s tagged visits over the period · attribution memory off"
+msgstr ""
+
+#: includes/insights.php:338
+msgid "Enable the attribution memory in Settings → Privacy if a small origin cookie is acceptable for your store."
+msgstr ""
+
+#: includes/insights.php:401
+#: includes/insights.php:446
+msgid "Leads worth checking"
+msgstr ""
+
+#: includes/insights.php:402
+msgid "Computed automatically from the period’s figures. They point at things to look at — they prove nothing, and they do not replace a proper analysis of your store."
+msgstr ""
+
+#. translators: 1: measured visits, 2: visits needed.
+#: includes/insights.php:412
+#, php-format
+msgid "Not enough data yet: %1$s visits measured over this period, %2$s needed before a lead means anything. Come back later, or widen the period."
+msgstr ""
+
+#: includes/insights.php:417
+msgid "Nothing stands out over this period. That is good news — or a sign that the period is too short to tell."
+msgstr ""
+
+#: includes/insights.php:427
+msgid "Worth doing:"
+msgstr ""
+
+#: includes/insights.php:432
+msgid "Take these with a pinch of salt: a rule sees a correlation, never a cause. It knows nothing of the season, your margins, your stock or the promotion running this week."
+msgstr ""
+
+#: includes/insights.php:446
+msgid "Simple rules applied to the period’s figures: a page that loses its visitors, a source that never converts, a product viewed a lot and never added to the cart. Each lead shows the numbers that triggered it, so you can disagree with it."
+msgstr ""
+
+#: includes/query.php:19
+msgid "Today"
+msgstr ""
+
+#: includes/query.php:20
+msgid "last 7 days"
+msgstr ""
+
+#: includes/query.php:21
+#: includes/query.php:109
+msgid "Last 30 days"
+msgstr ""
+
+#: includes/query.php:22
+msgid "last 90 days"
+msgstr ""
+
+#: includes/query.php:23
+msgid "last 12 months"
+msgstr ""
+
+#: includes/query.php:573
+#: includes/query.php:779
+msgid "Add to cart"
+msgstr ""
+
+#: includes/query.php:574
+msgid "Order started"
+msgstr ""
+
+#: includes/query.php:575
+msgid "Purchase"
+msgstr ""
+
+#: includes/query.php:777
+msgid "Page view"
+msgstr ""
+
+#: includes/query.php:778
+msgid "Product consultation"
+msgstr ""
+
+#: includes/query.php:780
+msgid "Shopping cart viewed"
+msgstr ""
+
+#: includes/query.php:781
+msgid "Start of order"
+msgstr ""
+
+#: includes/query.php:782
+#: views/campagne.php:118
+#: views/visites.php:342
+msgid "Order"
+msgstr ""
+
+#: includes/query.php:783
+msgid "Search"
+msgstr ""
+
+#. translators: 1: number of minutes, 2: number of seconds.
+#: includes/query.php:850
+#, php-format
+msgid "%1$d min %2$02d s"
+msgstr ""
+
+#: includes/query.php:1292
+#: views/comportement.php:76
+msgid "Welcome"
+msgstr ""
+
+#: includes/track.php:1209
+#: views/visites.php:39
+msgid "Origin"
+msgstr ""
+
+#: views/acquisition.php:39
+#: views/comportement.php:35
+#: views/overview.php:65
+#: views/visiteurs.php:44
+msgid "vs previous period"
+msgstr ""
+
+#: views/acquisition.php:50
+msgid "Traffic Sources"
+msgstr ""
+
+#: views/acquisition.php:50
+msgid "Search, filter and export the performance of each source."
+msgstr ""
+
+#: views/acquisition.php:53
+msgid "Find a source…"
+msgstr ""
+
+#: views/acquisition.php:58
+#: views/campagne-form.php:70
+msgctxt "traffic medium"
+msgid "Medium"
+msgstr ""
+
+#: views/acquisition.php:59
+#: views/comportement.php:241
+#: views/produits.php:117
+msgid "Evolution"
+msgstr ""
+
+#: views/acquisition.php:60
+#: views/ecommerce.php:73
+#: views/produits.php:114
+#: assets/admin.js:598
+msgid "Conversion"
+msgstr ""
+
+#: views/acquisition.php:60
+#: views/ecommerce.php:73
+#: views/produits.php:116
+#: views/visiteurs.php:94
+msgctxt "revenue abbreviation"
+msgid "Revenue"
+msgstr ""
+
+#: views/acquisition.php:84
+msgid "sources"
+msgstr ""
+
+#: views/acquisition.php:114
+msgid "Sites that send people to your home."
+msgstr ""
+
+#: views/acquisition.php:130
+msgid "No referring site: visits arrive directly or via links without a referrer."
+msgstr ""
+
+#: views/acquisition.php:137
+msgid "Distribution of visits"
+msgstr ""
+
+#: views/campagne-form.php:8
+msgid "Instagram Story"
+msgstr ""
+
+#: views/campagne-form.php:9
+msgid "Instagram Bio"
+msgstr ""
+
+#: views/campagne-form.php:10
+msgid "Instagram post"
+msgstr ""
+
+#: views/campagne-form.php:11
+msgid "TikTok"
+msgstr ""
+
+#: views/campagne-form.php:12
+msgid "Newsletter"
+msgstr ""
+
+#: views/campagne-form.php:13
+msgid "Influencer"
+msgstr ""
+
+#: views/campagne-form.php:14
+msgid "Flyer or card"
+msgstr ""
+
+#: views/campagne-form.php:15
+msgid "Paid advertising"
+msgstr ""
+
+#: views/campagne-form.php:20
+#: views/campagne.php:21
+#: views/campagne.php:41
+msgid "← All campaigns"
+msgstr ""
+
+#: views/campagne-form.php:27
+msgid "Edit campaign"
+msgstr ""
+
+#: views/campagne-form.php:27
+msgid "New campaign"
+msgstr ""
+
+#: views/campagne-form.php:28
+msgid "Only the source and campaign name are required. The rest refines the report."
+msgstr ""
+
+#: views/campagne-form.php:33
+msgid "Starting from a model"
+msgstr ""
+
+#: views/campagne-form.php:49
+msgid "Internal name"
+msgstr ""
+
+#: views/campagne-form.php:50
+msgid "Instagram story back to school"
+msgstr ""
+
+#: views/campagne-form.php:54
+msgid "Campaign name *"
+msgstr ""
+
+#: views/campagne-form.php:55
+msgid "back-to-school-2026"
+msgstr ""
+
+#: views/campagne-form.php:57
+#: views/campagne.php:118
+msgid "Status"
+msgstr ""
+
+#: views/campagne-form.php:67
+msgid "Source *"
+msgstr ""
+
+#: views/campagne-form.php:68
+msgid "instagram"
+msgstr ""
+
+#: views/campagne-form.php:71
+msgid "social"
+msgstr ""
+
+#: views/campagne-form.php:76
+msgid "Content"
+msgstr ""
+
+#: views/campagne-form.php:77
+msgid "story-1"
+msgstr ""
+
+#: views/campagne-form.php:79
+msgid "Term"
+msgstr ""
+
+#: views/campagne-form.php:84
+msgid "Destination page"
+msgstr ""
+
+#: views/campagne-form.php:89
+msgid "Budget invested (€)"
+msgstr ""
+
+#: views/campagne-form.php:92
+msgid "Revenue target (€)"
+msgstr ""
+
+#: views/campagne-form.php:98
+msgid "Beginning"
+msgstr ""
+
+#: views/campagne-form.php:101
+msgid "End"
+msgstr ""
+
+#: views/campagne-form.php:106
+msgid "Notes"
+msgstr ""
+
+#: views/campagne-form.php:111
+#: views/campagne.php:60
+msgid "Link to share"
+msgstr ""
+
+#: views/campagne-form.php:116
+msgid "Save"
+msgstr ""
+
+#: views/campagne-form.php:116
+msgid "Create the campaign"
+msgstr ""
+
+#: views/campagne-form.php:117
+msgid "Cancel"
+msgstr ""
+
+#: views/campagne-form.php:124
+msgid "How it works"
+msgstr ""
+
+#: views/campagne-form.php:127
+msgid "The link contains <strong>only one parameter</strong>. Its source, medium and content are read from this campaign when the visit arrives."
+msgstr ""
+
+#: views/campagne-form.php:128
+msgid "You can therefore <strong>correct the source afterwards</strong> without re-transmitting the links already broadcast."
+msgstr ""
+
+#: views/campagne-form.php:129
+msgid "The parameter <strong>disappears from the address bar</strong> once the visit is counted, so the page remains shareable as-is."
+msgstr ""
+
+#: views/campagne-form.php:130
+msgid "The values ​​are lowercase and without accent: “Instagram” and “instagram” count as one channel."
+msgstr ""
+
+#: views/campagne-form.php:131
+msgid "Without a budget, everything works - but the column <strong>Retour</strong> will remain empty, because we do not know what the operation cost."
+msgstr ""
+
+#: views/campagne-form.php:137
+msgid "Other formats"
+msgstr ""
+
+#: views/campagne-form.php:139
+#: views/campagne.php:66
+msgid "Without question mark, for a QR code"
+msgstr ""
+
+#: views/campagne-form.php:142
+#: views/campagne-form.php:148
+#: views/campagne.php:63
+#: views/campagne.php:69
+#: views/campagne.php:75
+#: views/campagnes.php:172
+#: views/parametres.php:246
+#: assets/admin.js:888
+msgid "Copy"
+msgstr ""
+
+#: views/campagne-form.php:145
+#: views/campagne.php:72
+msgid "Complete UTM format, for advertising agencies"
+msgstr ""
+
+#: views/campagne.php:10
+msgid "This campaign no longer exists."
+msgstr ""
+
+#: views/campagne.php:24
+msgid "Performance of this campaign"
+msgstr ""
+
+#: views/campagne.php:25
+msgid "Pro measures visits, orders, revenue, conversion rate and ROI of this campaign."
+msgstr ""
+
+#: views/campagne.php:77
+#: views/campagnes.php:177
+msgid "To modify"
+msgstr ""
+
+#: views/campagne.php:82
+#: views/campagnes.php:102
+#: views/campagnes.php:165
+msgid "Net turnover"
+msgstr ""
+
+#. translators: %1$s: refunded amount.
+#: views/campagne.php:82
+#, php-format
+msgid "%1$s refunded"
+msgstr ""
+
+#. translators: %1$s: refunded amount.
+#: views/campagne.php:83
+msgid "Budget"
+msgstr ""
+
+#: views/campagne.php:85
+#: views/campagnes.php:102
+#: views/campagnes.php:166
+msgctxt "return on ad spend"
+msgid "Return"
+msgstr ""
+
+#. translators: %1$s: campaign profit.
+#: views/campagne.php:87
+#, php-format
+msgid "profit %1$s"
+msgstr ""
+
+#. translators: %1$s: conversion rate.
+#: views/campagne.php:90
+#, php-format
+msgid "conversion %1$s"
+msgstr ""
+
+#. translators: 1: current revenue, 2: revenue goal.
+#: views/campagne.php:96
+#, php-format
+msgid "%1$s on %2$s"
+msgstr ""
+
+#: views/campagne.php:107
+msgid "Day by day"
+msgstr ""
+
+#: views/campagne.php:114
+msgid "Each line carries the trace of this campaign in WooCommerce."
+msgstr ""
+
+#: views/campagne.php:118
+msgid "Date"
+msgstr ""
+
+#: views/campagne.php:118
+msgid "Total"
+msgstr ""
+
+#: views/campagne.php:131
+msgid "No attributed orders for this period."
+msgstr ""
+
+#: views/campagnes.php:52
+msgid "Registered campaign."
+msgstr ""
+
+#: views/campagnes.php:53
+msgid "File deleted. Orders retain their attribution."
+msgstr ""
+
+#: views/campagnes.php:54
+msgid "You need at least one source and a campaign name."
+msgstr ""
+
+#: views/campagnes.php:57
+#: views/campagnes.php:140
+msgid "My campaigns"
+msgstr ""
+
+#: views/campagnes.php:60
+msgid "Performance"
+msgstr ""
+
+#: views/campagnes.php:74
+msgid "refunds deducted"
+msgstr ""
+
+#: views/campagnes.php:77
+msgid "Overall return"
+msgstr ""
+
+#: views/campagnes.php:79
+msgid "euros earned per euro spent"
+msgstr ""
+
+#. translators: %1$s: number of visits.
+#: views/campagnes.php:81
+#, php-format
+msgid "%1$s visits"
+msgstr ""
+
+#: views/campagnes.php:91
+msgid "Profitability per campaign"
+msgstr ""
+
+#: views/campagnes.php:91
+msgid "Net revenue read from orders. Every tagged visit appears, whether or not a campaign record exists."
+msgstr ""
+
+#: views/campagnes.php:94
+msgid "Search for a campaign…"
+msgstr ""
+
+#: views/campagnes.php:101
+#: views/visiteurs.php:94
+msgid "Conv."
+msgstr ""
+
+#: views/campagnes.php:128
+msgid "No campaign measured over the period."
+msgstr ""
+
+#: views/campagnes.php:132
+msgid "campaigns"
+msgstr ""
+
+#: views/campagnes.php:140
+msgid "The operations in place, their link to be broadcast and what they bring in."
+msgstr ""
+
+#: views/campagnes.php:143
+#: views/campagnes.php:192
+msgid "Create a campaign"
+msgstr ""
+
+#: views/campagnes.php:176
+msgid "See details"
+msgstr ""
+
+#: views/campagnes.php:178
+msgid "Delete this record? Orders already assigned will be retained."
+msgstr ""
+
+#: views/campagnes.php:182
+msgid "Delete"
+msgstr ""
+
+#: views/campagnes.php:190
+msgid "No campaign yet"
+msgstr ""
+
+#: views/campagnes.php:191
+msgid "Create your first campaign to get a short link for a story or bio and track exactly how much revenue it generated."
+msgstr ""
+
+#: views/campagnes.php:206
+msgid "Measured campaigns without a record"
+msgstr ""
+
+#: views/campagnes.php:206
+msgid "Marked visits have arrived under these names, without a file existing."
+msgstr ""
+
+#. translators: 1: visit count, 2: revenue.
+#: views/campagnes.php:213
+#, php-format
+msgid "%1$s visits · %2$s"
+msgstr ""
+
+#: views/campagnes.php:218
+msgid "Creating the corresponding sheet allows you to enter a budget, therefore calculating a return. Visits already measured will join it."
+msgstr ""
+
+#: views/campagnes.php:226
+msgid "Campaign creation available for free. Detailed performance analysis available with Pro."
+msgstr ""
+
+#: views/campagnes.php:232
+msgid "Pro measures visits, orders, revenue, conversion rate and ROI of each campaign."
+msgstr ""
+
+#: views/comportement.php:12
+msgid "Products viewed"
+msgstr ""
+
+#: views/comportement.php:16
+msgid "Visitor journeys"
+msgstr ""
+
+#: views/comportement.php:45
+msgid "Navigation"
+msgstr ""
+
+#: views/comportement.php:45
+msgid "What we look at, where we enter, where we leave."
+msgstr ""
+
+#: views/comportement.php:60
+msgid "Systems"
+msgstr ""
+
+#: views/comportement.php:61
+#: views/visiteurs.php:67
+msgid "Browsers"
+msgstr ""
+
+#: views/comportement.php:68
+msgid "Landing page"
+msgstr ""
+
+#: views/comportement.php:68
+msgid "Then"
+msgstr ""
+
+#. translators: 1: analyzed visits, 2: distinct journeys, 3: sampled page count.
+#: views/comportement.php:82
+#, php-format
+msgid "%1$s visits analyzed · %2$s different paths · recent sample of %3$s pages"
+msgstr ""
+
+#. translators: 1: analyzed visits, 2: distinct journeys.
+#: views/comportement.php:84
+#, php-format
+msgid "%1$s visits analyzed · %2$s different routes"
+msgstr ""
+
+#: views/comportement.php:88
+msgid "Remove this start"
+msgstr ""
+
+#: views/comportement.php:88
+msgid "×"
+msgstr ""
+
+#: views/comportement.php:101
+msgid "No visit goes that far."
+msgstr ""
+
+#: views/comportement.php:113
+msgid "Only keep visits that left here"
+msgstr ""
+
+#. translators: %1$d: number of additional pages grouped together.
+#: views/comportement.php:121
+#, php-format
+msgid "%1$d other page"
+msgid_plural "%1$d other pages"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %1$s: percentage of visitors who stop.
+#: views/comportement.php:132
+#, php-format
+msgid "%1$s stop"
+msgstr ""
+
+#: views/comportement.php:143
+msgid ""
+"Each column groups the pages by <strong>position in the visit</strong>: where we arrive, then where we go.\n"
+"\t\t\tListing the entire routes would be illegible — a hundred visits easily give eighty paths\n"
+"\t\t\tdifferent, all with one or two occurrences."
+msgstr ""
+
+#: views/comportement.php:145
+msgid ""
+"Click on a landing page to only keep visits from there. “Stop” refers to those who\n"
+"            have seen nothing beyond: this is the point of renunciation."
+msgstr ""
+
+#: views/comportement.php:151
+msgid "Search term"
+msgstr ""
+
+#: views/comportement.php:151
+msgid "Searches"
+msgstr ""
+
+#: views/comportement.php:163
+msgid "No internal searches during this period."
+msgstr ""
+
+#: views/comportement.php:166
+msgid "What we look for without finding is often worth more than a ranking of page views: it is a request to which the catalog does not yet respond."
+msgstr ""
+
+#: views/comportement.php:175
+#: views/produits.php:108
+msgid "Product"
+msgstr ""
+
+#: views/comportement.php:175
+#: views/comportement.php:204
+#: views/produits.php:109
+msgid "Views"
+msgstr ""
+
+#: views/comportement.php:175
+#: views/produits.php:111
+msgid "Adds to cart"
+msgstr ""
+
+#: views/comportement.php:175
+#: views/produits.php:112
+msgid "Addition rate"
+msgstr ""
+
+#: views/comportement.php:192
+msgid "No product consultation measured over the period."
+msgstr ""
+
+#: views/comportement.php:204
+#: views/comportement.php:209
+msgid "Page"
+msgstr ""
+
+#: views/comportement.php:239
+msgid "Average time"
+msgstr ""
+
+#: views/comportement.php:240
+msgid "Bounce"
+msgstr ""
+
+#: views/comportement.php:242
+msgid "Share"
+msgstr ""
+
+#: views/comportement.php:265
+msgid "No pages measured over the period."
+msgstr ""
+
+#: views/comportement.php:270
+msgid ""
+"The average time only counts when the tab is visible: a page left open in the background\n"
+"\t\t\tall night isn't worth eight hours of reading. The bounce is read per entry page — one visit\n"
+"\t\t\tarrived there and left without seeing anything else."
+msgstr ""
+
+#: views/ecommerce.php:29
+msgid "WooCommerce revenue"
+msgstr ""
+
+#: views/ecommerce.php:34
+msgid "of revenue linked to a visit"
+msgstr ""
+
+#: views/ecommerce.php:41
+msgid "Revenue and visits"
+msgstr ""
+
+#: views/ecommerce.php:51
+msgid "Visits → Add to cart → Order started → Purchase"
+msgstr ""
+
+#: views/ecommerce.php:60
+msgid "Losses between each stage."
+msgstr ""
+
+#: views/ecommerce.php:62
+msgid "The difference between WooCommerce revenue and attributed revenue represents orders that cannot be linked to a measured visit."
+msgstr ""
+
+#: views/ecommerce.php:69
+msgid "Profitability by source"
+msgstr ""
+
+#: views/ecommerce.php:69
+msgid "What each channel actually earns, visit by visit."
+msgstr ""
+
+#: views/ecommerce.php:73
+msgid "Per visit"
+msgstr ""
+
+#: views/geographie.php:38
+msgid "The country is not yet known."
+msgstr ""
+
+#: views/geographie.php:39
+msgid ""
+"It is read in a header provided by the host or by Cloudflare, and failing that in the billing address of an order.\n"
+"\t\tNo GeoIP database is on board: it would weigh several megabytes and would require a monthly update.\n"
+"\t\tThe orders will therefore inform the countries as they arise."
+msgstr ""
+
+#: views/geographie.php:49
+msgid "Location of visitors"
+msgstr ""
+
+#: views/geographie.php:49
+msgid "Hover over a country to view its details."
+msgstr ""
+
+#: views/geographie.php:50
+#: assets/admin.js:721
+msgid "Pause rotation"
+msgstr ""
+
+#: views/geographie.php:57
+msgid "Globe of visits by country"
+msgstr ""
+
+#: views/geographie.php:60
+msgid "Zoom"
+msgstr ""
+
+#: views/geographie.php:61
+msgid "Zoom out"
+msgstr ""
+
+#: views/geographie.php:62
+msgid "Return to initial view"
+msgstr ""
+
+#: views/geographie.php:62
+msgid "Refocus"
+msgstr ""
+
+#: views/geographie.php:70
+msgid "Visitors currently present"
+msgstr ""
+
+#: views/geographie.php:75
+msgid "Total sales over the period"
+msgstr ""
+
+#: views/geographie.php:80
+msgid "Main locations"
+msgstr ""
+
+#: views/geographie.php:88
+msgid "No country identified."
+msgstr ""
+
+#: views/geographie.php:92
+msgid "Drag to rotate, hover over a country for its detail."
+msgstr ""
+
+#. translators: 1: maximum visit count, 2: country name.
+#: views/geographie.php:94
+#, php-format
+msgid "The size of a point follows its number of visits — %1$s at most, for %2$s."
+msgstr ""
+
+#: views/geographie.php:102
+msgid "Detail"
+msgstr ""
+
+#: views/geographie.php:105
+msgid "Hover over a country on the globe."
+msgstr ""
+
+#: views/geographie.php:111
+#: views/overview.php:166
+msgid "Top countries"
+msgstr ""
+
+#: views/geographie.php:111
+msgid "Ranking by visitors over the period."
+msgstr ""
+
+#. translators: 1: share of visits, 2: revenue.
+#: views/geographie.php:123
+#, php-format
+msgid "%1$s of visits · %2$s"
+msgstr ""
+
+#: views/geographie.php:126
+msgid "No country known during the period."
+msgstr ""
+
+#: views/overview.php:35
+msgid "Measurement disabled — no visits are recorded."
+msgstr ""
+
+#. translators: 1: attribution duration in days, 2: detailed-data retention in months.
+#: views/overview.php:38
+#, php-format
+msgid "Tracking active · one attribution cookie, %1$d days · %2$d-month retention · data hosted on your server"
+msgstr ""
+
+#. translators: %1$d: detailed-data retention in months.
+#: views/overview.php:40
+#, php-format
+msgid "Tracking active · no cookies · %1$d-month retention · data hosted on your server"
+msgstr ""
+
+#: views/overview.php:78
+msgid "Store performance"
+msgstr ""
+
+#. translators: 1: start date, 2: end date, 3: number of previous days.
+#: views/overview.php:79
+#, php-format
+msgid "%1$s – %2$s · compared to %3$d previous days"
+msgstr ""
+
+#. translators: %1$s: site timezone abbreviation.
+#: views/overview.php:81
+#, php-format
+msgid "Timestamped data %1$s"
+msgstr ""
+
+#: views/overview.php:89
+msgid "From visit to order, over the selected period."
+msgstr ""
+
+#: views/overview.php:96
+msgid "Conversion summary"
+msgstr ""
+
+#: views/overview.php:122
+msgid "Top sources"
+msgstr ""
+
+#: views/overview.php:123
+#: views/overview.php:145
+#: views/overview.php:167
+msgid "See all"
+msgstr ""
+
+#. translators: 1: revenue, 2: order count.
+#: views/overview.php:134
+#, php-format
+msgid "%1$s · %2$s commands"
+msgstr ""
+
+#: views/overview.php:144
+msgid "Top products"
+msgstr ""
+
+#. translators: 1: units sold, 2: order count.
+#: views/overview.php:156
+#, php-format
+msgid "%1$s sold · %2$s orders"
+msgstr ""
+
+#: views/overview.php:159
+#: views/produits.php:93
+#: views/produits.php:162
+msgid "No sales during the period."
+msgstr ""
+
+#: views/overview.php:182
+msgid "The country is not yet specified — see Geography for explanation."
+msgstr ""
+
+#: views/parametres.php:20
+msgid "General"
+msgstr ""
+
+#: views/parametres.php:21
+msgid "GDPR & privacy"
+msgstr ""
+
+#: views/parametres.php:22
+msgid "Exclusions"
+msgstr ""
+
+#: views/parametres.php:23
+msgid "Data"
+msgstr ""
+
+#: views/parametres.php:58
+msgid "Saved settings."
+msgstr ""
+
+#: views/parametres.php:70
+msgid "Enable tracking"
+msgstr ""
+
+#: views/parametres.php:71
+msgid "Records visits and purchase steps on the store."
+msgstr ""
+
+#: views/parametres.php:78
+msgid "Follow the purchasing steps"
+msgstr ""
+
+#: views/parametres.php:79
+msgid "Added to cart and started order — necessary for the conversion funnel."
+msgstr ""
+
+#: views/parametres.php:86
+msgid "Show leads worth checking"
+msgstr ""
+
+#: views/parametres.php:87
+msgid "Simple rules that point at what deserves a look once there are enough visits. They never replace an analysis of your store."
+msgstr ""
+
+#: views/parametres.php:94
+msgid "Reporting currency"
+msgstr ""
+
+#: views/parametres.php:95
+msgid "WooCommerce takeover: all amounts come from the store."
+msgstr ""
+
+#: views/parametres.php:104
+msgid "Time zone"
+msgstr ""
+
+#: views/parametres.php:105
+msgid "Determines the daily limits of the reports. Set in WordPress."
+msgstr ""
+
+#: views/parametres.php:114
+msgid "Duration of a visit"
+msgstr ""
+
+#: views/parametres.php:115
+msgid "Timeout of inactivity after which a new visit begins."
+msgstr ""
+
+#: views/parametres.php:119
+msgid "minutes"
+msgstr ""
+
+#: views/parametres.php:126
+msgid "Attribution window"
+msgstr ""
+
+#: views/parametres.php:127
+msgid "Period during which a campaign remains credited with a sale. It’s the setting that decides whether your campaigns appear profitable or sterile."
+msgstr ""
+
+#: views/parametres.php:131
+msgid "None"
+msgstr ""
+
+#. translators: %1$d: attribution duration in days.
+#: views/parametres.php:133
+#, php-format
+msgid "%1$d days"
+msgstr ""
+
+#: views/parametres.php:141
+msgid "Preservation of detail"
+msgstr ""
+
+#: views/parametres.php:143
+msgid ""
+"The visits one by one, their pages, their events. Thirteen months is the duration retained by\n"
+"\t\t\t\t\t\tthe CNIL for an audience measurement exempt from consent; beyond that, the exemption does not\n"
+"\t\t\t\t\t\tholds no longer and consent is required."
+msgstr ""
+
+#: views/parametres.php:148
+msgid "3 months"
+msgstr ""
+
+#: views/parametres.php:148
+msgid "6 months"
+msgstr ""
+
+#: views/parametres.php:148
+msgid "13 months"
+msgstr ""
+
+#: views/parametres.php:148
+msgid "2 years"
+msgstr ""
+
+#: views/parametres.php:148
+msgid "3 years"
+msgstr ""
+
+#: views/parametres.php:148
+msgid "5 years"
+msgstr ""
+
+#: views/parametres.php:148
+msgid "10 years"
+msgstr ""
+
+#: views/parametres.php:157
+msgid "Consolidated history"
+msgstr ""
+
+#: views/parametres.php:159
+msgid ""
+"A summary per day — visits, visitors, pages, orders, revenue, and their\n"
+"\t\t\t\t\t\tbreakdown by source, country and device. No individual visit, therefore no data\n"
+"\t\t\t\t\t\tpersonal: it survives the purge of details and compares itself from one year to the next."
+msgstr ""
+
+#. translators: %1$d: history retention in years.
+#: views/parametres.php:165
+#, php-format
+msgid "%1$d years"
+msgstr ""
+
+#. translators: 1: consolidated days, 2: oldest date, 3: total rows.
+#: views/parametres.php:175
+#, php-format
+msgid "%1$s days already consolidated from %2$s, or %3$s lines in total. At this rate, ten years of history weighs less than a week of detail."
+msgstr ""
+
+#. translators: 1: consolidated days, 2: total rows.
+#: views/parametres.php:177
+#, php-format
+msgid "%1$s days already consolidated, or %2$s lines in total. At this rate, ten years of history weighs less than a week of detail."
+msgstr ""
+
+#: views/parametres.php:180
+msgid "The consolidation starts tonight, then catches up with the existing one in installments each time the administration opens. Nothing is erased until it has been summarized."
+msgstr ""
+
+#. translators: %1$d: attribution duration in days.
+#: views/parametres.php:186
+#, php-format
+msgid "<strong>An attribution cookie is set</strong> for %1$d days. It stores only the referral source, never an identifier. Select “none” to disable it."
+msgstr ""
+
+#: views/parametres.php:188
+msgid "<strong>No cookies are placed.</strong> The plugin does not write anything in visitors' browsers: neither cookies, nor local storage, nor session storage."
+msgstr ""
+
+#: views/parametres.php:193
+msgid "<strong>The IP address is never recorded.</strong> It is used to calculate a fingerprint, then it is forgotten."
+msgstr ""
+
+#: views/parametres.php:194
+msgid ""
+"<strong>It is even truncated before this calculation</strong> — only the network is retained, never the address\n"
+"\t\t\t\t\tcomplete. A fingerprint can therefore no longer be recalculated to find someone's visits\n"
+"\t\t\t\t\twhose address we would know: it designates an entire network, not a person."
+msgstr ""
+
+#: views/parametres.php:195
+msgid "<strong>The fingerprint changes every day</strong>: impossible to follow someone over time."
+msgstr ""
+
+#: views/parametres.php:196
+msgid "<strong>Nothing comes out of your server.</strong> No third-party service, no transfer outside the European Union."
+msgstr ""
+
+#: views/parametres.php:197
+msgid "<strong>No profiling</strong>, no cross-checking between sites."
+msgstr ""
+
+#: views/parametres.php:201
+msgid ""
+"These points are the conditions set by the CNIL so that an audience measurement is exempt from consent.\n"
+"\t\t\t\tNo banner to display for this extension - which does not exempt you from having one for other trackers,\n"
+"\t\t\t\tnor mention the measure in your privacy policy."
+msgstr ""
+
+#: views/parametres.php:205
+msgid "What remains your responsibility"
+msgstr ""
+
+#: views/parametres.php:207
+msgid ""
+"The extension measures; it does not put anyone in their place. By installing this plugin,\n"
+"\t\t\t\t\tyou are the <strong>data controller</strong> within the meaning of the GDPR, and the obligations\n"
+"\t\t\t\t\tfollowing are your responsibility."
+msgstr ""
+
+#: views/parametres.php:210
+msgid ""
+"<strong>Informer.</strong> Mention audience measurement in your policy\n"
+"\t\t\t\t\t\tconfidentiality: what is collected, why, for how long, and who to contact.\n"
+"\t\t\t\t\t\tThe information obligation does not depend on cookies — it applies as soon as there is\n"
+"\t\t\t\t\t\ttreatment."
+msgstr ""
+
+#: views/parametres.php:211
+msgid ""
+"<strong>Supporting a legal basis.</strong> Legitimate interest is appropriate for a measure\n"
+"\t\t\t\t\t\tinternal audience. If you activate the attribution memory, a cookie is placed and the\n"
+"\t\t\t\t\t\tquestion of consent arises again."
+msgstr ""
+
+#: views/parametres.php:212
+msgid ""
+"<strong>Keep a register.</strong> One line in your treatment register is enough\n"
+"\t\t\t\t\t\tfor a store of this size, but it must exist."
+msgstr ""
+
+#: views/parametres.php:213
+msgid ""
+"<strong>Respond to requests.</strong> Right of access, rectification, erasure,\n"
+"\t\t\t\t\t\topposition. Anonymous visits are not subject to it; those attached to a\n"
+"\t\t\t\t\t\torder, yes."
+msgstr ""
+
+#: views/parametres.php:214
+msgid ""
+"<strong>Secure your hosting.</strong> The data lives in your WordPress database:\n"
+"\t\t\t\t\t\tbackups, passwords, updates, access to the database and the server are your responsibility\n"
+"\t\t\t\t\t\talone."
+msgstr ""
+
+#: views/parametres.php:215
+msgid ""
+"<strong>Notify a violation.</strong> Any data leak must be reported to the\n"
+"\t\t\t\t\t\tCNIL within 72 hours, and to the people concerned if the risk is high."
+msgstr ""
+
+#: views/parametres.php:218
+msgid "Text to include in your privacy policy"
+msgstr ""
+
+#: views/parametres.php:221
+msgid ""
+"The bare minimum, written according to the actual configuration of this installation.\n"
+"\t\t\t\t\tPaste as is, replacing the contact address."
+msgstr ""
+
+#. translators: %1$d: retention duration in years.
+#: views/parametres.php:229
+#, php-format
+msgid "%1$d year"
+msgid_plural "%1$d years"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %1$d: retention duration in months.
+#: views/parametres.php:232
+#, php-format
+msgid "%1$d month"
+msgid_plural "%1$d months"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %1$d: attribution duration in days.
+#: views/parametres.php:236
+#, php-format
+msgid "An attribution cookie is set for %1$d days. It contains no identifier and is used only to link an order to the preceding campaign."
+msgstr ""
+
+#: views/parametres.php:238
+msgid "No cookies are placed, and no information is stored in your browser."
+msgstr ""
+
+#. translators: 1: cookie policy according to settings, 2: data retention duration.
+#: views/parametres.php:241
+#, php-format
+msgid ""
+"Audience measurement\n"
+"\n"
+"This site measures its traffic using a solution hosted on its own server. The following are recorded: the pages viewed, the origin of the visit, the type of device, the browser, the language and the country. None of this information is transmitted to a third party.\n"
+"\n"
+"%1$s\n"
+"\n"
+"Your IP address is never stored. It is truncated then transformed into a non-reversible technical identifier, renewed every night, which does not allow you to be identified or recognized from one day to the next.\n"
+"\n"
+"When a visit results in an order, it is linked to it in order to measure the effectiveness of commercial operations.\n"
+"\n"
+"Detailed data is kept %2$s and then replaced with aggregated statistics that do not relate to any specific person.\n"
+"\n"
+"Legal basis: legitimate interest (audience measurement and site improvement).\n"
+"\n"
+"You can exercise your rights of access, rectification, erasure and opposition by writing to: [your email address]."
+msgstr ""
+
+#: views/parametres.php:250
+msgid ""
+"This text follows your settings: the storage period and the mention of the cookie are adjusted\n"
+"\t\t\t\t\tall alone. If you change them, come back and copy it."
+msgstr ""
+
+#: views/parametres.php:253
+msgid "Limit of liability of the publisher"
+msgstr ""
+
+#: views/parametres.php:255
+msgid ""
+"This extension works <strong>entirely on your server</strong>. No data is\n"
+"\t\t\t\t\ttransmitted to its publisher, who has no access to it and therefore acts neither as a subcontractor nor as\n"
+"\t\t\t\t\trecipient within the meaning of the GDPR."
+msgstr ""
+
+#: views/parametres.php:258
+msgid ""
+"This text describes how the software works and reminds you of common obligations.\n"
+"\t\t\t\t\tIt does not constitute legal advice. When in doubt, especially if you are processing data\n"
+"\t\t\t\t\tsensitive or if you export data outside the European Union, consult a professional\n"
+"\t\t\t\t\tright."
+msgstr ""
+
+#: views/parametres.php:265
+msgid "Ignore bots"
+msgstr ""
+
+#: views/parametres.php:267
+msgid ""
+"Content vacuums, monitoring probes, link preview generators:\n"
+"\t\t\t\t\t\tthey pass, they never order, and they lower the conversion rate.\n"
+"\t\t\t\t\t\tTheir visits are neither measured nor displayed."
+msgstr ""
+
+#: views/parametres.php:275
+msgid "Excluded roles"
+msgstr ""
+
+#: views/parametres.php:276
+msgid "A day of development on the store would swell the product pages without the slightest sale."
+msgstr ""
+
+#: views/parametres.php:289
+msgid "Excluded paths — one per line, start of address"
+msgstr ""
+
+#: views/parametres.php:296
+msgid "Permanently erase data on uninstallation"
+msgstr ""
+
+#: views/parametres.php:297
+msgid "Disabled by default. Enable this choice before removing the extension if you want to delete its attribution tables, settings, and metadata."
+msgstr ""
+
+#: views/parametres.php:302
+msgid "Recorded visits"
+msgstr ""
+
+#: views/parametres.php:304
+msgid "Order storage"
+msgstr ""
+
+#: views/parametres.php:304
+msgid "WooCommerce Tables"
+msgstr ""
+
+#: views/parametres.php:304
+msgid "WordPress Posts"
+msgstr ""
+
+#: views/parametres.php:305
+msgid "Automatic purge"
+msgstr ""
+
+#: views/parametres.php:305
+msgid "Scheduled"
+msgstr ""
+
+#: views/parametres.php:305
+msgid "Not scheduled"
+msgstr ""
+
+#: views/parametres.php:309
+msgid ""
+"The purge runs once a night and clears visits beyond the retention period.\n"
+"\t\t\t\tIf WordPress scheduled tasks are disabled, it will not run."
+msgstr ""
+
+#: views/parametres.php:314
+msgid "Save changes"
+msgstr ""
+
+#. translators: %1$s: last settings save date.
+#: views/parametres.php:316
+#, php-format
+msgid "Last save: %1$s"
+msgstr ""
+
+#. translators: date and time format of the last save, see https://www.php.net/manual/datetime.format.php — escape any literal letter with a backslash.
+#: views/parametres.php:318
+msgid "j M Y \\a\\t H:i"
+msgstr ""
+
+#: views/produits.php:37
+msgid "CA products"
+msgstr ""
+
+#: views/produits.php:46
+msgid "Top performing products"
+msgstr ""
+
+#: views/produits.php:46
+msgid "Completed, in progress and pending orders. The amounts come from WooCommerce."
+msgstr ""
+
+#: views/produits.php:49
+msgid "Most viewed"
+msgstr ""
+
+#: views/produits.php:50
+msgid "More added to cart"
+msgstr ""
+
+#: views/produits.php:51
+msgid "Most sold"
+msgstr ""
+
+#: views/produits.php:52
+msgid "Highest revenue"
+msgstr ""
+
+#: views/produits.php:53
+msgid "Better conversion"
+msgstr ""
+
+#: views/produits.php:100
+msgid "All products"
+msgstr ""
+
+#: views/produits.php:100
+msgid "Quantities, orders and share of revenue."
+msgstr ""
+
+#: views/produits.php:103
+msgid "Search for a product…"
+msgstr ""
+
+#: views/produits.php:115
+msgid "Quantities"
+msgstr ""
+
+#: views/produits.php:166
+msgid "products"
+msgstr ""
+
+#: views/produits.php:169
+msgid ""
+"A dash indicates a product for which no views have yet been measured — views are not recorded\n"
+"\t\tsince installing this version."
+msgstr ""
+
+#: views/temps-reel.php:48
+msgid "Visitors from the last 30 minutes"
+msgstr ""
+
+#: views/temps-reel.php:48
+msgid "Automatic update every 20 seconds."
+msgstr ""
+
+#: views/temps-reel.php:49
+msgid "Live"
+msgstr ""
+
+#: views/temps-reel.php:58
+msgid "Pages viewed"
+msgstr ""
+
+#: views/temps-reel.php:67
+msgid "No pages viewed recently."
+msgstr ""
+
+#: views/temps-reel.php:85
+msgid "Countries not indicated."
+msgstr ""
+
+#: views/temps-reel.php:108
+msgid "Live activity"
+msgstr ""
+
+#: views/temps-reel.php:108
+msgid "Anonymized events, no personal data."
+msgstr ""
+
+#: views/temps-reel.php:113
+msgid "The visitor counter and distributions above are free."
+msgstr ""
+
+#: views/temps-reel.php:117
+msgid "Live activity, event by event"
+msgstr ""
+
+#: views/temps-reel.php:118
+msgid "Pro shows each page view, add-to-cart and order as it happens, with its source and country."
+msgstr ""
+
+#: views/temps-reel.php:141
+msgid "No one on site at the moment."
+msgstr ""
+
+#: views/temps-reel.php:150
+msgid "Current sources"
+msgstr ""
+
+#: views/temps-reel.php:162
+msgid "No active source."
+msgstr ""
+
+#: views/visites.php:24
+msgid "This visit no longer exists — it may have been purged."
+msgstr ""
+
+#: views/visites.php:34
+msgid "← All routes"
+msgstr ""
+
+#. translators: 1: traffic medium, 2: campaign name.
+#: views/visites.php:46
+#, php-format
+msgid "%1$s · campaign %2$s"
+msgstr ""
+
+#: views/visites.php:54
+msgid "Duration"
+msgstr ""
+
+#. translators: %1$s: page-view count.
+#: views/visites.php:56
+#, php-format
+msgid "%1$s page views"
+msgstr ""
+
+#: views/visites.php:60
+msgid "Context"
+msgstr ""
+
+#: views/visites.php:69
+msgid "Outcome"
+msgstr ""
+
+#: views/visites.php:71
+msgid "Without purchase"
+msgstr ""
+
+#. translators: %1$d: WooCommerce order number.
+#: views/visites.php:75
+#, php-format
+msgid "Order #%1$d"
+msgstr ""
+
+#: views/visites.php:85
+msgid "Visit timeline"
+msgstr ""
+
+#: views/visites.php:128
+msgid "End of visit"
+msgstr ""
+
+#. translators: %1$s: last visited page.
+#: views/visites.php:130
+#, php-format
+msgid "Stopped on %1$s"
+msgstr ""
+
+#: views/visites.php:134
+msgid "No steps recorded for this visit."
+msgstr ""
+
+#: views/visites.php:138
+msgid ""
+"This visit is anonymous: it bears a non-reversible imprint, renewed every night, and no\n"
+"\t\t\tIP address. What we read here is a sequence of pages, not a person."
+msgstr ""
+
+#: views/visites.php:154
+msgid "All routes"
+msgstr ""
+
+#: views/visites.php:155
+msgid "Those who buy"
+msgstr ""
+
+#: views/visites.php:156
+msgid "Non-buyers"
+msgstr ""
+
+#: views/visites.php:157
+msgid "Abandoned carts"
+msgstr ""
+
+#: views/visites.php:158
+msgid "The long ones"
+msgstr ""
+
+#: views/visites.php:159
+msgid "The rebounds"
+msgstr ""
+
+#: views/visites.php:205
+msgid "the most recent of the period"
+msgstr ""
+
+#. translators: %1$s: share of the current group.
+#: views/visites.php:218
+#, php-format
+msgid "%1$s of the lot"
+msgstr ""
+
+#: views/visites.php:228
+msgid "The last page viewed, when the visit did not result in an order."
+msgstr ""
+
+#. translators: %1$s: stop count.
+#: views/visites.php:237
+#, php-format
+msgid "%1$s stops"
+msgstr ""
+
+#: views/visites.php:251
+msgid "Journeys, one by one"
+msgstr ""
+
+#: views/visites.php:252
+msgid "Each line is an actual visit, read from left to right. The last block says where she stopped."
+msgstr ""
+
+#: views/visites.php:262
+msgid "Search journeys"
+msgstr ""
+
+#: views/visites.php:262
+msgid "Page, source, campaign, country…"
+msgstr ""
+
+#: views/visites.php:263
+msgctxt "button"
+msgid "Search"
+msgstr ""
+
+#: views/visites.php:294
+msgctxt "visit"
+msgid "new"
+msgstr ""
+
+#: views/visites.php:294
+msgid "returning"
+msgstr ""
+
+#. translators: %1$s: page count.
+#: views/visites.php:298
+#, php-format
+msgid "%1$s page"
+msgid_plural "%1$s pages"
+msgstr[0] ""
+msgstr[1] ""
+
+#: views/visites.php:313
+#: views/visites.php:336
+msgid "arrival"
+msgstr ""
+
+#. translators: %1$s: hidden journey-step count.
+#: views/visites.php:320
+#, php-format
+msgid "+ %1$s steps"
+msgstr ""
+
+#: views/visites.php:347
+msgid "Stop here"
+msgstr ""
+
+#: views/visites.php:361
+msgid ""
+"The <strong>Visitor journeys</strong> tab under Behavior shows aggregated paths and trends.\n"
+"\t\tThis page shows actual visits one by one, revealing the exact step at which\n"
+"\t\ta cart was abandoned. Select the timestamp to see the complete timeline, down to the second."
+msgstr ""
+
+#: views/visites.php:366
+msgid "Journey pagination"
+msgstr ""
+
+#. translators: %1$d: number of recent journeys available in Free.
+#: views/visites.php:373
+#, php-format
+msgid "You are viewing the most recent %1$d routes."
+msgstr ""
+
+#: views/visites.php:379
+msgid "Pro provides access to full history, advanced filters, buyers, abandoned carts, campaigns and conversion paths."
+msgstr ""
+
+#: views/visiteurs.php:29
+#: views/visiteurs.php:126
+msgid "Unique visitors"
+msgstr ""
+
+#: views/visiteurs.php:55
+msgid "Distribution of visits."
+msgstr ""
+
+#: views/visiteurs.php:61
+msgid "Operating systems"
+msgstr ""
+
+#: views/visiteurs.php:72
+msgid "New or recurring"
+msgstr ""
+
+#: views/visiteurs.php:86
+msgid ""
+"“Recurring” here means: income during the same day. The imprint changing every night,\n"
+"\t\t\ta visitor who returns tomorrow will be counted as new — this is the price of not having an identifier."
+msgstr ""
+
+#: views/visiteurs.php:92
+msgid "Conversion by country"
+msgstr ""
+
+#: views/visiteurs.php:104
+msgid "Countries not indicated — see Geography."
+msgstr ""
+
+#: views/visiteurs.php:111
+msgid "What to test the store on first?"
+msgstr ""
+
+#: views/visiteurs.php:117
+msgid "Languages"
+msgstr ""
+
+#: views/visiteurs.php:123
+msgid "Loyalty"
+msgstr ""
+
+#: assets/admin.js:722
+#: assets/admin.js:781
+msgid "Resume rotation"
+msgstr ""
+
+#: assets/admin.js:887
+msgid "Copied"
+msgstr ""
+
+#. translators: 1: displayed row count, 2: total row count, 3: row type.
+#: assets/admin.js:1038
+#, js-format
+msgid "%1$d on %2$d %3$s"
+msgstr ""

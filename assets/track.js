@@ -1,5 +1,5 @@
 /**
- * CamiBijoux – Analytics : balise de mesure.
+ * Pluginect Analytics for WooCommerce : balise de mesure.
  *
  * Un peu moins de deux kilo-octets, sans dépendance, sans cookie et
  * sans rien écrire dans le navigateur. On envoie la page vue, puis les
@@ -88,7 +88,7 @@
     /**
      * Titre de la page, sans le nom du site.
      *
-     * WordPress accole « – CamiBijoux » à chaque titre : le répéter sur
+     * WordPress accole « – Nom du site » à chaque titre : le répéter sur
      * chaque ligne du fil d'activité n'apprend rien à qui regarde son
      * propre tableau de bord.
      */

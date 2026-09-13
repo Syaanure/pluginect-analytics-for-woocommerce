@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- vue incluse depuis cbaz_render_page() : variables locales à cette fonction, jamais globales
 /** Vue d'ensemble. */
 
 defined( 'ABSPATH' ) || exit;
@@ -31,16 +32,16 @@ $mois  = (int) cbaz_opt( 'retention_months' );
 	<span class="cbaz-dot<?php echo cbaz_opt( 'enabled' ) ? ' is-on' : ''; ?>"></span>
 
 	<?php if ( ! cbaz_opt( 'enabled' ) ) : ?>
-		<?php echo esc_html__( 'Mesure désactivée — aucune visite n’est enregistrée.', 'shop-analytics-for-woocommerce' ); ?>
+		<?php echo esc_html__( 'Measurement disabled — no visits are recorded.', 'pluginect-analytics-for-woocommerce' ); ?>
 	<?php else : ?>
 		<?php if ( $jours ) : ?>
-			<?php /* translators: 1: attribution duration in days, 2: detailed-data retention in months. */ printf( esc_html__( 'Mesure active · un cookie de provenance, %1$d jours · conservation %2$d mois · données hébergées sur ton serveur', 'shop-analytics-for-woocommerce' ), $jours, $mois ); ?>
+			<?php /* translators: 1: attribution duration in days, 2: detailed-data retention in months. */ printf( esc_html__( 'Tracking active · one attribution cookie, %1$d days · %2$d-month retention · data hosted on your server', 'pluginect-analytics-for-woocommerce' ), (int) $jours, (int) $mois ); ?>
 		<?php else : ?>
-			<?php /* translators: %1$d: detailed-data retention in months. */ printf( esc_html__( 'Mesure active · sans aucun cookie · conservation %1$d mois · données hébergées sur ton serveur', 'shop-analytics-for-woocommerce' ), $mois ); ?>
+			<?php /* translators: %1$d: detailed-data retention in months. */ printf( esc_html__( 'Tracking active · no cookies · %1$d-month retention · data hosted on your server', 'pluginect-analytics-for-woocommerce' ), (int) $mois ); ?>
 		<?php endif; ?>
 	<?php endif; ?>
 
-	<a href="<?php echo esc_url( add_query_arg( [ 'page' => cbaz_tab_page( 'parametres' ) ], admin_url( 'admin.php' ) ) ); ?>"><?php echo esc_html__( 'Paramètres', 'shop-analytics-for-woocommerce' ); ?></a>
+	<a href="<?php echo esc_url( add_query_arg( [ 'page' => cbaz_tab_page( 'parametres' ) ], admin_url( 'admin.php' ) ) ); ?>"><?php echo esc_html__( 'Settings', 'pluginect-analytics-for-woocommerce' ); ?></a>
 </div>
 
 <?php
@@ -57,25 +58,27 @@ $spark = [
 <div class="cbaz-kpis">
 	<?php foreach ( $kpis['cards'] as $k ) : ?>
 		<div class="cbaz-kpi">
-			<?php echo cbaz_kpi_icon( $k['key'] ); // phpcs:ignore ?><p class="cbaz-kpi__label"><?php echo esc_html( $k['label'] ); ?></p>
+			<?php echo cbaz_kpi_icon( $k['key'] ); // phpcs:ignore ?><p class="cbaz-kpi__label"><?php echo esc_html( $k['label'] ); ?><?php echo cbaz_tip( $k['key'] ); // phpcs:ignore ?></p>
 			<p class="cbaz-kpi__value"><?php echo esc_html( cbaz_format( $k['value'], $k['format'] ) ); ?></p>
 			<p class="cbaz-kpi__delta">
 				<?php echo cbaz_delta_badge( $k['delta'] ); // phpcs:ignore ?>
-				<span class="cbaz-kpi__vs"><?php echo esc_html__( 'vs période préc.', 'shop-analytics-for-woocommerce' ); ?></span>
+				<span class="cbaz-kpi__vs"><?php echo esc_html__( 'vs previous period', 'pluginect-analytics-for-woocommerce' ); ?></span>
 			</p>
 			<?php echo cbaz_sparkline( $spark[ $k['key'] ] ?? [] ); // phpcs:ignore ?>
 		</div>
 	<?php endforeach; ?>
 </div>
 
+<?php cbaz_insights_box( $range, 'overview' ); ?>
+
 <section class="cbaz-card">
 	<header class="cbaz-card__head">
 		<?php echo cbaz_icon( 'money', 2 ); // phpcs:ignore ?>
 			<div>
-			<h2><?php echo esc_html__( 'Performances de la boutique', 'shop-analytics-for-woocommerce' ); ?></h2>
-			<p><?php /* translators: 1: start date, 2: end date, 3: number of previous days. */ printf( esc_html__( '%1$s – %2$s · comparé aux %3$d jours précédents', 'shop-analytics-for-woocommerce' ), esc_html( wp_date( 'j M', strtotime( $range['from'] ) ) ), esc_html( wp_date( 'j M Y', strtotime( $range['to'] ) ) ), (int) $range['days'] ); ?></p>
+			<h2><?php echo esc_html__( 'Store performance', 'pluginect-analytics-for-woocommerce' ); ?></h2>
+			<p><?php /* translators: 1: start date, 2: end date, 3: number of previous days. */ printf( esc_html__( '%1$s – %2$s · compared to %3$d previous days', 'pluginect-analytics-for-woocommerce' ), esc_html( wp_date( 'j M', strtotime( $range['from'] ) ) ), esc_html( wp_date( 'j M Y', strtotime( $range['to'] ) ) ), (int) $range['days'] ); ?></p>
 		</div>
-		<span class="cbaz-pill"><?php /* translators: %1$s: site timezone abbreviation. */ printf( esc_html__( 'Données horodatées %1$s', 'shop-analytics-for-woocommerce' ), esc_html( wp_date( 'T' ) ) ); ?></span>
+		<span class="cbaz-pill"><?php /* translators: %1$s: site timezone abbreviation. */ printf( esc_html__( 'Timestamped data %1$s', 'pluginect-analytics-for-woocommerce' ), esc_html( wp_date( 'T' ) ) ); ?></span>
 	</header>
 	<?php echo cbaz_chart( $series ); // phpcs:ignore ?>
 </section>
@@ -83,28 +86,28 @@ $spark = [
 <div class="cbaz-grid cbaz-grid--2-1">
 	<section class="cbaz-card">
 		<header class="cbaz-card__head"><?php echo cbaz_icon( 'cart', 3 ); // phpcs:ignore ?>
-			<div><h2><?php echo esc_html__( 'Entonnoir de conversion', 'shop-analytics-for-woocommerce' ); ?></h2><p><?php echo esc_html__( 'De la visite à la commande, sur la période sélectionnée.', 'shop-analytics-for-woocommerce' ); ?></p></div></header>
+			<div><h2><?php echo esc_html__( 'Conversion funnel', 'pluginect-analytics-for-woocommerce' ); ?><?php echo cbaz_tip( 'funnel' ); // phpcs:ignore ?></h2><p><?php echo esc_html__( 'From visit to order, over the selected period.', 'pluginect-analytics-for-woocommerce' ); ?></p></div></header>
 
 		<?php echo cbaz_funnel_block( $funnel, $funnel_prev ); // phpcs:ignore ?>
 	</section>
 
 	<section class="cbaz-card">
 		<header class="cbaz-card__head"><?php echo cbaz_icon( 'cart', 3 ); // phpcs:ignore ?>
-			<div><h2><?php echo esc_html__( 'Synthèse conversion', 'shop-analytics-for-woocommerce' ); ?></h2></div></header>
+			<div><h2><?php echo esc_html__( 'Conversion summary', 'pluginect-analytics-for-woocommerce' ); ?></h2></div></header>
 		<dl class="cbaz-stats">
 			<?php
 			$stats = [
-				[ __( 'Taux de conversion', 'shop-analytics-for-woocommerce' ), cbaz_pct( $now['cr'] ), cbaz_delta( $now['cr'], $then['cr'] ), false ],
-				[ __( 'Taux de rebond', 'shop-analytics-for-woocommerce' ), cbaz_pct( $now['bounce_rate'], 1 ), cbaz_delta( $now['bounce_rate'], $then['bounce_rate'] ), true ],
-				[ __( 'Valeur par visite', 'shop-analytics-for-woocommerce' ), cbaz_money( $now['per_session'] ), cbaz_delta( $now['per_session'], $then['per_session'] ), false ],
-				[ __( 'Durée moyenne', 'shop-analytics-for-woocommerce' ), cbaz_duration( $now['duration'] ), cbaz_delta( $now['duration'], $then['duration'] ), false ],
-				[ __( 'Commandes', 'shop-analytics-for-woocommerce' ), cbaz_int( $now['orders'] ), cbaz_delta( $now['orders'], $then['orders'] ), false ],
+				[ __( 'Conversion rate', 'pluginect-analytics-for-woocommerce' ), cbaz_pct( $now['cr'] ), cbaz_delta( $now['cr'], $then['cr'] ), false, 'cr' ],
+				[ __( 'Bounce rate', 'pluginect-analytics-for-woocommerce' ), cbaz_pct( $now['bounce_rate'], 1 ), cbaz_delta( $now['bounce_rate'], $then['bounce_rate'] ), true, 'bounce' ],
+				[ __( 'Value per visit', 'pluginect-analytics-for-woocommerce' ), cbaz_money( $now['per_session'] ), cbaz_delta( $now['per_session'], $then['per_session'] ), false, 'per_session' ],
+				[ __( 'Average duration', 'pluginect-analytics-for-woocommerce' ), cbaz_duration( $now['duration'] ), cbaz_delta( $now['duration'], $then['duration'] ), false, 'duration' ],
+				[ __( 'Orders', 'pluginect-analytics-for-woocommerce' ), cbaz_int( $now['orders'] ), cbaz_delta( $now['orders'], $then['orders'] ), false, 'orders' ],
 			];
 
-			foreach ( $stats as list( $label, $value, $delta, $invert ) ) :
+			foreach ( $stats as list( $label, $value, $delta, $invert, $help ) ) :
 				?>
 				<div>
-					<dt><?php echo esc_html( $label ); ?></dt>
+					<dt><?php echo esc_html( $label ); ?><?php echo cbaz_tip( $help ); // phpcs:ignore ?></dt>
 					<dd><?php echo esc_html( $value ); ?> <?php echo cbaz_delta_badge( $delta, $invert ); // phpcs:ignore ?></dd>
 				</div>
 			<?php endforeach; ?>
@@ -116,8 +119,8 @@ $spark = [
 	<section class="cbaz-card">
 		<header class="cbaz-card__head">
 			<?php echo cbaz_icon( 'globe', 6 ); // phpcs:ignore ?>
-			<div><h2><?php echo esc_html__( 'Top sources', 'shop-analytics-for-woocommerce' ); ?></h2></div>
-			<a href="<?php echo esc_url( add_query_arg( [ 'page' => cbaz_tab_page( 'acquisition' ), 'periode' => $range['preset'] ], admin_url( 'admin.php' ) ) ); ?>"><?php echo esc_html__( 'Tout voir', 'shop-analytics-for-woocommerce' ); ?></a>
+			<div><h2><?php echo esc_html__( 'Top sources', 'pluginect-analytics-for-woocommerce' ); ?><?php echo cbaz_tip( 'sources' ); // phpcs:ignore ?></h2></div>
+			<a href="<?php echo esc_url( add_query_arg( [ 'page' => cbaz_tab_page( 'acquisition' ), 'periode' => $range['preset'] ], admin_url( 'admin.php' ) ) ); ?>"><?php echo esc_html__( 'See all', 'pluginect-analytics-for-woocommerce' ); ?></a>
 		</header>
 		<?php $max = $sources ? max( array_map( fn( $s ) => (int) $s->sessions, $sources ) ) : 1; ?>
 		<ul class="cbaz-list">
@@ -128,18 +131,18 @@ $spark = [
 						<span class="cbaz-num"><?php echo esc_html( cbaz_int( $s->sessions ) ); ?></span>
 					</div>
 					<?php echo cbaz_bar( $s->sessions, $max ); // phpcs:ignore ?>
-					<p class="cbaz-list__note"><?php /* translators: 1: revenue, 2: order count. */ printf( esc_html__( '%1$s · %2$s commandes', 'shop-analytics-for-woocommerce' ), esc_html( cbaz_money( $s->revenue ) ), esc_html( cbaz_int( $s->orders ) ) ); ?></p>
+					<p class="cbaz-list__note"><?php /* translators: 1: revenue, 2: order count. */ printf( esc_html__( '%1$s · %2$s commands', 'pluginect-analytics-for-woocommerce' ), esc_html( cbaz_money( $s->revenue ) ), esc_html( cbaz_int( $s->orders ) ) ); ?></p>
 				</li>
 			<?php endforeach; ?>
-			<?php if ( ! $sources ) : ?><li class="cbaz-empty"><?php echo esc_html__( 'Aucune visite sur la période.', 'shop-analytics-for-woocommerce' ); ?></li><?php endif; ?>
+			<?php if ( ! $sources ) : ?><li class="cbaz-empty"><?php echo esc_html__( 'No visits during the period.', 'pluginect-analytics-for-woocommerce' ); ?></li><?php endif; ?>
 		</ul>
 	</section>
 
 	<section class="cbaz-card">
 		<header class="cbaz-card__head">
 			<?php echo cbaz_icon( 'box', 3 ); // phpcs:ignore ?>
-			<div><h2><?php echo esc_html__( 'Top produits', 'shop-analytics-for-woocommerce' ); ?></h2></div>
-			<a href="<?php echo esc_url( add_query_arg( [ 'page' => cbaz_tab_page( 'produits' ), 'periode' => $range['preset'] ], admin_url( 'admin.php' ) ) ); ?>"><?php echo esc_html__( 'Tout voir', 'shop-analytics-for-woocommerce' ); ?></a>
+			<div><h2><?php echo esc_html__( 'Top products', 'pluginect-analytics-for-woocommerce' ); ?></h2></div>
+			<a href="<?php echo esc_url( add_query_arg( [ 'page' => cbaz_tab_page( 'produits' ), 'periode' => $range['preset'] ], admin_url( 'admin.php' ) ) ); ?>"><?php echo esc_html__( 'See all', 'pluginect-analytics-for-woocommerce' ); ?></a>
 		</header>
 		<?php $maxp = $prods ? max( array_map( fn( $p ) => (float) $p->revenue, $prods ) ) : 1; ?>
 		<ul class="cbaz-list">
@@ -150,18 +153,18 @@ $spark = [
 						<span class="cbaz-num"><?php echo esc_html( cbaz_money( $p->revenue ) ); ?></span>
 					</div>
 					<?php echo cbaz_bar( $p->revenue, $maxp ); // phpcs:ignore ?>
-					<p class="cbaz-list__note"><?php /* translators: 1: units sold, 2: order count. */ printf( esc_html__( '%1$s vendus · %2$s commandes', 'shop-analytics-for-woocommerce' ), esc_html( cbaz_int( $p->qty ) ), esc_html( cbaz_int( $p->orders ) ) ); ?></p>
+					<p class="cbaz-list__note"><?php /* translators: 1: units sold, 2: order count. */ printf( esc_html__( '%1$s sold · %2$s orders', 'pluginect-analytics-for-woocommerce' ), esc_html( cbaz_int( $p->qty ) ), esc_html( cbaz_int( $p->orders ) ) ); ?></p>
 				</li>
 			<?php endforeach; ?>
-			<?php if ( ! $prods ) : ?><li class="cbaz-empty"><?php echo esc_html__( 'Aucune vente sur la période.', 'shop-analytics-for-woocommerce' ); ?></li><?php endif; ?>
+			<?php if ( ! $prods ) : ?><li class="cbaz-empty"><?php echo esc_html__( 'No sales during the period.', 'pluginect-analytics-for-woocommerce' ); ?></li><?php endif; ?>
 		</ul>
 	</section>
 
 	<section class="cbaz-card">
 		<header class="cbaz-card__head">
 			<?php echo cbaz_icon( 'flag', 5 ); // phpcs:ignore ?>
-			<div><h2><?php echo esc_html__( 'Top pays', 'shop-analytics-for-woocommerce' ); ?></h2></div>
-			<a href="<?php echo esc_url( add_query_arg( [ 'page' => cbaz_tab_page( 'geographie' ), 'periode' => $range['preset'] ], admin_url( 'admin.php' ) ) ); ?>"><?php echo esc_html__( 'Tout voir', 'shop-analytics-for-woocommerce' ); ?></a>
+			<div><h2><?php echo esc_html__( 'Top countries', 'pluginect-analytics-for-woocommerce' ); ?><?php echo cbaz_tip( 'countries' ); // phpcs:ignore ?></h2></div>
+			<a href="<?php echo esc_url( add_query_arg( [ 'page' => cbaz_tab_page( 'geographie' ), 'periode' => $range['preset'] ], admin_url( 'admin.php' ) ) ); ?>"><?php echo esc_html__( 'See all', 'pluginect-analytics-for-woocommerce' ); ?></a>
 		</header>
 		<?php $maxg = $geo ? max( array_map( fn( $g ) => (int) $g->sessions, $geo ) ) : 1; ?>
 		<ul class="cbaz-list">
@@ -176,7 +179,7 @@ $spark = [
 				</li>
 			<?php endforeach; ?>
 			<?php if ( ! $geo ) : ?>
-				<li class="cbaz-empty"><?php echo esc_html__( 'Le pays n’est pas encore renseigné — voir Géographie pour l’explication.', 'shop-analytics-for-woocommerce' ); ?></li>
+				<li class="cbaz-empty"><?php echo esc_html__( 'The country is not yet specified — see Geography for explanation.', 'pluginect-analytics-for-woocommerce' ); ?></li>
 			<?php endif; ?>
 		</ul>
 	</section>
