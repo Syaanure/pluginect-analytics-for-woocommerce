@@ -1,6 +1,7 @@
 <?php
 /**
  * Plugin Name: Pluginect Analytics – Statistics & Reports for WooCommerce
+ * Plugin URI:  https://pluginect.com/pluginect-analytics/
  * Description: Local audience and sales measurement for WooCommerce, without third-party services or cookies by default.
  * Version:     4.31.4
  * Requires at least: 6.0
@@ -9,6 +10,7 @@
  * WC requires at least: 8.0
  * WC tested up to: 11.1
  * Author:      Pluginect
+ * Author URI: https://pluginect.com/
  * License:     GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: pluginect-analytics-for-woocommerce

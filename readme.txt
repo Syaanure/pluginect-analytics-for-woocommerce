@@ -154,6 +154,7 @@ Clearer links to the Pro module and a fix for a real-time notice whose translata
 == Changelog ==
 
 = 4.31.4 =
+* New: the plugins list now carries real links — the author name opens pluginect.com, and “Visit plugin site” opens the plugin page. Both were missing because the header declared no Plugin URI and no Author URI.
 * Fix: four country names were wrong or had never been translated — “Swiss”, “The Netherlands”, “Suede” and “UNITED STATES” are now “Switzerland”, “Netherlands”, “Sweden” and “United States”.
 * Fix: three labels were shouted in capitals (“LANGUAGES”, “DELETE”, “END”).
 * Fix: the visit list said “1 pages”; the counter now has a proper plural.

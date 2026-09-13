@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: pluginect-analytics-for-woocommerce\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pluginect-"
 "analytics-for-woocommerce\n"
-"POT-Creation-Date: 2026-09-13T14:59:49+00:00\n"
+"POT-Creation-Date: 2026-09-13T15:48:55+00:00\n"
 "PO-Revision-Date: 2026-09-12 12:00+0200\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
@@ -17,6 +17,11 @@ msgstr ""
 #: pluginect-analytics-for-woocommerce.php
 msgid "Pluginect Analytics – Statistics & Reports for WooCommerce"
 msgstr "Pluginect Analytics – Statistics & Reports for WooCommerce"
+
+#. Plugin URI of the plugin
+#: pluginect-analytics-for-woocommerce.php
+msgid "https://pluginect.com/pluginect-analytics/"
+msgstr ""
 
 #. Description of the plugin
 #: pluginect-analytics-for-woocommerce.php
@@ -31,6 +36,11 @@ msgstr ""
 #: pluginect-analytics-for-woocommerce.php
 msgid "Pluginect"
 msgstr "Pluginect"
+
+#. Author URI of the plugin
+#: pluginect-analytics-for-woocommerce.php
+msgid "https://pluginect.com/"
+msgstr ""
 
 #: includes/admin.php:20
 msgid ""
@@ -139,7 +149,7 @@ msgstr "Parcours"
 msgid "The journey of each visit, page by page."
 msgstr "Le parcours de chaque visite, page par page."
 
-#: includes/admin.php:41 pluginect-analytics-for-woocommerce.php:217
+#: includes/admin.php:41 pluginect-analytics-for-woocommerce.php:219
 #: views/overview.php:44
 msgid "Settings"
 msgstr "Paramètres"
@@ -272,7 +282,7 @@ msgid "Export"
 msgstr "Exporter"
 
 #: includes/admin.php:1045 includes/features.php:134 includes/features.php:151
-#: pluginect-analytics-for-woocommerce.php:225
+#: pluginect-analytics-for-woocommerce.php:227
 msgid "Pro"
 msgstr "Pro"
 
